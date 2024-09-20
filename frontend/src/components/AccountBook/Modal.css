@@ -1,0 +1,92 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  font-family: "omyu_pretty";
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* Stacks content vertically */
+  align-items: stretch; /* Ensures content stretches to fit width */
+  position: relative; /* Ensures positioning context for centering */
+}
+
+h3 {
+  margin: 0;
+  padding-bottom: 15px;
+  text-align: center;
+
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure form groups take full width of modal */
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 25px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 3px solid#ffc95d;
+  font-size: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Ensure buttons take full width of modal */
+  margin-top: 20px; /* Add space above buttons */
+}
+
+button {
+  background-color: #ffd698;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 20px;
+  flex: 1;
+  margin: 0 5px;
+}
+
+button:hover {
+  background-color: #ffcc66;
+}
+
+button:first-of-type {
+  background-color: #ffebb5;
+}
+
+button:last-of-type {
+  background-color: #ffadad;
+}
+
+button:last-of-type:hover {
+  background-color: #ff8585;
+}
