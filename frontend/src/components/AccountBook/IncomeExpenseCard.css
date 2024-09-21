@@ -1,0 +1,116 @@
+.income {
+    color :#88a4ff;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .expense {
+    color :#e74c3c;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  .card-wrapper {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .summary .income,
+  .summary .expense {
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    flex: 1;
+    text-align: center;
+    margin: 0 10px;
+  }
+  
+  .transactions {
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .transaction-card {
+    background: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .transaction-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    padding-left: 15px;
+  }
+  
+  .transaction-type {
+    margin-left: 10px;
+    flex-shrink: 0; 
+  
+  }
+  
+  .transaction-category {
+    text-align: center;
+    flex-grow: 1;
+    margin: 0 20px; 
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .transaction-amount {
+    margin-right: 20px;
+    flex-shrink: 0;
+    font-weight: bold;
+  }
+  
+  .transaction-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  button {
+    background-color: #ffd698;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+
+  button:hover {
+    background-color: #ffcc66;
+  }
+  
+  .edit-btn {
+    background-color: #ffebb5;
+  }
+  
+  .delete-btn {
+    background-color: #ffadad;
+  }
+  
+  .delete-btn:hover {
+    background-color: #ff8585;
+  }
+ 
