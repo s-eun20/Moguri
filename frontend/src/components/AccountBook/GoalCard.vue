@@ -1,79 +1,79 @@
 <template>
     <div class="goal-card">
       <div class="goal-content">
-        <p class="goal-title">{{ goal.content }}</p>
-        <p class="goal-date">{{ goal.startDate }} ~ {{ goal.endDate }}</p>
+        <h3>{{ goal.content }}</h3>
+        <p>목표 금액: {{ formatCurrency(goal.amount) }}</p>
+        <p>기간: {{ formatDate(goal.startDate) }} - {{ formatDate(goal.endDate) }}</p>
       </div>
-      <div class="goal-info">
-        <p>목표 금액: {{ goal.amount.toLocaleString() }} ₩</p>
-        <div class="goal-progress">
-          <div class="progress-bar" :style="{ width: goal.progress + '%' }"></div>
-          <span class="progress-text">{{ goal.progress }}%</span>
-        </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: `${goal.progress}%` }"></div>
       </div>
+      <p class="progress-text">{{ goal.progress }}% 달성</p>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      goal: Object,
+</template>
+
+<script>
+export default {
+  props: {
+    goal: {
+      type: Object,
+      required: true
+    }
+  },
+  methods: {
+    formatCurrency(value) {
+      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(value);
     },
-  };
-  </script>
-  
-  <style scoped>
-  .goal-card {
-  background-color: white;
-  border-radius: 8px; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-  padding: 10px; 
-  margin-bottom: 10px; 
-  font-size: 14px; 
-  width: 700px; /* 가로 길이 유지 */
-  height: 120px; /* 세로 높이 감소 */
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.goal-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
-.goal-content {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px; 
-}
-
-.goal-title {
+.goal-content h3 {
+  font-size: 18px;
   font-weight: bold;
-  font-size: 16px; 
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.goal-date {
-  font-size: 12px; 
-  color: gray;
+.goal-content p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
 }
 
-.goal-info {
-  margin-top: 6px; 
-}
-
-.goal-progress {
-  position: relative;
-  background-color: #f2f2f2;
-  height: 10px; /* 프로그레스바 높이 조정 */
-  border-radius: 4px; 
-  margin: 8px 0; 
+.progress-bar-container {
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
 }
 
 .progress-bar {
-  height: 100%; /* 프로그레스바 높이 유지 */
-  background-color: #ffa07a;
-  border-radius: 4px; 
+  height: 100%;
+  background-color: #ff9f67;
+  transition: width 0.3s ease;
 }
 
 .progress-text {
-  position: absolute;
-  right: 5px; 
-  top: -18px; 
-  font-size: 12px; 
-  color: #ffa07a;
+  font-size: 14px;
+  color: #4CAF50;
+  text-align: right;
+  margin-top: 5px;
+  font-weight: bold;
 }
-  </style>
-  
+</style>

@@ -76,7 +76,8 @@ export default {
 
 <style scoped>
 .line-chart-container {
-  font-family: 'LeeSeoyun';
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
 }
 
 .line-chart {

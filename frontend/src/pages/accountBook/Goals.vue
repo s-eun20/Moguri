@@ -1,22 +1,41 @@
 <template>
   <div class="goal-page">
     <h1 class="page-title">목표 설정</h1>
-    <div class="goal">
-    <div class="goal-list">
-      <GoalList 
-        title="저축 목표" 
-        :goals="savingGoals" 
-        buttonText="저축 목표 등록"
-        buttonColor="green"
-        @add-goal="openModal('saving')"
-      />
-      <GoalList 
-        title="지출 목표" 
-        :goals="expenseGoals" 
-        buttonText="지출 목표 등록"
-        buttonColor="orange"
-        @add-goal="openModal('expense')"
-      />
+    <div class="content-wrapper">
+      <div class="goal-lists-container">
+        <GoalList 
+          title="저축 목표" 
+          :goals="savingGoals" 
+          buttonText="저축 목표 등록"
+          buttonColor="green"
+          @add-goal="openModal('saving')"
+        />
+        <GoalList 
+          title="지출 목표" 
+          :goals="expenseGoals" 
+          buttonText="지출 목표 등록"
+          buttonColor="orange"
+          @add-goal="openModal('expense')"
+        />
+      </div>
+      <div class="reference-container">
+        <h2>관심 있는 태그를 클릭하세요!</h2>
+        <div class="hashtag-section">
+          <span 
+            v-for="tag in hashtags" 
+            :key="tag" 
+            class="hashtag" 
+            @click="filterArticles(tag)"
+          >
+            #{{ tag }}
+          </span>
+        </div>
+        <div v-for="article in filteredArticles" :key="article.id" class="article">
+          <strong>신문사:</strong> {{ article.source }}<br>
+          <strong>기사 제목:</strong> {{ article.title }}<br>
+          <strong>기사 내용:</strong> {{ article.content }}
+        </div>
+      </div>
     </div>
 
     <Modal
@@ -24,26 +43,6 @@
       @add-goal="handleAddGoal"
       @close="closeModal"
     />
-
-    <div class="reference-section">
-      <h2>관심 있는 태그를 클릭하세요!</h2>
-      <div class="hashtag-section">
-        <span 
-          v-for="tag in hashtags" 
-          :key="tag" 
-          class="hashtag" 
-          @click="filterArticles(tag)"
-        >
-          #{{ tag }}
-        </span>
-      </div>
-      <div v-for="article in filteredArticles" :key="article.id" class="article">
-        <strong>신문사:</strong> {{ article.source }}<br>
-        <strong>기사 제목:</strong> {{ article.title }}<br>
-        <strong>기사 내용:</strong> {{ article.content }}
-      </div>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -128,74 +127,89 @@ export default {
 </script>
 
 <style scoped>
-.goal {
-  display: flex; 
-  justify-content: space-between;
-}
 .goal-page {
-  padding: 20px;
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  font-family: 'HakgyoansimWoojuR';
+    font-weight: bold;
 }
+
 .page-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ffcc99;
+  font-size: 28px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #FFCC00;
 }
-.goal-list {
+
+.content-wrapper {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.goal-lists-container,
+.reference-container {
   flex: 1;
-  height: 660px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  height: 700px;
+  overflow-y: auto;
 }
 
-.reference-section {
-  background-color: #fffaf3;
-    padding: 20px;
-    border-radius: 12px;
-    border: 2px solid #ffcc99;
-    margin-bottom: 20px;
-    width: 800px;
-    margin-right: 110px;
+.goal-lists-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.reference-section h2 {
-  font-size: 30px;
-  margin-bottom: 30px; 
+.reference-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
   font-weight: bold;
-  
 }
 
 .hashtag-section {
-  margin: 10px 0;
+  margin-bottom: 20px;
 }
 
 .hashtag {
   display: inline-block;
   background-color: #e0e0e0;
   border-radius: 3px;
-  padding: 5px;
-  margin-right: 5px;
-  cursor: pointer; 
+  padding: 5px 10px;
+  margin-right: 10px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .article {
-  margin-bottom: 15px; 
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px; 
-  background-color: white;
-  border-radius: 8px; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-  padding: 10px; 
-  margin-bottom: 10px; 
-  font-size: 14px; 
-  width: 700px; 
-  height: 120px; 
-  
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 14px;
 }
 
 .article strong {
-  display: inline-block; 
+  display: inline-block;
   margin-bottom: 5px;
+}
+
+@media (max-width: 1024px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .goal-lists-container,
+  .reference-container {
+    width: 100%;
+    height: auto;
+  }
 }
 </style>

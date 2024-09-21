@@ -134,12 +134,14 @@ export default {
 
 <style scoped>
 .PieChart {
-  font-family: 'LeeSeoyun';
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
 }
 
 .month-selector {
   margin-bottom: 10px;
   font-size: 20px;
+  
 }
 
 #month {
@@ -153,6 +155,7 @@ export default {
   appearance: none; /* Remove default browser styles */
   width: 200px;
   text-align: center;
+  font-weight: bold;
 }
 
 #month:focus {
@@ -175,7 +178,7 @@ export default {
 
 .category-list {
   width: 230px; 
-  height: 300px; 
+  height: 320px; 
   padding-left: 20px;
   border: 3px solid rgb(255, 212, 95);
   font-weight: bold;

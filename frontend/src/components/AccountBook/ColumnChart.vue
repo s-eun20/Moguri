@@ -119,7 +119,8 @@
   <style scoped>
   .year-selector {
     margin-bottom: 10px;
-    font-family: 'LeeSeoyun';
+    font-family: 'HakgyoansimWoojuR';
+    font-weight: bold;
   }
   
   .year-selector label {
@@ -127,6 +128,7 @@
   }
   
   #year {
+    font-weight: bold;
     padding: 8px 12px;
     border-radius: 12px;
     border: 2px solid #ffcc99; 
@@ -158,10 +160,8 @@
   margin-top: 20px;
   font-size: 24px;
   width: 350px;
-  font-weight: bold;
   color: #ff6f61; 
   text-align: center; 
-  font-family: 'omyu_pretty';
 }
   </style>
   

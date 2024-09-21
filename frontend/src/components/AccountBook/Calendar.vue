@@ -53,14 +53,16 @@
   border-radius: 10px;
   padding: 15px;
   background-color: #fff8e1;
+  
 }
 
 /* 달력 헤더 스타일 (제목과 버튼 간격 조정) */
 
 
 .custom-calendar .fc-toolbar-title {
-  font-family: 'HSSaemaul-Regular';
-  font-size: 60px;
+
+  font-weight:1000;
+  font-size: 30px;
   color: #a06d36;
   text-align: center;
   margin-left: 10px;
@@ -69,6 +71,7 @@
 
 /* 달력 헤더 버튼 스타일 */
 .custom-calendar .fc-button {
+  
   background-color: #ffd698;
   border: none;
   border-radius: 4px;
@@ -88,7 +91,7 @@
 
 /* 달력의 각 날짜 스타일 */
 .custom-calendar .fc-daygrid-day {
-  font-family: 'HSSaemaul-Regular';
+  font-weight: bold;
   border-radius: 6px;
   background-color: #fffaf0;
   transition: background-color 0.3s ease;

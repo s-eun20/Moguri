@@ -1,23 +1,22 @@
 <template>
   <div class="income-expense-page">
-    <h1 class="page-title">수입/지출</h1>
+    <h1 class="page-title">수입/지출 관리</h1>
     
     <div class="content-wrapper">
-      <Calendar @dateSelected="fetchTransactions" />
-      <IncomeExpenseCard 
-        :selectedDate="selectedDate" 
-        :transactions="transactions" 
-      />
+      <div class="calendar-container">
+        <Calendar @dateSelected="fetchTransactions" />
+      </div>
+      <div class="transactions-container">
+        <IncomeExpenseCard 
+          :selectedDate="selectedDate" 
+          :transactions="transactions" 
+        />
+      </div>
     </div>
 
-    <div class="add-transaction-icon-container">
-      <img
-        src="../../assets/plus.png"
-        class="add-transaction-icon"
-        @click="openModal"
-        alt="Add Transaction"
-      />
-    </div>
+    <button class="add-transaction-btn" @click="openModal">
+      <i class="fas fa-plus"></i> 거래 추가
+    </button>
 
     <Modal 
       :isVisible="isModalVisible" 
@@ -72,33 +71,73 @@ export default {
   
   <style scoped>
   .income-expense-page {
-    padding: 20px;
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'HakgyoansimWoojuR';
+    font-weight: bold;
   }
 
   .page-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ffcc99;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #FFCC00;
   }
 
   .content-wrapper {
     display: flex;
-    margin-top: 20px;
-    margin-left: 150px;
+    gap: 30px;
+    margin-top: 30px;
   }
 
-  .add-transaction-icon-container {
-    position: fixed; 
-    bottom: 180px;
-    right: 300px;
-    z-index: 1000; 
+  .calendar-container,
+  .transactions-container {
+    flex: 1;
+    width: calc(50% - 15px); /* 간격의 절반을 뺀 50% */
+    height: 600px; /* 고정 높이 설정 */
   }
 
-  .add-transaction-icon {
-    width: 50px;
+  .calendar-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .add-transaction-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #FFCC00;
+    color: #000000;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .add-transaction-btn:hover {
+    background-color: #E6B800;
+  }
+
+  @media (max-width: 1024px) {
+    .content-wrapper {
+      flex-direction: column;
+    }
+    
+    .calendar-container,
+    .transactions-container {
+      width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
   }
   </style>

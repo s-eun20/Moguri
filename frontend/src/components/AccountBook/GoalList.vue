@@ -36,7 +36,6 @@
     border-radius: 12px;
     border: 2px solid #ffcc99;
     margin-bottom: 20px;
-    width: 800px;
   }
   
   .goal-header {
