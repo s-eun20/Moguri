@@ -39,7 +39,7 @@ export default {
 .statistics-page {
   padding: 30px;
   max-width: 1600px;
-  margin: 0 auto; /* Center the content */
+  margin: 0 auto; 
   box-sizing: border-box;
   overflow-x: hidden; 
   font-family: 'HakgyoansimWoojuR';
@@ -53,12 +53,12 @@ export default {
   margin-bottom: 30px;
   padding-bottom: 15px;
   border-bottom: 2px solid #FFCC00;
-  width: 1600px; /* Fit the title width to the content */
+  width: 1600px; 
 }
 
 .charts-container {
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden; 
 }
 
 .charts-grid {
@@ -74,7 +74,7 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent overflowing content */
+  overflow: hidden; 
 }
 
 .chart-title {
@@ -84,7 +84,7 @@ export default {
   padding-bottom: 10px;
   text-align: left;
   border-bottom: 1px solid #FFCC00;
-  width: fit-content; /* Fit the title width to the content */
+  width: fit-content; 
 }
 
 .full-width {
@@ -93,16 +93,16 @@ export default {
 
 @media (max-width: 1500px) {
   .statistics-page {
-    margin: 0 auto; /* Ensure it centers even in smaller viewports */
+    margin: 0 auto;
     max-width: 100%;
-    overflow-x: hidden; /* Ensure no overflow */
+    overflow-x: hidden; 
   }
 }
 
 @media (max-width: 768px) {
   .statistics-page {
     padding: 20px;
-    overflow-x: hidden; /* Ensure no overflow */
+    overflow-x: hidden; 
   }
 
   .charts-grid {

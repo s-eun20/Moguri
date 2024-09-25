@@ -11,40 +11,40 @@
     </div>
     <div class="transactions">
       <div
-        v-for="(transaction, index) in transactions"
-        :key="index"
+        v-for="transaction in transactions"
+        :key="transaction.accountBookId"
         class="transaction-card"
       >
         <img
-          v-if="transaction.type === 'income'"
+          v-if="transaction.type === '수입'"
           src="../../assets/income.png"
           width="30px"
         />
         <img
-          v-if="transaction.type === 'expense'"
+          v-if="transaction.type === '지출'"
           src="../../assets/expense.png"
           width="30px"
         />
         <div class="transaction-info">
           <span
             class="transaction-type"
-            :class="transaction.type === 'income' ? 'income' : 'expense'"
+            :class="transaction.type === '수입' ? 'income' : 'expense'"
           >
-            {{ transaction.type === 'income' ? '수입' : '지출' }}
+            {{ transaction.type }}
           </span>
-          <span class="transaction-category">
-            {{ transaction.category }}
+          <span class="transaction-details">
+            {{ transaction.description }}
           </span>
           <span
             class="transaction-amount"
-            :class="transaction.type === 'income' ? 'income' : 'expense'"
+            :class="transaction.type === '수입' ? 'income' : 'expense'"
           >
-            {{ transaction.type === 'income' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+            {{ transaction.type === '수입' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
           </span>
         </div>
         <div class="transaction-actions">
-          <button @click="editTransaction(index)" class="edit-btn">수정</button>
-          <button @click="deleteTransaction(index)" class="delete-btn">삭제</button>
+          <button @click="editTransaction(transaction)" class="edit-btn">수정</button>
+          <button @click="deleteTransaction(transaction.accountBookId)" class="delete-btn">삭제</button>
         </div>
       </div>
     </div>
@@ -54,21 +54,40 @@
 <script>
 export default {
   props: {
-    selectedDate: String,
+    selectedDate: [String, Number, Date],
     transactions: Array,
   },
   computed: {
     dayTitle() {
-      return this.selectedDate ? `Day ${new Date(this.selectedDate).getDate()}` : '날짜를 선택하세요';
+      if (!this.selectedDate || this.selectedDate === '') return '날짜를 선택하세요';
+      
+      let date;
+      if (this.selectedDate instanceof Date) {
+        date = this.selectedDate;
+      } else if (typeof this.selectedDate === 'string') {
+        date = new Date(this.selectedDate);
+      } else if (typeof this.selectedDate === 'number') {
+        date = new Date(this.selectedDate);
+      } else {
+        console.error('Invalid date type:', typeof this.selectedDate);
+        return '유효하지 않은 날짜';
+      }
+      
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date:', this.selectedDate);
+        return '유효하지 않은 날짜';
+      }
+      
+      return `Day ${date.getDate()}`;
     },
     totalIncome() {
       return this.transactions
-        .filter((item) => item.type === 'income')
+        .filter((item) => item.type === '수입')
         .reduce((sum, item) => sum + item.amount, 0);
     },
     totalExpense() {
       return this.transactions
-        .filter((item) => item.type === 'expense')
+        .filter((item) => item.type === '지출')
         .reduce((sum, item) => sum + item.amount, 0);
     },
   },
@@ -76,11 +95,11 @@ export default {
     formatCurrency(amount) {
       return amount.toLocaleString('ko-KR');
     },
-    editTransaction(index) {
-      // 수정 기능 구현
+    editTransaction(transaction) {
+      this.$emit('edit', transaction);
     },
-    deleteTransaction(index) {
-      // 삭제 기능 구현
+    deleteTransaction(accountBookId) {
+      this.$emit('delete', accountBookId);
     },
   },
 };

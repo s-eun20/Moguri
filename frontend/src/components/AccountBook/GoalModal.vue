@@ -4,20 +4,24 @@
       <h3>목표 입력</h3>
       <form @submit.prevent="submitGoal">
         <div class="form-group">
-          <label for="content">목표 내용</label>
-          <input type="text" v-model="goal.content" id="content" required />
+          <label for="goalName">목표 이름</label>
+          <input type="text" v-model="goal.goalName" id="goalName" required />
         </div>
         <div class="form-group">
-          <label for="amount">목표 금액</label>
-          <input type="number" v-model="goal.amount" id="amount" required />
+          <label for="goalAmount">목표 금액</label>
+          <input type="number" v-model="goal.goalAmount" id="goalAmount" step="0.01" required />
         </div>
         <div class="form-group">
-          <label for="start-date">시작일</label>
-          <input type="date" v-model="goal.startDate" id="start-date" required />
+          <label for="currentAmount">현재 금액</label>
+          <input type="number" v-model="goal.currentAmount" id="currentAmount" step="0.01" required />
         </div>
         <div class="form-group">
-          <label for="end-date">종료일</label>
-          <input type="date" v-model="goal.endDate" id="end-date" required />
+          <label for="startDate">시작일</label>
+          <input type="date" v-model="goal.startDate" id="startDate" required />
+        </div>
+        <div class="form-group">
+          <label for="endDate">종료일</label>
+          <input type="date" v-model="goal.endDate" id="endDate" required />
         </div>
         <div class="buttons">
           <button type="submit">추가</button>
@@ -39,21 +43,31 @@ export default {
   data() {
     return {
       goal: {
-        content: '',
-        amount: 0,
+        goalName: '',
+        goalAmount: 0,
+        currentAmount: 0,
         startDate: '',
         endDate: '',
-        progress: 0, // 기본값 설정
       },
     };
   },
   methods: {
     submitGoal() {
+      if (new Date(this.goal.startDate) >= new Date(this.goal.endDate)) {
+        alert('종료일은 시작일보다 늦어야 합니다.');
+        return;
+      }
       this.$emit('add-goal', this.goal);
       this.closeModal();
     },
     closeModal() {
-      this.goal = { content: '', amount: 0, startDate: '', endDate: '', progress: 0 };
+      this.goal = {
+        goalName: '',
+        goalAmount: 0,
+        currentAmount: 0,
+        startDate: '',
+        endDate: '',
+      };
       this.$emit('close');
     },
   },
