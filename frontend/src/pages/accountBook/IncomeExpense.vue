@@ -4,75 +4,176 @@
     
     <div class="content-wrapper">
       <div class="calendar-container">
-        <Calendar @dateSelected="fetchTransactions" />
+        <Calendar @dateSelected="handleDateSelected" />
       </div>
       <div class="transactions-container">
         <IncomeExpenseCard 
           :selectedDate="selectedDate" 
-          :transactions="transactions" 
+          :transactions="filteredTransactions"
+          @edit="openEditModal"
+          @delete="deleteTransaction"
         />
       </div>
     </div>
 
-    <button class="add-transaction-btn" @click="openModal">
+    <button class="add-transaction-btn" @click="openAddModal">
       <i class="fas fa-plus"></i> 거래 추가
     </button>
 
-    <Modal 
-      :isVisible="isModalVisible" 
-      @close="closeModal" 
+    <AccountModal 
+      :isVisible="isAddModalVisible" 
+      @close="closeAddModal" 
       @add="addTransaction" 
+    />
+
+    <EditModal
+      :isVisible="isEditModalVisible"
+      :transaction="editingTransaction"
+      @close="closeEditModal"
+      @update="updateTransaction"
     />
   </div>
 </template>
-  
-  
-  <script>
-import Calendar from '@/components/AccountBook/Calendar.vue';
+
+<script>
+import { ref, computed, onMounted, watch } from 'vue';
+import { useAccountStore } from '@/stores/accountStore';
+import { storeToRefs } from 'pinia';
 import IncomeExpenseCard from '@/components/AccountBook/IncomeExpenseCard.vue';
-import Modal from '@/components/AccountBook/AccountModal.vue';  
+import Calendar from '@/components/AccountBook/Calendar.vue';
+import AccountModal from '@/components/AccountBook/AccountModal.vue';
+import EditModal from '@/components/AccountBook/editModal.vue';
 
 export default {
   components: {
-    Calendar,
     IncomeExpenseCard,
-    Modal
+    Calendar,
+    AccountModal,
+    EditModal
   },
-  data() {
-    return {
-      selectedDate: '',
-      transactions: [],
-      isModalVisible: false  
+  setup() {
+    const accountStore = useAccountStore();
+    const { transactions } = storeToRefs(accountStore);
+    const selectedDate = ref(null);
+    const isAddModalVisible = ref(false);
+    const isEditModalVisible = ref(false);
+    const editingTransaction = ref(null);
+
+    const handleDateSelected = (date) => {
+      if (date instanceof Date) {
+        selectedDate.value = date.toISOString().split('T')[0];
+      } else if (typeof date === 'string') {
+        selectedDate.value = date.split('T')[0];
+      } else {
+        console.error('Invalid date format:', date);
+        selectedDate.value = null;
+      }
     };
-  },
-  methods: {
-    fetchTransactions(date) {
-      this.selectedDate = date;
-      this.transactions = [
-        { type: 'income', category: '알바비', amount: 400000 },
-        { type: 'expense', category: '올리브영', amount: 27000 },
-        { type: 'income', category: '용돈', amount: 10000 },
-        { type: 'expense', category: '버스비', amount: 3000 }
-      ];
-    },
-    openModal() {
-      this.isModalVisible = true;
-    },
-    closeModal() {
-      this.isModalVisible = false;
-    },
-    addTransaction(newTransaction) {
-      this.transactions.push(newTransaction);
-    }
+
+    const openAddModal = () => {
+      isAddModalVisible.value = true;
+    };
+
+    const closeAddModal = () => {
+      isAddModalVisible.value = false;
+    };
+
+    const addTransaction = async (newTransaction) => {
+      try {
+        await accountStore.addTransaction(newTransaction);
+        closeAddModal();
+      } catch (error) {
+        console.error('거래 추가 중 오류가 발생했습니다:', error);
+      }
+    };
+
+    const openEditModal = (transaction) => {
+      editingTransaction.value = { ...transaction };
+      isEditModalVisible.value = true;
+    };
+
+    const closeEditModal = () => {
+      isEditModalVisible.value = false;
+      editingTransaction.value = null;
+    };
+
+    const updateTransaction = async (updatedTransaction) => {
+      try {
+        await accountStore.updateTransaction(updatedTransaction);
+        closeEditModal();
+      } catch (error) {
+        console.error('거래 수정 중 오류가 발생했습니다:', error);
+      }
+    };
+
+    const deleteTransaction = async (accountBookId) => {
+      if (confirm('정말로 이 거래 내역을 삭제하시겠습니까?')) {
+        try {
+          await accountStore.deleteTransaction(accountBookId);
+        } catch (error) {
+          console.error('거래 내역 삭제 중 오류가 발생했습니다:', error);
+        }
+      }
+    };
+
+    const filteredTransactions = computed(() => {
+      console.log('Computed 실행 - 선택된 날짜:', selectedDate.value);
+      console.log('Computed 실행 - 전체 거래:', transactions.value);
+      
+      if (!selectedDate.value) return [];
+      
+      let selectedDateString;
+      if (selectedDate.value instanceof Date) {
+        selectedDateString = selectedDate.value.toISOString().split('T')[0];
+      } else if (typeof selectedDate.value === 'string') {
+        selectedDateString = selectedDate.value.split('T')[0];
+      } else {
+        console.error('Invalid selectedDate format:', selectedDate.value);
+        return [];
+      }
+      
+      const filtered = transactions.value.filter(transaction => {
+        const transactionDateString = transaction.transactionDate.split('T')[0];
+        const result = transactionDateString === selectedDateString;
+        console.log('거래 날짜:', transactionDateString, '선택된 날짜:', selectedDateString, '일치:', result);
+        return result;
+      });
+      
+      console.log('필터링된 거래 내역:', filtered);
+      return filtered;
+    });
+
+    onMounted(() => {
+      accountStore.fetchTransactions();
+    });
+
+    watch(transactions, (newTransactions) => {
+      console.log('거래 내역이 업데이트되었습니다:', newTransactions);
+    });
+
+    return {
+      selectedDate,
+      filteredTransactions,
+      isAddModalVisible,
+      isEditModalVisible,
+      editingTransaction,
+      handleDateSelected,
+      openAddModal,
+      closeAddModal,
+      addTransaction,
+      openEditModal,
+      closeEditModal,
+      updateTransaction,
+      deleteTransaction
+    };
   }
 };
 </script>
 
-  
-  <style scoped>
+<style scoped>
   .income-expense-page {
     padding: 30px;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     font-family: 'HakgyoansimWoojuR';
     font-weight: bold;
@@ -93,19 +194,20 @@ export default {
     margin-top: 30px;
   }
 
-  .calendar-container,
-  .transactions-container {
-    flex: 1;
-    width: calc(50% - 15px); /* 간격의 절반을 뺀 50% */
-    height: 600px; /* 고정 높이 설정 */
-  }
-
   .calendar-container {
+    flex: 2; /* 달력 컨테이너의 비율을 3으로 증가 */
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow: auto;
+    height: 700px; /* 높이를 증가 */
+  }
+
+  .transactions-container {
+    flex: 1; /* 거래 내역 컨테이너의 비율을 2로 설정 */
+    height: 700px; /* 높이를 달력 컨테이너와 동일하게 설정 */
+    overflow: auto; /* 내용이 넘칠 경우 스크롤 추가 */
   }
 
   .add-transaction-btn {
@@ -139,5 +241,13 @@ export default {
       height: auto;
       margin-bottom: 20px;
     }
+
+    .calendar-container {
+      height: 500px; /* 모바일 화면에서의 달력 높이 조정 */
+    }
+
+    .transactions-container {
+      height: auto; /* 모바일 화면에서는 내용에 맞게 높이 조정 */
+    }
   }
-  </style>
+</style>
