@@ -42,7 +42,7 @@ import { storeToRefs } from 'pinia';
 import IncomeExpenseCard from '@/components/AccountBook/IncomeExpenseCard.vue';
 import Calendar from '@/components/AccountBook/Calendar.vue';
 import AccountModal from '@/components/AccountBook/AccountModal.vue';
-import EditModal from '@/components/AccountBook/editModal.vue';
+import EditModal from '@/components/AccountBook/EditModal.vue';
 
 export default {
   components: {
@@ -132,19 +132,20 @@ export default {
         return [];
       }
       
-      const filtered = transactions.value.filter(transaction => {
+      return transactions.value.filter(transaction => {
         const transactionDateString = transaction.transactionDate.split('T')[0];
-        const result = transactionDateString === selectedDateString;
-        console.log('거래 날짜:', transactionDateString, '선택된 날짜:', selectedDateString, '일치:', result);
-        return result;
+        return transactionDateString === selectedDateString;
       });
-      
-      console.log('필터링된 거래 내역:', filtered);
-      return filtered;
     });
 
-    onMounted(() => {
-      accountStore.fetchTransactions();
+    onMounted(async () => {
+      try {
+        await accountStore.fetchAllTransactions();
+      } catch (error) {
+        console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
+      } finally {
+        isLoading.value = false;
+      }
     });
 
     watch(transactions, (newTransactions) => {
