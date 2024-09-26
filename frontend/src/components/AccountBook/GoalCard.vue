@@ -6,14 +6,15 @@
         <p>현재 금액: {{ formatCurrency(goal.currentAmount) }}</p>
         <p>기간: {{ formatDate(goal.startDate) }} - {{ formatDate(goal.endDate) }}</p>
       </div>
-      <div class="progress-bar-container">
-        <div class="progress-bar" :style="{ width: `${calculateProgress()}%` }"></div>
-      </div>
-      <p class="progress-text">{{ calculateProgress() }}% 달성</p>
       <div class="button-container">
         <button @click="$emit('edit', goal)" class="edit-btn">수정</button>
         <button @click="$emit('delete', goal.goalId)" class="delete-btn">삭제</button>
       </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: `${calculateProgress()}%` }"></div>
+      </div>
+      <p class="progress-text">{{ calculateProgress() }}% 달성</p>
+      
     </div>
 </template>
 
@@ -50,14 +51,14 @@ export default {
 }
 
 .goal-content h3 {
-  font-size: 18px;
+  font-size: 25px;
   font-weight: bold;
   margin-bottom: 10px;
   color: #333;
 }
 
 .goal-content p {
-  font-size: 14px;
+  font-size: 20px;
   color: #666;
   margin-bottom: 5px;
 }

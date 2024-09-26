@@ -28,10 +28,6 @@
           },
           selectable: true,
           dateClick: this.handleDateClick,
-          events: [
-            { title: 'Event 1', start: '2024-09-10', className: 'custom-event' },
-            { title: 'Event 2', start: '2024-09-12', className: 'custom-event' }
-          ],
           eventBackgroundColor: '#ffcccc',
           eventTextColor: '#333333',
         }
