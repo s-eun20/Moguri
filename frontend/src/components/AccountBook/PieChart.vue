@@ -229,7 +229,7 @@ li {
   font-size: 23px;
   margin-bottom: 10px;
   align-items: center;
-  color: #e07306;
+  color: #fda451;
 }
 li:first-child {
   color: black; /* '카테고리별 소비내역' 텍스트는 검정색 유지 */
