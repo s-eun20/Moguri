@@ -5,8 +5,15 @@ import Statistics from '@/pages/accountBook/Statistics.vue';
 import Goals from '@/pages/accountBook/Goals.vue';
 import Login from '@/pages/login/Login.vue'; // Login 컴포넌트 import 추가
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
+import Home from '@/pages/Home.vue';
 
 const routes = [
+  {
+    path: '/',
+    name: 'MainPage',
+    component: Home
+  },
+
   {
     path: '/accountBook/incomeExpense',
     name: 'IncomeExpense',
