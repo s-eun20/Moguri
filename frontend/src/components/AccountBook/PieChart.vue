@@ -1,133 +1,165 @@
 <template>
   <div class="PieChart">
-    <!-- 월 선택 드롭다운 -->
-    <div class="month-selector">
-      <select id="month" v-model="selectedMonth" @change="updateChart">
-        <option v-for="month in months" :key="month" :value="month">
-          {{ month }}
-        </option>
-      </select>
-    </div>
+    <div v-if="isLoading">데이터를 불러오는 중...</div>
+    <div v-else>
+      <div class="selector">
+        <select id="year" v-model="selectedYear" @change="updateChart">
+          <option v-for="year in years" :key="year" :value="year">
+            {{ year }}년
+          </option>
+        </select>
+        <select id="month" v-model="selectedMonth" @change="updateChart">
+          <option v-for="month in months" :key="month" :value="month">
+            {{ month }}
+          </option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <div class="category-list">
+          <ul>
+            <li>카테고리별 소비내역</li>
+            <li
+              v-for="(item, index) in selectedSeries"
+              :key="index"
+            >
+              {{ item.name }} : {{ item.amount.toLocaleString() }}원
+            </li>
+          </ul>
+        </div>
 
-    <div class="chart-container">
-      <!-- 카테고리 리스트 -->
-      <div class="category-list">
-        <ul>
-          <li> 카테고리별 소비내역 </li>
-          <li
-            v-for="(item, index) in selectedSeries"
-            :key="index"
-            :style="{ color: chartColors[index] }"
-          >
-            {{ item.name }} : {{ item.amount.toLocaleString() }}원
-          </li>
-        </ul>
+        <div ref="chartContainer" class="pie-chart"></div>
       </div>
 
-      <div ref="chartContainer" class="pie-chart"></div>
-    </div>
-
-    <!-- 총 지출 금액 표시 -->
-    <div class="total-amount">
-      총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
+      <div class="total-amount">
+        총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { PieChart } from "@toast-ui/chart";
+import { useAccountStore } from '@/stores/accountStore';
+import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
+import debounce from 'lodash/debounce';
+import { Colors } from "chart.js";
 
 export default {
-  data() {
-    return {
-      // 전체 월별 데이터
-      monthlyData: {
-        "1월": [
-          { name: "식비", data: 40, amount: 40000 },
-          { name: "교통비", data: 15, amount: 150000 },
-          { name: "건강", data: 10, amount: 100000 },
-          { name: "통신비", data: 15, amount: 150000 },
-          { name: "쇼핑", data: 20, amount: 200000 },
-        ],
-        "2월": [
-          { name: "식비", data: 35, amount: 350000 },
-          { name: "교통비", data: 20, amount: 200000 },
-          { name: "건강", data: 10, amount: 100000 },
-          { name: "통신비", data: 20, amount: 200000 },
-          { name: "쇼핑", data: 15, amount: 150000 },
-        ],
-        // 각 월에 대한 데이터 추가
-      },
-      months: [
-        "1월",
-        "2월",
-        "3월",
-        "4월",
-        "5월",
-        "6월",
-        "7월",
-        "8월",
-        "9월",
-        "10월",
-        "11월",
-        "12월",
-      ],
-      selectedMonth: "1월", // 선택된 월 기본값
-      chartColors: ["#ff6f61", "#6b5b95", "#88b04b", "#f7c6c7", "#f2ab27"],
-      selectedSeries: [], // 현재 선택된 월의 데이터
-    };
-  },
-  computed: {
-    // 선택된 월의 총 지출 금액 계산
-    totalExpenditure() {
-      return this.selectedSeries.reduce((total, item) => total + item.amount, 0);
-    },
-  },
-  mounted() {
-    this.updateChart(); // 첫 로딩 시 차트를 그립니다.
-  },
-  methods: {
-    // 차트 업데이트 함수
-    updateChart() {
+  setup() {
+    const accountStore = useAccountStore();
+    const currentDate = new Date();
+    const selectedYear = ref(currentDate.getFullYear());
+    const selectedMonth = ref('9월');
+    const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+    let chart = null;
+    const isLoading = ref(true);
+    const chartContainer = ref(null);
+
+    const years = computed(() => {
+      const uniqueYears = [...new Set(accountStore.transactions.map(t => new Date(t.transactionDate).getFullYear()))];
+      return uniqueYears.sort((a, b) => b - a);
+    });
+
+    const monthlyData = computed(() => {
+      const monthIndex = months.indexOf(selectedMonth.value);
+      const startDate = new Date(selectedYear.value, monthIndex, 1);
+      const endDate = new Date(selectedYear.value, monthIndex + 1, 0);
+
+      const transactions = accountStore.transactions.filter(t => 
+        new Date(t.transactionDate) >= startDate && 
+        new Date(t.transactionDate) <= endDate &&
+        t.type === '지출' &&
+        t.category !== '수입'
+      );
+
+      const categoryTotals = transactions.reduce((acc, t) => {
+        if (!acc[t.category]) {
+          acc[t.category] = { name: t.category, amount: 0 };
+        }
+        acc[t.category].amount += t.amount;
+        return acc;
+      }, {});
+
+      return Object.values(categoryTotals);
+    });
+
+    const totalExpenditure = computed(() =>
+      monthlyData.value.reduce((total, item) => total + item.amount, 0)
+    );
+
+    const selectedSeries = computed(() => monthlyData.value);
+
+    const updateChart = debounce(async () => {
+      await nextTick();
+
+      if (!chartContainer.value || monthlyData.value.length === 0) return;
+
       const data = {
-        categories: ["Category"],
-        series: this.monthlyData[this.selectedMonth].map((item) => ({
+        series: monthlyData.value.map(item => ({
           name: item.name,
-          data: item.data,
+          data: item.amount,
         })),
       };
 
       const options = {
         chart: { width: 500, height: 400 },
         series: {
-          colors: this.chartColors,
           dataLabels: {
-            visible: true, // 데이터 레이블을 차트에 표시
+            visible: true,
             pieSeriesName: {
-              visible: true, // 파이 차트 시리즈의 이름을 표시
+              visible: true,
             },
           },
         },
         legend: {
-          visible: true, // 차트의 범례를 표시
-          align: 'bottom', // 범례를 아래쪽에 배치
+          visible: true,
+          align: 'bottom',
         },
       };
 
-      // 파이차트 업데이트
-      if (this.chart) {
-        this.chart.destroy(); // 기존 차트를 삭제
+      if (chart) {
+        chart.destroy();
       }
 
-      this.chart = new PieChart({
-        el: this.$refs.chartContainer,
+      chart = new PieChart({
+        el: chartContainer.value,
         data,
         options,
       });
+    }, 400);
 
-      // 선택된 월의 데이터를 업데이트
-      this.selectedSeries = this.monthlyData[this.selectedMonth];
-    },
+    watch([selectedYear, selectedMonth], updateChart);
+    watch(() => accountStore.transactions, { deep: true });
+
+    onMounted(async () => {
+      try {
+        await accountStore.fetchAllTransactions();
+        updateChart();
+      } catch (error) {
+        console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
+      } finally {
+        isLoading.value = false;
+      }
+    });
+
+    onUnmounted(() => {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+    });
+
+    return {
+      selectedYear,
+      selectedMonth,
+      years,
+      months,
+      selectedSeries,
+      totalExpenditure,
+      updateChart,
+      isLoading,
+      chartContainer,
+    };
   },
 };
 </script>
@@ -138,51 +170,51 @@ export default {
   font-weight: bold;
 }
 
-.month-selector {
+.selector {
   margin-bottom: 10px;
   font-size: 20px;
-  
 }
 
-#month {
+#year, #month {
   padding: 8px 12px;
-  border-radius: 12px; 
-  border: 2px solid #ffcc99; 
-  background-color: #fff4e6; 
-  color: #333; /* Text color */
-  font-size: 20px; /* Font size */
-  cursor: pointer; /* Pointer cursor */
-  appearance: none; /* Remove default browser styles */
-  width: 200px;
+  border-radius: 12px;
+  border: 2px solid #ffcc99;
+  background-color: #fff4e6;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  appearance: none;
+  width: 150px;
   text-align: center;
   font-weight: bold;
+  margin-right: 10px;
 }
 
-#month:focus {
-  outline: none; /* Remove default focus outline */
-  border-color: #ffb366; /* Darker orange border on focus */
-  box-shadow: 0 0 4px rgba(255, 153, 85, 0.5); /* Add a subtle shadow on focus */
+#year:focus, #month:focus {
+  outline: none;
+  border-color: #ffb366;
+  box-shadow: 0 0 4px rgba(255, 153, 85, 0.5);
 }
 
 .chart-container {
-  display: flex; /* Flex 레이아웃 사용 */
-  flex-direction: row-reverse; /* 요소들을 오른쪽부터 정렬 */
-  align-items: center; /* 요소들을 수직으로 가운데 정렬 */
-  gap: 50px; /* 차트와 리스트 사이의 간격 설정 */
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 50px;
 }
 
 .pie-chart {
-  width: 400px; /* 차트의 크기 조정 */
-  height: 400px; /* 차트의 높이를 리스트와 맞춤 */
+  width: 400px;
+  height: 400px;
 }
 
 .category-list {
-  width: 230px; 
-  height: 320px; 
+  width: 230px;
+  height: 320px;
   padding-left: 20px;
   border: 3px solid rgb(255, 212, 95);
   font-weight: bold;
-  display: flex; 
+  display: flex;
   align-items: center;
   margin-left: 70px;
 }
@@ -190,25 +222,28 @@ export default {
 ul {
   list-style-type: none;
   padding: 0;
-  margin: 0; /* 리스트의 기본 여백 제거 */
+  margin: 0;
 }
 
 li {
   font-size: 23px;
   margin-bottom: 10px;
   align-items: center;
+  color: #e07306;
+}
+li:first-child {
+  color: black; /* '카테고리별 소비내역' 텍스트는 검정색 유지 */
 }
 
-/* 총 지출 금액 표시 스타일 */
 .total-amount {
-  border-radius: 12px; 
-  border: 2px solid #ffcc99; 
-  background-color: #fff4e6; 
+  border-radius: 12px;
+  border: 2px solid #ffcc99;
+  background-color: #fff4e6;
   margin-top: 20px;
   font-size: 24px;
   width: 350px;
   font-weight: bold;
-  color: #ff6f61; /* 총 지출 금액의 텍스트 색상 */
-  text-align: center; /* 가운데 정렬 */
+  color: #ff6f61;
+  text-align: center;
 }
 </style>

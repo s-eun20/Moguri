@@ -17,7 +17,7 @@
       <b-nav-item v-if="isLoggedIn" class="user-name">{{ nickname }}님</b-nav-item>
     </b-navbar-nav>
   </b-navbar>
-  <hr>
+  <div class="nav-divider"></div>
 </template>
 
 <script setup>
@@ -38,7 +38,13 @@ if (user) {
 </script>
 
 <style scoped>
-/* MOGURI 로고 노란색 */
+.nav-divider {
+  height: 1px;
+  background-color: #e0e0e0; /* 원하는 색상으로 변경 가능 */
+  margin-top: 5px;
+  padding: 0;
+  border: none;
+}
 .moguri-logo {
   color: rgb(255, 166, 0);
   font-weight: bold;
