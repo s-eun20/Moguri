@@ -1,12 +1,20 @@
 <template>
     <div class="overlay" v-if="isVisible">
       <div class="modal">
-        <h3>소비/지출 내역 추가</h3>
+        <h3>수입/지출 내역 추가</h3>
         <div class="form-group">
-          <label for="date">날짜</label>
-          <input type="date" id="date" v-model="date" />
+          <label for="transactionDate">날짜</label>
+          <input type="date" id="transactionDate" v-model="transactionDate" />
         </div>
         <div class="form-group">
+          <label for="type">유형</label>
+          <select id="type" v-model="type">
+            <option value="">유형 선택</option>
+            <option value="수입">수입</option>
+            <option value="지출">지출</option>
+          </select>
+        </div>
+        <div class="form-group" v-if="type === '지출'">
           <label for="category">카테고리</label>
           <select id="category" v-model="category">
             <option value="">카테고리 선택</option>
@@ -18,8 +26,15 @@
           <input type="number" id="amount" v-model="amount" />
         </div>
         <div class="form-group">
-          <label for="details">거래 상세내역</label>
-          <input type="text" id="details" v-model="details" />
+          <label for="description">거래 상세내역</label>
+          <input type="text" id="description" v-model="description" />
+        </div>
+        <div class="form-group">
+          <label for="paymentMethod">결제 방법</label>
+          <select id="paymentMethod" v-model="paymentMethod">
+            <option value="">결제 방법 선택</option>
+            <option v-for="method in paymentMethods" :key="method">{{ method }}</option>
+          </select>
         </div>
         <div class="buttons">
           <button @click="addTransaction">추가</button>
@@ -36,30 +51,47 @@
     },
     data() {
       return {
-        date: '',
+        memberId : 1,
+        transactionDate: '',
+        type: '',
         category: '',
         amount: 0,
-        details: '',
-        categories: ['식비', '교통비', '건강', '쇼핑','통신비']
+        description: '',
+        paymentMethod: '',
+        categories: ['식비', '교통비', '건강', '쇼핑', '통신비'],
+        paymentMethods: ['현금', '신용카드', '체크카드', '계좌이체']
       };
     },
     methods: {
       closeModal() {
         this.$emit('close');
+        this.resetForm();
       },
       addTransaction() {
-        if (!this.category || this.amount <= 0) {
-          alert('카테고리와 금액을 올바르게 입력해 주세요.');
+        if (!this.type || (this.type === '지출' && !this.category) || this.amount <= 0 || !this.paymentMethod) {
+          alert('모든 필드를 올바르게 입력해 주세요.');
           return;
         }
         const newTransaction = {
-          type: this.category === '수입' ? 'income' : 'expense',
-          category: this.category,
+          memberId: this.memberId,
+          transactionDate: this.transactionDate,
+          type: this.type,
+          category: this.type === '지출' ? this.category : '수입',
           amount: this.amount,
-          details: this.details
+          description: this.description,
+          paymentMethod: this.paymentMethod
         };
         this.$emit('add', newTransaction);
+        console.log(newTransaction);
         this.closeModal();
+      },
+      resetForm() {
+        this.transactionDate = '';
+        this.type = '';
+        this.category = '';
+        this.amount = 0;
+        this.description = '';
+        this.paymentMethod = '';
       }
     }
   };
@@ -67,6 +99,4 @@
   
   <style src="./Modal.css" scoped>
   </style>
-  
-  
-  
+

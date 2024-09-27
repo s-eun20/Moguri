@@ -15,15 +15,15 @@
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  font-family: "omyu_pretty";
+  font-family: "HakgyoansimWoojuR";
   width: 400px;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column; /* Stacks content vertically */
-  align-items: stretch; /* Ensures content stretches to fit width */
-  position: relative; /* Ensures positioning context for centering */
+  flex-direction: column; 
+  align-items: stretch; 
+  position: relative; 
 }
 
 h3 {
@@ -39,7 +39,7 @@ h3 {
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure form groups take full width of modal */
+  width: 100%; 
 }
 
 label {
@@ -48,7 +48,8 @@ label {
 }
 
 input,
-select {
+select,
+input[type="text"] {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
@@ -60,8 +61,8 @@ select {
 .buttons {
   display: flex;
   justify-content: space-between;
-  width: 100%; /* Ensure buttons take full width of modal */
-  margin-top: 20px; /* Add space above buttons */
+  width: 100%; 
+  margin-top: 20px; 
 }
 
 button {
