@@ -1,27 +1,28 @@
 <template>
   <div class="register-container">
-    <h2 class="register-title">모구리 회원가입</h2>
-    <form @submit.prevent="register">
-      <div class="input-group">
-        <label for="email">이메일:</label>
-        <input type="text" v-model="email" required />
-      </div>
-      <div class="input-group">
-        <label for="nickname">닉네임:</label>
-        <input type="text" v-model="nickname" required />
-      </div>
-      <div class="input-group">
-        <label for="password">비밀번호:</label>
-        <input type="password" v-model="password" required />
-      </div>
-      <div class="input-group">
-        <label for="confirmPassword">비밀번호 확인:</label>
-        <input type="password" v-model="confirmPassword" required />
-      </div>
-      <button type="submit" class="register-button">회원가입</button>
-    </form>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    <p>계정이 있으신가요? <router-link to="/login">로그인</router-link></p>
+    <div class="register-box">
+      <img src="@/assets/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+      <h2 class="register-title">회원가입</h2>
+      <form @submit.prevent="register" class="register-form">
+        <div class="input-group">
+          <input type="text" v-model="email" required placeholder="이메일" />
+        </div>
+        <div class="input-group">
+          <input type="text" v-model="nickname" required placeholder="닉네임" />
+        </div>
+        <div class="input-group">
+          <input type="password" v-model="password" required placeholder="비밀번호" />
+        </div>
+        <div class="input-group">
+          <input type="password" v-model="confirmPassword" required placeholder="비밀번호 확인" />
+        </div>
+        <button type="submit" class="register-button">회원가입</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </form>
+      <p class="login-link">
+        이미 계정이 있으신가요? <router-link to="/login">로그인</router-link>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -70,46 +71,72 @@ export default {
 };
 </script>
 
-<style>
-/* 스타일링 부분은 변경하지 않았습니다. */
+<style scoped>
 .register-container {
-  max-width: 500px; /* 로그인 화면과 동일한 최대 너비 */
-  margin: auto;
-  padding: 30px; /* 패딩은 동일하게 유지 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.register-box {
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.moguri-logo {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px;
 }
 
 .register-title {
+  color: #333;
   font-size: 24px;
-  margin-bottom: 20px;
   text-align: center;
+  margin-bottom: 30px;
+}
+
+.register-form {
+  margin-bottom: 20px;
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 input[type="text"],
 input[type="password"] {
+  width: 100%;
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #FECD72;
+  outline: none;
 }
 
 .register-button {
-  background-color: #FECD72;
-  border: none;
-  padding: 12px; /* 로그인 화면과 동일하게 조정 */
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s;
   width: 100%;
+  padding: 12px;
+  background-color: #FECD72;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .register-button:hover {
@@ -118,6 +145,22 @@ input[type="password"] {
 
 .error {
   color: #e74c3c;
+  text-align: center;
   margin-top: 10px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+}
+
+.login-link a {
+  color: #FECD72;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
 }
 </style>
