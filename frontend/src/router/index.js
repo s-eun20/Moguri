@@ -8,16 +8,9 @@ import Rank from '@/pages/investment/Rank.vue';
 import Stock from '@/pages/investment/Stock.vue'
 import Login from '@/pages/login/Login.vue'; // Login 컴포넌트 import 추가
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
-import Home from '@/pages/Home.vue';
-import Main from '@/pages/main/Main.vue'; 
+import Main from '@/pages/main/Main.vue'; //main 페이지 추가
 
 const routes = [
-  {
-    path: '/',
-    name: 'MainPage',
-    component: Home
-  },
-
   {
     path: '/accountBook/incomeExpense',
     name: 'IncomeExpense',
@@ -33,9 +26,6 @@ const routes = [
     name: 'Goals',
     component: Goals,
   },
-  
-
-
   {
     path: '/investment/stock',
     name: 'Stock',
