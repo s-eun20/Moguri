@@ -209,14 +209,24 @@ export default {
 }
 
 .category-list {
-  width: 230px;
-  height: 320px;
-  padding-left: 20px;
-  border: 3px solid rgb(255, 212, 95);
+  width: 25%;  
+  min-width: 200px; 
+  height: auto;  
+  padding: 2% 0 2% 2%;  
+  border: 0.2em solid rgb(255, 212, 95);  
   font-weight: bold;
   display: flex;
-  align-items: center;
-  margin-left: 70px;
+  flex-direction: column;  
+  justify-content: center;  
+  margin-left: 5%;  
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 추가 */
+@media (max-width: 768px) {
+  .category-list {
+    width: 90%;  
+    margin: 5% auto;  
+  }
 }
 
 ul {
@@ -226,7 +236,7 @@ ul {
 }
 
 li {
-  font-size: 23px;
+  font-size: 20px;
   margin-bottom: 10px;
   align-items: center;
   color: #fda451;

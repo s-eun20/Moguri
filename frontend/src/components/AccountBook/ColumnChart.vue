@@ -1,7 +1,7 @@
 <template>
   <div class="ColumnChart">
     <div v-if="isLoading">데이터를 불러오는 중...</div>
-    <div v-else>
+    <div v-else class="chart-content">
       <div class="year-selector">
         <select id="year" v-model="selectedYear" @change="updateChart">
           <option v-for="year in years" :key="year" :value="year">
@@ -85,7 +85,7 @@ export default {
       console.log('Chart data:', data); // 디버깅을 위한 로그
 
       const options = {
-        chart: { width: 1300, height: 500 },
+        chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
         xAxis: { title: '월' },
         yAxis: { title: '금액 (원)' },
         legend: { align: 'bottom' },
@@ -143,11 +143,22 @@ export default {
 .ColumnChart {
   font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.chart-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .year-selector {
   margin-bottom: 20px;
-  font-size: 20px;
+  width: 100%;
+  text-align: center;
 }
 
 #year {
@@ -156,10 +167,11 @@ export default {
   border: 2px solid #ffcc99;
   background-color: #fff4e6;
   color: #333;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   appearance: none;
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
   text-align: center;
   font-weight: bold;
 }
@@ -171,25 +183,62 @@ export default {
 }
 
 .chart-container {
+  width: 100%;
   display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .column-chart {
-  margin-left: 100px;
-  width: 1000px;
+  width: 100%;
   height: 500px;
-  
+  max-width: 1000px;
 }
 
 .total-amount {
   border-radius: 12px; 
   border: 2px solid #ffcc99; 
   background-color: #fff4e6; 
-  margin-top: 20px;
-  font-size: 24px;
-  width: 350px;
+  padding: 10px;
+  font-size: 20px;
+  width: 100%;
+  max-width: 350px;
   font-weight: bold;
   color: #ff6f61;
   text-align: center; 
+}
+
+@media (max-width: 1024px) {
+  .ColumnChart {
+    padding: 10px;
+  }
+
+  .column-chart {
+    height: 400px;
+  }
+
+  #year, .total-amount {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .column-chart {
+    height: 300px;
+  }
+
+  #year, .total-amount {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .column-chart {
+    height: 250px;
+  }
+
+  #year, .total-amount {
+    font-size: 12px;
+  }
 }
 </style>
