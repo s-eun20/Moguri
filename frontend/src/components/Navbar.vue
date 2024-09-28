@@ -1,39 +1,60 @@
 <template>
   <b-navbar toggleable="lg" type="light" class="navbar-custom">
-    <!-- MOGURI 로고 -->
     <b-navbar-brand href="/" class="moguri-logo">MOGURI</b-navbar-brand>
 
-    <!-- 메뉴 그룹 -->
     <menu-group class="menu" />
 
-    <!-- 프로필 사진 -->
-    <img src="@/assets/모구리.png" alt="Profile Picture" class="profile-pic" />
-
-    <!-- 프로필과 사용자 이름 -->
     <b-navbar-nav class="ml-auto d-flex align-items-center">
-      <!-- 로그인 링크 추가 -->
-      <b-nav-item v-if="!isLoggedIn" to="/login">로그인</b-nav-item>
-      <!-- 사용자 이름 -->
-      <b-nav-item v-if="isLoggedIn" class="user-name">{{ nickname }}님</b-nav-item>
+      <div class="d-flex align-items-center">
+        <b-dropdown v-if="isLoggedIn">
+          <template #button-content>
+            <img src="@/assets/모구리.png" alt="Profile Picture" class="profile-pic" />
+          </template>
+          <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
+          <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
+          <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
+          <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
+        </b-dropdown>
+
+        <b-nav-item v-if="isLoggedIn" class="user-name">{{ nickname }}님</b-nav-item>
+
+        <!-- 로그인 링크 수정 -->
+        <b-nav-item v-else>
+          <router-link to="/login" class="login-button">
+            <i class="fas fa-user-circle"></i> 로그인
+          </router-link>
+        </b-nav-item>
+      </div>
     </b-navbar-nav>
   </b-navbar>
   <div class="nav-divider"></div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import MenuGroup from './Menu/menuGroup.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 import '../assets/styles/global.css';
 
-// 로그인 상태와 닉네임을 관리할 ref 변수 생성
-const isLoggedIn = ref(false);
-const nickname = ref('');
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLogin);
+const nickname = computed(() => authStore.nickname);
+const router = useRouter();
+const logout = () => {
+  authStore.logout(router); // router 전달
+};
 
-// 로컬 스토리지에서 사용자 정보를 가져와 로그인 상태를 설정
-const user = JSON.parse(localStorage.getItem('user'));
-if (user) {
-  isLoggedIn.value = true;
-  nickname.value = user.nickname; // 사용자의 닉네임 설정
+const goToBadges = () => {
+  console.log("뱃지함으로 이동");
+}
+
+const collectMoguri = () => {
+  console.log("모구리 모으기");
+}
+
+const editAccount = () => {
+  console.log("회원 수정");
 }
 </script>
 
@@ -52,26 +73,56 @@ if (user) {
   font-family: 'BMJUA';
 }
 
-/* 메뉴 그룹을 왼쪽으로 정렬 */
 .menu {
   margin-right: auto;
   font-family: 'HakgyoansimBareondotumB';
   font-size: 19px;
 }
 
-/* 사용자 이름 스타일링 */
 .user-name {
   font-weight: bold;
   font-family: 'Ownglyph_meetme-Rg';
   font-size: 22px;
   color: #333;
+  margin-left: 0.5rem;
 }
 
 .profile-pic {
   width: 40px;
   height: 40px;
-  border-radius: 50%; 
-  object-fit: cover; 
+  border-radius: 50%;
+  object-fit: cover;
   margin-left: 1rem;
+  cursor: pointer;
+}
+
+.login-button {
+  margin-left: 1rem;
+  font-weight: bold;
+  color: #FECD72;
+  border: 2px solid #FECD72;
+  padding: 14px 14px; /* 여백 추가하여 버튼 크기 조정 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  transition: all 0.3s ease;
+  text-decoration: none; /* 링크 밑줄 제거 */
+}
+
+.login-button:hover {
+  background-color: #FECD72;
+  color: white;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  padding: 8px 12px; /* 여백 추가하여 버튼 크기 조정 */
+  transition: background-color 0.2s;
+  border-radius: 5px;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 166, 0, 0.1);
+  color: rgb(255, 166, 0);
 }
 </style>

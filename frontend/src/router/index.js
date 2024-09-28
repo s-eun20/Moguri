@@ -26,9 +26,6 @@ const routes = [
     name: 'Goals',
     component: Goals,
   },
-  
-
-
   {
     path: '/investment/stock',
     name: 'Stock',
