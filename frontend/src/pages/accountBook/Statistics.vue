@@ -1,7 +1,7 @@
 <template>
   <div class="statistics-page">
     <h1 class="page-title">통계</h1>
-    
+
     <div class="charts-container">
       <div class="charts-grid">
         <div class="chart-container">
@@ -39,11 +39,12 @@ export default {
 .statistics-page {
   padding: 30px;
   max-width: 1600px;
-  margin: 0 auto; 
+  margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden; 
+  overflow-x: hidden;
   font-family: 'HakgyoansimWoojuR';
-    font-weight: bold;
+  /* font-family: 'Pretendard-Regular'; */
+  font-weight: bold;
 }
 
 .page-title {
@@ -52,13 +53,13 @@ export default {
   color: #000000;
   margin-bottom: 30px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #FFCC00;
-  width: 1600px; 
+  border-bottom: 2px solid #ffcc00;
+  width: 1600px;
 }
 
 .charts-container {
   width: 100%;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .charts-grid {
@@ -74,7 +75,7 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .chart-title {
@@ -83,8 +84,8 @@ export default {
   margin-bottom: 15px;
   padding-bottom: 10px;
   text-align: left;
-  border-bottom: 1px solid #FFCC00;
-  width: fit-content; 
+  border-bottom: 1px solid #ffcc00;
+  width: fit-content;
 }
 
 .full-width {
@@ -95,14 +96,14 @@ export default {
   .statistics-page {
     margin: 0 auto;
     max-width: 100%;
-    overflow-x: hidden; 
+    overflow-x: hidden;
   }
 }
 
 @media (max-width: 768px) {
   .statistics-page {
     padding: 20px;
-    overflow-x: hidden; 
+    overflow-x: hidden;
   }
 
   .charts-grid {
@@ -118,4 +119,3 @@ export default {
   }
 }
 </style>
-
