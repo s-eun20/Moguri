@@ -8,15 +8,29 @@
       <div class="d-flex align-items-center">
         <b-dropdown v-if="isLoggedIn">
           <template #button-content>
-            <img src="@/assets/모구리.png" alt="Profile Picture" class="profile-pic" />
+            <img
+              src="@/assets/img/너구리샘플.png"
+              alt="Profile Picture"
+              class="profile-pic"
+            />
           </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
+          <b-dropdown-item class="dropdown-item" @click="goToBadges"
+            >🛡️ 뱃지함</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="collectMoguri"
+            >🪙 모구리 모으기</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="editAccount"
+            >📝 회원 수정</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="logout"
+            >🚪 로그아웃</b-dropdown-item
+          >
         </b-dropdown>
 
-        <b-nav-item v-if="isLoggedIn" class="user-name">{{ nickname }}님</b-nav-item>
+        <b-nav-item v-if="isLoggedIn" class="user-name"
+          >{{ nickname }}님</b-nav-item
+        >
 
         <!-- 로그인 링크 수정 -->
         <b-nav-item v-else>
@@ -46,16 +60,16 @@ const logout = () => {
 };
 
 const goToBadges = () => {
-  console.log("뱃지함으로 이동");
-}
+  console.log('뱃지함으로 이동');
+};
 
 const collectMoguri = () => {
-  console.log("모구리 모으기");
-}
+  console.log('모구리 모으기');
+};
 
 const editAccount = () => {
-  console.log("회원 수정");
-}
+  console.log('회원 수정');
+};
 </script>
 
 <style scoped>
@@ -100,8 +114,8 @@ const editAccount = () => {
 .login-button {
   margin-left: 1rem;
   font-weight: bold;
-  color: #FECD72;
-  border: 2px solid #FECD72;
+  color: #fecd72;
+  border: 2px solid #fecd72;
   padding: 14px 14px; /* 여백 추가하여 버튼 크기 조정 */
   border-radius: 5px; /* 모서리 둥글게 */
   transition: all 0.3s ease;
@@ -109,7 +123,7 @@ const editAccount = () => {
 }
 
 .login-button:hover {
-  background-color: #FECD72;
+  background-color: #fecd72;
   color: white;
 }
 

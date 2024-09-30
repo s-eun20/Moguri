@@ -25,12 +25,12 @@
       >
         <img
           v-if="transaction.type === '수입'"
-          src="../../assets/income.png"
+          src="@/assets/img/income.png"
           width="30px"
         />
         <img
           v-if="transaction.type === '지출'"
-          src="../../assets/expense.png"
+          src="@/assets/img/expense.png"
           width="30px"
         />
         <div class="transaction-info">

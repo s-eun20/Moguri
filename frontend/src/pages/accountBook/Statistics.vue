@@ -7,7 +7,7 @@
           <p>{{ spendingChangeMessage }}</p>
           <p>{{ topCategoryMessage }}</p>
         </div>
-        <img src="@/assets/너구리샘플.png" alt="Mascot" class="mascot-image" />
+        <img src="@/assets/img/너구리샘플.png" alt="Mascot" class="mascot-image" />
       </div>
     </div>
     
