@@ -12,13 +12,13 @@
       <!-- The slideshow -->
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="../../assets/main_banner_1.png" />
+          <img src="@/assets/img/main_banner_1.png" />
         </div>
         <div class="carousel-item">
-          <img src="../../assets/main_banner_2.png" />
+          <img src="@/assets/img/main_banner_2.png" />
         </div>
         <div class="carousel-item">
-          <img src="../../assets/main_banner_3.png" />
+          <img src="@/assets/img/main_banner_3.png" />
         </div>
       </div>
 
@@ -61,7 +61,7 @@
           <button @click="goToPage('/element')" class="main_bottom_banner_btn">
             <div class="first-flex">
               <img
-                src="../../assets/main_element_icon1.png"
+                src="../../assets/img/main_element_icon1.png"
                 alt="소비 원소 테스트"
                 class="img-fluid main_img_btn"
               />
@@ -91,7 +91,7 @@
           >
             <div class="first-flex">
               <img
-                src="../../assets/main_whatismoguri_icon.png"
+                src="../../assets/img/main_whatismoguri_icon.png"
                 alt="모구리 소개"
                 class="img-fluid main_img_btn"
               />
@@ -122,7 +122,7 @@
           >
             <div class="first-flex">
               <img
-                src="../../assets/main_attendance_icon.png"
+                src="../../assets/img/main_attendance_icon.png"
                 alt="출석체크"
                 class="img-fluid main_img_btn"
               />

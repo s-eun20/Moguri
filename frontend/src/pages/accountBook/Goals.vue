@@ -303,21 +303,19 @@ export default {
 
 <style scoped>
 .goal-page {
-  padding: 30px;
-  max-width: 1400px;
+  width: 70%;
   margin: 0 auto;
-  box-sizing: border-box;
-  font-family: "HakgyoansimWoojuR";
+  padding: 20px;
+  font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
+  margin-top: 20px;
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #000000;
   margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #ffcc00;
+  font-size : 35px;
+  color: #333;
+  font-weight: bold;
 }
 
 .content-wrapper {

@@ -9,7 +9,7 @@
         <b-dropdown v-if="isLoggedIn">
           <template #button-content>
             <img
-              src="@/assets/모구리.png"
+              src="@/assets/img/너구리샘플.png"
               alt="Profile Picture"
               class="profile-pic"
             />
@@ -84,19 +84,13 @@ const editAccount = () => {
   color: rgb(255, 166, 0);
   font-weight: bold;
   font-size: 24px;
-  font-family: 'BMJUA';
+  font-family: 'HakgyoansimWoojuR';
 }
 
 .menu {
   margin-right: auto;
-  font-family: 'HakgyoansimBareondotumB';
-  @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff')
-      format('woff');
-    font-weight: 400;
-    font-style: normal;
-  }
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
   font-size: 19px;
 }
 

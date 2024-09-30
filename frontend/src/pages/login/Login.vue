@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <img src="@/assets/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+      <img src="@/assets/img/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
       <h2 class="login-title">로그인</h2>
       <form @submit.prevent="login" class="login-form">
         <div class="input-group">
@@ -19,13 +19,13 @@
       </div>
       <div class="social-login">
         <button @click="kakaoLogin" class="social-button kakao">
-          <img src="@/assets/kakao-logo.png" alt="Kakao" />
+          <img src="@/assets/img/kakao-logo.png" alt="Kakao" />
         </button>
         <button @click="googleLogin" class="social-button google">
-          <img src="@/assets/google-logo.png" alt="Google" />
+          <img src="@/assets/img/google-logo.png" alt="Google" />
         </button>
         <button @click="naverLogin" class="social-button naver">
-          <img src="@/assets/naver-logo.png" alt="Naver" />
+          <img src="@/assets/img/naver-logo.png" alt="Naver" />
         </button>
       </div>
       <p class="register-link">
