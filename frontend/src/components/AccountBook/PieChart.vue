@@ -1,37 +1,37 @@
 <template>
   <div class="PieChart">
     <div v-if="isLoading">데이터를 불러오는 중...</div>
-    <div v-else>
-      <div class="selector">
-        <select id="year" v-model="selectedYear" @change="updateChart">
-          <option v-for="year in years" :key="year" :value="year">
-            {{ year }}년
-          </option>
-        </select>
-        <select id="month" v-model="selectedMonth" @change="updateChart">
-          <option v-for="month in months" :key="month" :value="month">
-            {{ month }}
-          </option>
-        </select>
+    <div v-else class="chart-content">
+      <div class="header">
+        <div class="selector">
+          <select id="year" v-model="selectedYear" @change="updateChart">
+            <option v-for="year in years" :key="year" :value="year">
+              {{ year }}년
+            </option>
+          </select>
+          <select id="month" v-model="selectedMonth" @change="updateChart">
+            <option v-for="month in months" :key="month" :value="month">
+              {{ month }}
+            </option>
+          </select>
+        </div>
+        <div class="total-amount">
+          총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
+        </div>
       </div>
-      <div class="chart-container">
+      <div class="chart-and-category">
+        <div class="chart-container">
+          <div ref="chartContainer" class="pie-chart"></div>
+        </div>
         <div class="category-list">
+          <h3>카테고리별 소비내역</h3>
           <ul>
-            <li>카테고리별 소비내역</li>
-            <li
-              v-for="(item, index) in selectedSeries"
-              :key="index"
-            >
-              {{ item.name }} : {{ item.amount.toLocaleString() }}원
+            <li v-for="(item, index) in selectedSeries" :key="index">
+              <span class="category-name">{{ item.name }}</span>
+              <span class="category-amount">{{ item.amount.toLocaleString() }}원</span>
             </li>
           </ul>
         </div>
-
-        <div ref="chartContainer" class="pie-chart"></div>
-      </div>
-
-      <div class="total-amount">
-        총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
       </div>
     </div>
   </div>
@@ -45,7 +45,7 @@ import debounce from 'lodash/debounce';
 import { Colors } from "chart.js";
 
 export default {
-  setup() {
+  setup(props, { emit }) {  // emit 추가
     const accountStore = useAccountStore();
     const currentDate = new Date();
     const selectedYear = ref(currentDate.getFullYear());
@@ -102,7 +102,7 @@ export default {
       };
 
       const options = {
-        chart: { width: 500, height: 400 },
+        chart: { width: 700, height: 400 },
         series: {
           dataLabels: {
             visible: true,
@@ -128,13 +128,63 @@ export default {
       });
     }, 400);
 
-    watch([selectedYear, selectedMonth], updateChart);
+    const previousMonthData = computed(() => {
+      const currentMonthIndex = months.indexOf(selectedMonth.value);
+      const previousMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+      const previousYear = currentMonthIndex === 0 ? selectedYear.value - 1 : selectedYear.value;
+      const startDate = new Date(previousYear, previousMonthIndex, 1);
+      const endDate = new Date(previousYear, previousMonthIndex + 1, 0);
+
+      return calculateMonthlyExpenditure(startDate, endDate);
+    });
+
+    const calculateMonthlyExpenditure = (startDate, endDate) => {
+      const transactions = accountStore.transactions.filter(t => 
+        new Date(t.transactionDate) >= startDate && 
+        new Date(t.transactionDate) <= endDate &&
+        t.type === '지출' &&
+        t.category !== '수입'
+      );
+
+      return transactions.reduce((total, t) => total + t.amount, 0);
+    };
+
+    const spendingChangePercentage = computed(() => {
+      if (previousMonthData.value === 0) return 0;
+      const change = ((totalExpenditure.value - previousMonthData.value) / previousMonthData.value) * 100;
+      return Number(change.toFixed(1));
+    });
+
+    const topSpendingCategory = computed(() => {
+      if (selectedSeries.value.length === 0) return '없음';
+      return selectedSeries.value.reduce((max, current) => 
+        max.amount > current.amount ? max : current
+      ).name;
+    });
+
+    const emitStatistics = () => {
+      emit('update:statistics', {
+        currentMonthSpending: totalExpenditure.value,
+        previousMonthSpending: previousMonthData.value,
+        spendingChangePercentage: spendingChangePercentage.value,
+        topCategory: topSpendingCategory.value
+      });
+    };
+
+    watch([selectedYear, selectedMonth], () => {
+      updateChart();
+      nextTick(() => {
+        emitStatistics();
+      });
+    });
+
     watch(() => accountStore.transactions, { deep: true });
 
     onMounted(async () => {
       try {
         await accountStore.fetchAllTransactions();
         updateChart();
+        emitStatistics();
       } catch (error) {
         console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
       } finally {
@@ -166,94 +216,155 @@ export default {
 
 <style scoped>
 .PieChart {
-  font-family: 'HakgyoansimWoojuR';
-  font-weight: bold;
+  font-family: 'HakgyoansimWoojuR', sans-serif;
+ 
+}
+
+.chart-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .selector {
-  margin-bottom: 10px;
-  font-size: 20px;
+  display: flex;
+  gap: 10px;
 }
 
 #year, #month {
+  font-weight: bold;
   padding: 8px 12px;
-  border-radius: 12px;
-  border: 2px solid #ffcc99;
-  background-color: #fff4e6;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   color: #333;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
   appearance: none;
-  width: 150px;
-  text-align: center;
-  font-weight: bold;
-  margin-right: 10px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+#year:hover, #month:hover {
+  border-color: #007bff;
 }
 
 #year:focus, #month:focus {
   outline: none;
-  border-color: #ffb366;
-  box-shadow: 0 0 4px rgba(255, 153, 85, 0.5);
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.total-amount {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff0000;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+.chart-and-category {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.chart-container, .category-list {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .chart-container {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: 50px;
+  width : 60%;
+}
+.category-list {
+  width :40%;
 }
 
 .pie-chart {
-  width: 400px;
+  width: 80%;
   height: 400px;
 }
 
-.category-list {
-  width: 25%;  
-  min-width: 200px; 
-  height: auto;  
-  padding: 2% 0 2% 2%;  
-  border: 0.2em solid rgb(255, 212, 95);  
+.category-list h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #c1dcfa;
+  padding-bottom: 10px;
   font-weight: bold;
-  display: flex;
-  flex-direction: column;  
-  justify-content: center;  
-  margin-left: 5%;  
-}
-
-/* 반응형 디자인을 위한 미디어 쿼리 추가 */
-@media (max-width: 768px) {
-  .category-list {
-    width: 90%;  
-    margin: 5% auto;  
-  }
 }
 
 ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  height: calc(400px - 50px); /* 차트 높이에서 제목 높이를 뺀 값 */
+  overflow-y: auto;
 }
 
 li {
-  font-size: 20px;
+  font-size: 16px;
   margin-bottom: 10px;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  color: #fda451;
-}
-li:first-child {
-  color: black; /* '카테고리별 소비내역' 텍스트는 검정색 유지 */
+  padding: 8px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.total-amount {
-  border-radius: 12px;
-  border: 2px solid #ffcc99;
-  background-color: #fff4e6;
-  margin-top: 20px;
-  font-size: 24px;
-  width: 350px;
+li:hover {
+  background-color: #f0f4f8;
+}
+
+.category-name {
   font-weight: bold;
-  color: #ff6f61;
-  text-align: center;
+  font-size :18px;
+}
+
+.category-amount {
+  font-size: 18px;
+  color: #000000;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .chart-and-category {
+    flex-direction: column;
+  }
+
+  .chart-container, .category-list {
+    max-width: 100%;
+  }
+
+  .pie-chart {
+    height: 300px;
+  }
+
+  ul {
+    height: auto;
+    max-height: 300px;
+  }
 }
 </style>

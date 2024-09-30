@@ -2,20 +2,20 @@
   <div class="ColumnChart">
     <div v-if="isLoading">데이터를 불러오는 중...</div>
     <div v-else class="chart-content">
-      <div class="year-selector">
-        <select id="year" v-model="selectedYear" @change="updateChart">
-          <option v-for="year in years" :key="year" :value="year">
-            {{ year }}년
-          </option>
-        </select>
+      <div class="header">
+        <div class="selector">
+          <select id="year" v-model="selectedYear" @change="updateChart">
+            <option v-for="year in years" :key="year" :value="year">
+              {{ year }}년
+            </option>
+          </select>
+        </div>
+        <div class="total-amount">
+          총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
+        </div>
       </div>
-
       <div class="chart-container">
         <div ref="chartContainer" class="column-chart"></div>
-      </div>
-
-      <div class="total-amount">
-        총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
       </div>
     </div>
   </div>
@@ -141,104 +141,96 @@ export default {
 
 <style scoped>
 .ColumnChart {
-  font-family: 'HakgyoansimWoojuR';
-  font-weight: bold;
+  font-family: 'HakgyoansimWoojuR', sans-serif;
   width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 20px;
+ 
 }
 
 .chart-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-.year-selector {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  width: 100%;
-  text-align: center;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.selector {
+  display: flex;
+  gap: 10px;
 }
 
 #year {
   padding: 8px 12px;
-  border-radius: 12px;
-  border: 2px solid #ffcc99;
-  background-color: #fff4e6;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   color: #333;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   appearance: none;
-  width: 100%;
-  max-width: 200px;
-  text-align: center;
+  background-color: white;
+  transition: all 0.3s ease;
   font-weight: bold;
+}
+
+#year:hover {
+  border-color: #007bff;
 }
 
 #year:focus {
   outline: none;
-  border-color: #ffb366;
-  box-shadow: 0 0 4px rgba(255, 153, 85, 0.5);
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.total-amount {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff0000;
+  background-color: #ffffff;
+  padding: 8px 15px;
+  border-radius: 8px;
 }
 
 .chart-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .column-chart {
   width: 100%;
-  height: 500px;
-  max-width: 1000px;
-}
-
-.total-amount {
-  border-radius: 12px; 
-  border: 2px solid #ffcc99; 
-  background-color: #fff4e6; 
-  padding: 10px;
-  font-size: 20px;
-  width: 100%;
-  max-width: 350px;
-  font-weight: bold;
-  color: #ff6f61;
-  text-align: center; 
-}
-
-@media (max-width: 1024px) {
-  .ColumnChart {
-    padding: 10px;
-  }
-
-  .column-chart {
-    height: 400px;
-  }
-
-  #year, .total-amount {
-    font-size: 16px;
-  }
+  height: 400px;
 }
 
 @media (max-width: 768px) {
-  .column-chart {
-    height: 300px;
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 
-  #year, .total-amount {
-    font-size: 14px;
+  .column-chart {
+    height: 300px;
   }
 }
 
 @media (max-width: 480px) {
+  #year, .total-amount {
+    font-size: 14px;
+  }
+  
   .column-chart {
     height: 250px;
-  }
-
-  #year, .total-amount {
-    font-size: 12px;
   }
 }
 </style>

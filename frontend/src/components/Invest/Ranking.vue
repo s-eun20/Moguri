@@ -1,6 +1,5 @@
 <template>
   <div class="investment-ranking">
-    <h2 class="section-title">이달의 투자왕 <span class="crown">👑</span></h2>
     <div class="top-three">
       <div class="rank-container">
         <div class="member-name">{{ rankingData[1]?.name || '-' }}</div>
@@ -65,19 +64,6 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
-}
-
-.section-title {
-  font-size: 35px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.crown {
-  font-size: 40px;
-  margin-left: 5px;
 }
 
 .top-three {

@@ -70,12 +70,13 @@ const editAccount = () => {
   color: rgb(255, 166, 0);
   font-weight: bold;
   font-size: 24px;
-  font-family: 'BMJUA';
+  font-family: 'HakgyoansimWoojuR';
 }
 
 .menu {
   margin-right: auto;
-  font-family: 'HakgyoansimBareondotumB';
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
   font-size: 19px;
 }
 

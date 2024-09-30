@@ -1,6 +1,6 @@
 <template>
     <div class="ranking-page">
-      <h1 class="page-title">투자 랭킹</h1>
+      <h1 class="page-title">이달의 투자왕👑</h1>
       <div class="content-wrapper">
         <InvestmentRanking :rankingData="rankingData" />
       </div>
@@ -32,21 +32,20 @@
   
   <style scoped>
   .ranking-page {
-    padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-    font-family: 'HakgyoansimWoojuR';
-    font-weight: bold;
-  }
+    width: 70%;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 20px;
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
+}
 
-  .page-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #ffcc00;
-  }
+.page-title {
+  font-size : 35px;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: bold;
+}
 
   .content-wrapper {
     max-width: 800px;
