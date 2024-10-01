@@ -9,6 +9,9 @@ import Stock from '@/pages/investment/Stock.vue'
 import Login from '@/pages/login/Login.vue'; // Login 컴포넌트 import 추가
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
 import Main from '@/pages/main/Main.vue'; //main 페이지 추가
+import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
+import Roulette from '@/pages/event/Roulette.vue'; // Roulette 컴포넌트 추가
+import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
 
 const routes = [
   {
@@ -67,6 +70,21 @@ const routes = [
     path: '/attendance', // 출석 체크 페이지 경로 추가
     name: 'AttendancePage',
     // component: AttendancePage,
+  },
+  {
+    path: '/event/check', // 출석체크 경로 추가
+    name: 'Check',
+    component: Check,
+  },
+  {
+    path: '/event/roulette', // 룰렛 이벤트 경로 추가
+    name: 'Roulette',
+    component: Roulette,
+  },
+  {
+    path: '/event/quiz', // 금융 퀴즈 경로 추가
+    name: 'Quiz',
+    component: Quiz,
   },
 ];
 
