@@ -294,8 +294,8 @@ export default {
 }
 
 .pie-chart {
-  width: 80%;
-  height: 400px;
+  height: auto;
+
 }
 
 .category-list h3 {

@@ -38,7 +38,7 @@
             class="transaction-type"
             :class="transaction.type === '수입' ? 'income' : 'expense'"
           >
-            {{ transaction.type }}
+            {{ transaction.category }}
           </span>
           <span class="transaction-details">
             {{ transaction.description }}
