@@ -12,7 +12,10 @@
           <div class="input-group">
             <input type="password" v-model="password" required placeholder="비밀번호" />
           </div>
-          <button type="submit" class="login-button">로그인</button>
+          <button type="submit" class="login-button" :disabled="authStore.isLoading">
+            <span v-if="authStore.isLoading">로딩 중...</span>
+            <span v-else>로그인</span>
+          </button>
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         </form>
         <div class="divider">
@@ -67,6 +70,8 @@ const login = async () => {
   } catch (error) {
     console.error('로그인 중 오류 발생:', error.message);
     authStore.errorMessage = error.message || "로그인이 실패했습니다.";
+  }finally{
+    password.value = '';
   }
 };
 
