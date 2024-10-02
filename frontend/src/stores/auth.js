@@ -12,6 +12,7 @@ const initState = {
     email: '',
     nickname: '',
     roles: [],
+    cottonCandy: ''
   },
 };
 
@@ -19,10 +20,12 @@ export const useAuthStore = defineStore('auth', () => {
   const state = ref({ ...initState });
   const isLoading = ref(false);
   const errorMessage = ref('');
+  
 
   const isLogin = computed(() => !!state.value.user.nickname);
   const nickname = computed(() => state.value.user.nickname);
   const email = computed(() => state.value.user.email);
+  const cottonCandy = computed(() => state.value.user.cottonCandy);
 
  // 로그인 메서드
  const login = async (member, router) => { // router 인자 추가
@@ -32,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
   try {
     const response = await axios.post('http://localhost:8080/api/auth/login', member);
     console.log('로그인 성공:', response.data);
+    console.log('응답 데이터:', JSON.stringify(response.data, null, 2));
     
     // 로그인 정보 업데이트
     state.value.token = response.data.token; // 예시로 토큰만 업데이트
@@ -58,7 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
 const logout = () => {
   localStorage.removeItem(AUTH_KEY);
   state.value = { ...initState };
-  router.push('/login'); // router를 사용하여 페이지 이동
+  router.push('/'); // router를 사용하여 페이지 이동
 };
 
   // 로컬스토리지에서 인증 정보 로드
@@ -82,6 +86,7 @@ const logout = () => {
     email,
     login,
     logout,
+    cottonCandy,
     isLoading, // 로딩 상태 추가
   };
 });
