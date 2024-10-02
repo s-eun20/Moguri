@@ -1,0 +1,24 @@
+.subQuestion-div {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    height: 310px;
+  }
+
+.hidden {
+    display: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+  }
+
+.hover\:example-label-gray:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+  }
+
+.example-label-orange {
+  --tw-bg-opacity: 1;
+  background-color: rgba(255, 204, 0, var(--tw-bg-opacity));
+}

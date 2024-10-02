@@ -1,0 +1,38 @@
+.objectQuestion-div {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    height: 120px;
+  }
+
+.objectExample-label {
+    display: block;
+    margin-top: 1rem;
+    border-width: 1px;
+    border-color: rgba(209, 213, 219, var(--tw-border-opacity));
+    border-radius: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+  }
+
+.hover\:example-label-gray:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
+  }
+
+.example-label-orange {
+  --tw-bg-opacity: 1;
+  background-color: rgba(255, 204, 0, var(--tw-bg-opacity));
+}
