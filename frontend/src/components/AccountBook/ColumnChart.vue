@@ -1,21 +1,21 @@
 <template>
   <div class="ColumnChart">
     <div v-if="isLoading">데이터를 불러오는 중...</div>
-    <div v-else>
-      <div class="year-selector">
-        <select id="year" v-model="selectedYear" @change="updateChart">
-          <option v-for="year in years" :key="year" :value="year">
-            {{ year }}년
-          </option>
-        </select>
+    <div v-else class="chart-content">
+      <div class="header">
+        <div class="selector">
+          <select id="year" v-model="selectedYear" @change="updateChart">
+            <option v-for="year in years" :key="year" :value="year">
+              {{ year }}년
+            </option>
+          </select>
+        </div>
+        <div class="total-amount">
+          총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
+        </div>
       </div>
-
       <div class="chart-container">
         <div ref="chartContainer" class="column-chart"></div>
-      </div>
-
-      <div class="total-amount">
-        총 소비 금액: {{ totalExpenditure.toLocaleString() }}원
       </div>
     </div>
   </div>
@@ -85,7 +85,7 @@ export default {
       console.log('Chart data:', data); // 디버깅을 위한 로그
 
       const options = {
-        chart: { width: 1300, height: 500 },
+        chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
         xAxis: { title: '월' },
         yAxis: { title: '금액 (원)' },
         legend: { align: 'bottom' },
@@ -141,55 +141,96 @@ export default {
 
 <style scoped>
 .ColumnChart {
-  font-family: 'HakgyoansimWoojuR';
-  font-weight: bold;
+  font-family: 'HakgyoansimWoojuR', sans-serif;
+  width: 100%;
+ 
 }
 
-.year-selector {
+.chart-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  font-size: 20px;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.selector {
+  display: flex;
+  gap: 10px;
 }
 
 #year {
   padding: 8px 12px;
-  border-radius: 12px;
-  border: 2px solid #ffcc99;
-  background-color: #fff4e6;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   color: #333;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
   appearance: none;
-  width: 200px;
-  text-align: center;
+  background-color: white;
+  transition: all 0.3s ease;
   font-weight: bold;
+}
+
+#year:hover {
+  border-color: #007bff;
 }
 
 #year:focus {
   outline: none;
-  border-color: #ffb366;
-  box-shadow: 0 0 4px rgba(255, 153, 85, 0.5);
-}
-
-.chart-container {
-  display: flex;
-}
-
-.column-chart {
-  margin-left: 100px;
-  width: 1000px;
-  height: 500px;
-  
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .total-amount {
-  border-radius: 12px; 
-  border: 2px solid #ffcc99; 
-  background-color: #fff4e6; 
-  margin-top: 20px;
-  font-size: 24px;
-  width: 350px;
+  font-size: 18px;
   font-weight: bold;
-  color: #ff6f61;
-  text-align: center; 
+  color: #ff0000;
+  background-color: #ffffff;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+.chart-container {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.column-chart {
+  width: 100%;
+  height: 400px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .column-chart {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  #year, .total-amount {
+    font-size: 14px;
+  }
+  
+  .column-chart {
+    height: 250px;
+  }
 }
 </style>

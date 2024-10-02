@@ -1,7 +1,7 @@
 <template>
   <div class="register-container">
     <div class="register-box">
-      <img src="@/assets/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+      <img src="@/assets/img/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
       <h2 class="register-title">회원가입</h2>
       <form @submit.prevent="register" class="register-form">
         <div class="input-group">
@@ -72,8 +72,9 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #F0F2F5;
+  background-color: #f0f2f5;
 }
+
 .register-box {
   background: white;
   padding: 40px;
@@ -94,9 +95,11 @@ export default {
   text-align: center;
   margin-bottom: 30px;
 }
+
 .register-form {
   margin-bottom: 20px;
 }
+
 .input-group {
   margin-bottom: 20px;
 }
@@ -109,11 +112,13 @@ input[type="password"] {
   font-size: 16px;
   transition: border-color 0.3s;
 }
+
 input[type="text"]:focus,
 input[type="password"]:focus {
   border-color: #FECD72;
   outline: none;
 }
+
 .register-button {
   width: 100%;
   padding: 12px;
@@ -129,10 +134,11 @@ input[type="password"]:focus {
   background-color: #F0B300;
 }
 .error {
-  color: #E74C3C;
+  color: #e74c3c;
   text-align: center;
   margin-top: 10px;
 }
+
 .login-link {
   text-align: center;
   margin-top: 20px;
@@ -142,6 +148,7 @@ input[type="password"]:focus {
   color: #FECD72;
   text-decoration: none;
 }
+
 .login-link a:hover {
   text-decoration: underline;
 }

@@ -8,14 +8,24 @@
       <div class="d-flex align-items-center">
         <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
           <template #button-content>
-            <div class="profile-container">
-              <img src="@/assets/너구리샘플.png" alt="Profile Picture" class="profile-pic" />
-            </div>
+            <img
+              src="@/assets/img/너구리샘플.png"
+              alt="Profile Picture"
+              class="profile-pic"
+            />
           </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
+          <b-dropdown-item class="dropdown-item" @click="goToBadges"
+            >🛡️ 뱃지함</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="collectMoguri"
+            >🪙 모구리 모으기</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="editAccount"
+            >📝 회원 수정</b-dropdown-item
+          >
+          <b-dropdown-item class="dropdown-item" @click="logout"
+            >🚪 로그아웃</b-dropdown-item
+          >
         </b-dropdown>
 
         <div v-if="isLoggedIn" class="user-info">
@@ -90,12 +100,13 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   font-weight: bold;
   font-size: 24px;
-  font-family: 'BMJUA';
+  font-family: 'HakgyoansimWoojuR';
 }
 
 .menu {
   margin-right: auto;
-  font-family: 'HakgyoansimBareondotumB';
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
   font-size: 19px;
 }
 

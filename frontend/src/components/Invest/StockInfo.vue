@@ -9,7 +9,7 @@
           class="search-input"
         />
         <img 
-          src="@/assets/search.png" 
+          src="@/assets/img/search.png" 
           alt="Search" 
           class="search-icon" 
         />

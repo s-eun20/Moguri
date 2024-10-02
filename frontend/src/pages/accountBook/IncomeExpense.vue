@@ -1,6 +1,9 @@
 <template>
   <div class="income-expense-page">
-    <h1 class="page-title">수입/지출 관리</h1>
+    <div class="header">
+      <h1 class="page-title">수입/지출</h1>
+      <div class="total-assets">내 자산: {{ formatCurrency(totalAssets) }}</div>
+    </div>
     
     <div class="content-wrapper">
       <div class="calendar-container">
@@ -10,6 +13,8 @@
         <IncomeExpenseCard 
           :selectedDate="selectedDate" 
           :transactions="filteredTransactions"
+          :allTransactions="transactions"
+          @update:totalAssets="updateTotalAssets"
           @edit="openEditModal"
           @delete="deleteTransaction"
         />
@@ -58,6 +63,7 @@ export default {
     const isAddModalVisible = ref(false);
     const isEditModalVisible = ref(false);
     const editingTransaction = ref(null);
+    const totalAssets = ref(0);
 
     const handleDateSelected = (date) => {
       if (date instanceof Date) {
@@ -116,6 +122,14 @@ export default {
       }
     };
 
+    const updateTotalAssets = (newTotalAssets) => {
+      totalAssets.value = newTotalAssets;
+    };
+
+    const formatCurrency = (amount) => {
+      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount);
+    };
+
     const filteredTransactions = computed(() => {
       console.log('Computed 실행 - 선택된 날짜:', selectedDate.value);
       console.log('Computed 실행 - 전체 거래:', transactions.value);
@@ -143,9 +157,7 @@ export default {
         await accountStore.fetchAllTransactions();
       } catch (error) {
         console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
-      } finally {
-        isLoading.value = false;
-      }
+      } 
     });
 
     watch(transactions, (newTransactions) => {
@@ -153,6 +165,7 @@ export default {
     });
 
     return {
+      transactions,
       selectedDate,
       filteredTransactions,
       isAddModalVisible,
@@ -165,7 +178,10 @@ export default {
       openEditModal,
       closeEditModal,
       updateTransaction,
-      deleteTransaction
+      deleteTransaction,
+      totalAssets,
+      updateTotalAssets,
+      formatCurrency
     };
   }
 };
@@ -173,22 +189,21 @@ export default {
 
 <style scoped>
   .income-expense-page {
-    padding: 30px;
-    max-width: 1600px;
-    margin: 0 auto;
-    font-family: 'HakgyoansimWoojuR';
-    font-weight: bold;
-  }
+    width: 70%;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'HakgyoansimWoojuR';
+  font-weight: bold;
+  margin-top: 20px;
+}
 
-  .page-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #FFCC00;
-  }
-
+.page-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size : 35px;
+  color: #333;
+  font-weight: bold;
+}
   .content-wrapper {
     display: flex;
     gap: 30px;
@@ -196,19 +211,19 @@ export default {
   }
 
   .calendar-container {
-    flex: 2; /* 달력 컨테이너의 비율을 3으로 증가 */
+    height: calc(75vh - 70px); 
+  max-height: 600px;
+    flex: 2; 
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow: auto;
-    height: 700px; /* 높이를 증가 */
   }
 
   .transactions-container {
-    flex: 1; /* 거래 내역 컨테이너의 비율을 2로 설정 */
-    height: 700px; /* 높이를 달력 컨테이너와 동일하게 설정 */
-    overflow: auto; /* 내용이 넘칠 경우 스크롤 추가 */
+    flex: 1.2; 
+    overflow: auto; 
   }
 
   .add-transaction-btn {
@@ -231,24 +246,59 @@ export default {
     background-color: #E6B800;
   }
 
-  @media (max-width: 1024px) {
-    .content-wrapper {
-      flex-direction: column;
-    }
-    
-    .calendar-container,
-    .transactions-container {
-      width: 100%;
-      height: auto;
-      margin-bottom: 20px;
-    }
+  :deep(.fc) {
+  height: 100% !important;
+  font-size: 0.85em; /* 폰트 크기를 더 줄임 */
+}
 
-    .calendar-container {
-      height: 500px; /* 모바일 화면에서의 달력 높이 조정 */
-    }
+/* 헤더 (요일 표시) 부분의 패딩 줄임 */
+:deep(.fc-col-header-cell) {
+  padding: 4px 0 !important;
+}
 
-    .transactions-container {
-      height: auto; /* 모바일 화면에서는 내용에 맞게 높이 조정 */
-    }
+/* 날짜 셀의 패딩 줄임 */
+:deep(.fc-daygrid-day) {
+  padding: 1px !important;
+}
+
+/* 날짜 숫자 크기 줄임 */
+:deep(.fc-daygrid-day-number) {
+  font-size: 0.9em;
+  padding: 2px;
+}
+
+/* 이벤트 텍스트 크기 줄임 */
+:deep(.fc-event-title) {
+  font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+  .income-expense-page {
+    padding: 10px;
   }
+  
+  .calendar-container {
+    height: calc(65vh - 60px); /* 모바일에서 높이 더 줄임 */
+    max-height: 500px;
+  }
+
+  :deep(.fc) {
+    font-size: 0.75em; /* 모바일에서 폰트 크기 더 줄임 */
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.total-assets {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+/* ... 기존 스타일 ... */
 </style>
