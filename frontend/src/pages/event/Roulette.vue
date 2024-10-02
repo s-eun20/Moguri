@@ -5,7 +5,7 @@
     <div class="content-wrapper">
       <div class="Roulette-container">
         <div class="roulette-game">
-          <RouletteGame  />
+          <RouletteGame/>
         </div>
       </div>
     </div>

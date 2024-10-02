@@ -4,7 +4,7 @@
       
       <div class="attendance-content-wrapper">
         <div class="attendance-calendar-container">
-          <AttendanceCalendar @dateSelected="fetchAttendances"/>
+          <AttendanceCalendar/>
         </div>
         <div class="attendance-month-container">
             <AttendanceMonthCheck
@@ -36,11 +36,6 @@
         ]
       };
     },
-    methods: {
-      fetchAttendances(date) {
-        this.AttendanceSelectedDate = date;
-      },
-    }
   };
 </script>
   
