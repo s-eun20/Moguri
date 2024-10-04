@@ -22,6 +22,7 @@ import { Chart, registerables } from 'chart.js';
 import { CandlestickController, CandlestickElement, OhlcElement } from 'chartjs-chart-financial';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
+import { useStockStore } from '@/stores/stockStore';
 
 // Chart.js 컴포넌트 등록
 Chart.register(...registerables, CandlestickController, CandlestickElement, OhlcElement);
@@ -39,55 +40,28 @@ export default {
     }
   },
   setup(props) {
-    const selectedPeriod = ref('day');
-    const periods = ['day', 'week', 'month', 'year'];
+    const stockStore = useStockStore();
+    const selectedPeriod = ref('DAY');
+    const periods = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
     const periodLabels = {
-      day: '일',
-      week: '주',
-      month: '월',
-      year: '년'
+      DAY: '일',
+      WEEK: '주',
+      MONTH: '월',
+      YEAR: '년'
     };
     const chartCanvas = ref(null);
     let chart = null;
 
-    const generateDummyData = (days) => {
-      const data = [];
-      let price = 60000;
-      for (let i = 0; i < days; i++) {
-        const open = price + Math.random() * 2000 - 1000;
-        const close = open + Math.random() * 2000 - 1000;
-        const high = Math.max(open, close) + Math.random() * 1000;
-        const low = Math.min(open, close) - Math.random() * 1000;
-        data.push({
-          x: new Date(2023, 0, i + 1).getTime(),
-          o: open,
-          h: high,
-          l: low,
-          c: close
-        });
-        price = close;
-      }
-      return data;
-    };
+    const updateChart = async () => {
+      await stockStore.fetchStockChart(props.stockCode, selectedPeriod.value);
+      const data = stockStore.chartData;
 
-    const updateChart = () => {
-      const ctx = chartCanvas.value.getContext('2d');
-      
-      let data;
-      switch(selectedPeriod.value) {
-        case 'day':
-          data = generateDummyData(30);
-          break;
-        case 'week':
-          data = generateDummyData(12 * 7);
-          break;
-        case 'month':
-          data = generateDummyData(12 * 30);
-          break;
-        case 'year':
-          data = generateDummyData(365);
-          break;
+      if (!data) {
+        console.error('No chart data available');
+        return;
       }
+
+      const ctx = chartCanvas.value.getContext('2d');
 
       if (chart) {
         chart.destroy();
@@ -98,7 +72,13 @@ export default {
         data: {
           datasets: [{
             label: props.stockName,
-            data: data,
+            data: data.map(item => ({
+              x: item.date,
+              o: item.open,
+              h: item.high,
+              l: item.low,
+              c: item.close
+            })),
             color: {
               up: '#26A69A',
               down: '#EF5350',
@@ -113,7 +93,7 @@ export default {
             x: {
               type: 'time',
               time: {
-                unit: selectedPeriod.value === 'day' ? 'day' : 'month'
+                unit: selectedPeriod.value.toLowerCase()
               },
               adapters: {
                 date: {
@@ -147,13 +127,14 @@ export default {
 
     const changePeriod = (period) => {
       selectedPeriod.value = period;
+      updateChart();
     };
 
     onMounted(() => {
       updateChart();
     });
 
-    watch(selectedPeriod, () => {
+    watch(() => props.stockCode, () => {
       updateChart();
     });
 

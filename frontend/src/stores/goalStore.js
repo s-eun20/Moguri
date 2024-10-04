@@ -21,7 +21,13 @@ export const useGoalStore = defineStore('goal', {
     },
     async addGoal(newGoal) {
         try {
-          const response = await axios.post('/api/goal', newGoal);
+          console.log(newGoal);
+          const response = await axios.post('/api/goal', newGoal,{
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
           if (response.data) {
             await this.fetchGoals(); // 목표 목록을 새로고침
             return true;

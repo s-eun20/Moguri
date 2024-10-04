@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <img src="@/assets/img/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+      <img src="@/assets/img/Moguri.png" alt="Moguri Logo" class="moguri-logo" />
       <h2 class="login-title">로그인</h2>
       <form @submit.prevent="login" class="login-form">
         <div class="input-group">

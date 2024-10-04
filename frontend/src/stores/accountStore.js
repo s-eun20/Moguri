@@ -76,7 +76,7 @@ export const useAccountStore = defineStore('account', {
 
         if (response.data.returnCode === '0000') {
           console.log('Transaction added successfully');
-          await this.fetchTransactions(this.currentPage);
+          await this.fetchAllTransactions();
         } else {
           console.error('Error adding transaction:', response.data.returnMessage);
         }
@@ -106,17 +106,6 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
-    // 거래 내역 삭제
-    async deleteTransaction(accountBookId) {
-      try {
-        const response = await axios.delete(`http://localhost:8080/api/accountbook/${accountBookId}`);
-        if (response.data.returnCode === 'SUCCESS') {
-          await this.fetchTransactions(this.currentPage);
-        }
-      } catch (error) {
-        console.error('Error deleting transaction:', error);
-      }
-    },
 
     // 저축 목표 삭제
     async deleteSavingGoal(memberId, goalId) {
@@ -142,9 +131,10 @@ export const useAccountStore = defineStore('account', {
 
     async deleteTransaction(accountBookId) {
       try {
+        console.log(accountBookId)
         const response = await axios.delete(`/api/accountbook/${accountBookId}`);
         if (response.data.returnCode === '0000') {
-          await this.fetchTransactions(this.currentPage);
+          await this.fetchAllTransactions();
           return true;
         } else {
           throw new Error(response.data.returnMessage || '거래 삭제에 실패했습니다.');

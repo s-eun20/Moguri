@@ -10,8 +10,8 @@
           <th>카테고리</th>
           <th>목표 이름</th>
           <th>기간</th>
-          <th>목표 금액</th>
-          <th>현재 금액</th>
+          <th v-if="props.activeTab === 'saving'">목표 금액</th>
+          <th v-if="props.activeTab === 'saving'">현재 금액</th>
           <th>목표 달성률</th>
         </tr>
       </thead>
@@ -20,8 +20,8 @@
           <td>{{ goal.goalCategory || '저축' }}</td>
           <td>{{ goal.goalName }}</td>
           <td>{{ formatDateRange(goal.startDate, goal.endDate) }}</td>
-          <td>{{ formatCurrency(goal.goalAmount) }}</td>
-          <td>{{ formatCurrency(goal.currentAmount) }}</td>
+          <td v-if="props.activeTab === 'saving'">{{ formatCurrency(goal.goalAmount) }}</td>
+          <td v-if="props.activeTab === 'saving'">{{ formatCurrency(goal.currentAmount) }}</td>
           <td class="progress-cell">
             <div class="progress-bar">
               <div class="progress" :style="{ width: calculateProgress(goal) + '%' }"></div>
@@ -81,7 +81,8 @@
         filteredGoals,
         formatCurrency,
         formatDateRange,
-        calculateProgress
+        calculateProgress,
+        props // props를 반환하여 템플릿에서 사용할 수 있도록 함
       }
     }
   };

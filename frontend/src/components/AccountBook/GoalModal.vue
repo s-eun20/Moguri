@@ -26,13 +26,9 @@
           <label for="goalName">목표 이름</label>
           <input type="text" v-model="goal.goalName" id="goalName" required />
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="goal.type === 'saving'">
           <label for="goalAmount">목표 금액</label>
           <input type="number" v-model.number="goal.goalAmount" id="goalAmount" step="1" required />
-        </div>
-        <div class="form-group">
-          <label for="currentAmount">현재 금액</label>
-          <input type="number" v-model.number="goal.currentAmount" id="currentAmount" step="1" required />
         </div>
         <div class="form-group">
           <label for="startDate">시작일</label>

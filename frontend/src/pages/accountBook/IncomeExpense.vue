@@ -1,7 +1,7 @@
 <template>
   <div class="income-expense-page">
     <div class="header">
-      <h1 class="page-title">수입/지출</h1>
+      <h1 class="page-title">가계부</h1>
       <div class="total-assets">내 자산: {{ formatCurrency(totalAssets) }}</div>
     </div>
     
@@ -222,7 +222,7 @@ export default {
   }
 
   .transactions-container {
-    flex: 1.2; 
+    flex: 1.4; 
     overflow: auto; 
   }
 

@@ -1,4 +1,3 @@
-<!-- frontend/src/components/AccountBook/QuestList.vue -->
 <template>
   <div class="quest-list-overlay">
     <div class="quest-list-modal">
@@ -16,9 +15,10 @@
       <ul class="quest-items">
         <li v-for="quest in filteredQuests" :key="quest.id" @click="selectQuest(quest)">
           <div class="quest-info">
-            <span class="quest-name">{{ quest.content }}</span>
-            <span class="quest-period">{{ formatDateRange(quest.startDate, quest.endDate) }}</span>
-            <span class="quest-reward">리워드: {{ quest.reward }}P</span>
+            <span class="quest-name">{{ quest.title }}</span>
+            <span class="quest-description">{{ quest.description }}</span>
+            <span class="quest-period">기간: {{ quest.questDays }}일</span>
+            <span class="quest-reward">리워드: {{ quest.rewardAmount }}P</span>
           </div>
         </li>
       </ul>
@@ -47,27 +47,34 @@ export default {
     },
   },
   methods: {
-    formatDateRange(startDate, endDate) {
-      return `${this.formatDate(startDate)} ~ ${this.formatDate(endDate)}`;
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      return `${date.getMonth() + 1}/${date.getDate()}`;
-    },
     selectQuest(quest) {
+      const today = new Date();
+      const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      const endDate = new Date(today.setDate(today.getDate() + quest.questDays)).toISOString().split('T')[0];
+
       const newGoal = {
-        id: Date.now(), // 임시 ID 생성
+        id: quest.id,
         category: quest.category,
-        content: quest.content,
-        startDate: quest.startDate,
-        endDate: quest.endDate,
-        amount: quest.amount,
-        current_amount: 0,
-        reward: quest.reward
+        title: quest.title,
+        description: quest.description,
+        questDays: quest.questDays,
+        startDate: startDate,
+        endDate: endDate,
+        targetAmount: quest.targetAmount,
+        currentAmount: quest.currentAmount,
+        rewardAmount: quest.rewardAmount
       };
       this.$emit('add-goal', newGoal);
       this.$emit('close');
     },
+
+    formatDate(date) {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
   },
 };
 </script>
@@ -142,6 +149,12 @@ h3 {
   margin-bottom: 5px;
 }
 
+.quest-description {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 5px;
+}
+
 .quest-period {
   font-size: 0.9em;
   color: #666;
@@ -156,7 +169,7 @@ h3 {
 .button-group {
   display: flex;
   justify-content: center;
-  gap: 10px;  /* 버튼 사이의 간격 */
+  gap: 10px;
   margin-top: 20px;
 }
 
@@ -165,7 +178,7 @@ h3 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #ffdf9f;  /* 초록색 */
+  background-color: #ffdf9f;
   color: rgb(0, 0, 0);
 }
 
