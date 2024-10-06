@@ -9,10 +9,11 @@ const AUTH_KEY = 'auth';
 const initState = {
   token: '',
   user: {
+    memberId: '',
     email: '',
     nickname: '',
     roles: [],
-    cottonCandy: ''
+    cottonCandy: '0'
   },
 };
 
@@ -68,15 +69,41 @@ const logout = () => {
   // 로컬스토리지에서 인증 정보 로드
   const load = () => {
     const auth = localStorage.getItem(AUTH_KEY);
+    console.log('로컬 스토리지에서 로드된 데이터:', auth); 
     if (auth) {
       state.value = JSON.parse(auth);
-      if (!state.value.user.nickname) {
-        // 닉네임이 없으면 초기 상태로 설정
+      if (!state.value.user.nickname || !state.value.user.memberId) {
         state.value = { ...initState };
-      }
+    }
     }
   };
 
+  const updateCottonCandy = async (amount) => {
+    console.log('현재 사용자 정보:', state.value.user);
+    const userId = state.value.user.memberId;
+    
+    if (!userId) {
+        console.error('사용자 ID가 정의되지 않았습니다.');
+        return;
+    }
+
+    // 코튼 캔디 수량 업데이트
+    const newCottonCandyAmount = parseInt(state.value.user.cottonCandy) + amount;
+
+    // 상태 업데이트
+    state.value.user.cottonCandy = newCottonCandyAmount.toString();
+    localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
+
+    // DB에 업데이트
+    try {
+        await axios.patch(`http://localhost:8080/api/members/${userId}/cotton-candy`, { 
+            cottonCandy: newCottonCandyAmount 
+        });
+        console.log('코튼 캔디 업데이트 성공');
+    } catch (error) {
+        console.error('코튼 캔디 업데이트 실패:', error);
+    }
+}
   load(); // 애플리케이션 시작 시 로드
 
   return {
@@ -88,5 +115,6 @@ const logout = () => {
     logout,
     cottonCandy,
     isLoading, // 로딩 상태 추가
+    updateCottonCandy, 
   };
 });

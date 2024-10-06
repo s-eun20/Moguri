@@ -14,6 +14,7 @@
 
 <script>
   import RouletteGame from '@/components/Event/RouletteGame.vue';
+ 
 
   export default {
     components: {

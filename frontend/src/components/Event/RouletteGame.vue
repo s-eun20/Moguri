@@ -36,70 +36,81 @@
 </template>
 
 <script>
-
-    export default {
-        data() {
-            return {
-                items: [
-                    {value:"10000"},
-                    {value:"1000"},
-                    {value:"30000"},
-                    {value:"5000"},
-                    {value:"0"},
-                    {value:"-1"},
-                ],
-                itemStyles:[],
-                lineStyles:[],
-                current:0,// 실제 가리키는 데이터 위치
-                count:0,
-                history:[],
-            }
-        },
-        computed: {
-            segment() {
-                return 360 / this.items.length;
-            },
-            offset() {
-                return this.segment / 2;
-            },
-            angle() {
-                // return -this.current * this.segment; // 정가운데 설정
-                let temp = this.current * this.segment;
-                let randomOffset = Math.floor(Math.random() * this.segment) - this.offset - 1;
-                let cycle = this.count * 360 * 5; //5바퀴 
-                return -(temp + randomOffset + cycle); // 랜덤 변화
-            },
-            rouletteStyle() {
-                return {
-                    "transform":"rotate("+this.angle+"deg)"
-                }
-            },
-            currentItem() {
-                return this.items[this.current];
-            },
-        },
-        methods: {
-            play() {
-                this.count++;
-                this.current = Math.floor(Math.random() * this.items.length);
-                this.history.push(this.currentItem.value);
-            }
-        },
-        created() {
-            //itemStyle 정의
-            this.items.forEach((el, idx) => {
-                //itemStyles 정의
-                this.itemStyles.push({
-                    "transform":"rotate(" + this.segment * idx + "deg)",
-                });
-                //lineStyles 정의
-                this.lineStyles.push({
-                    "transform":"rotate(" + (this.segment * idx + this.offset) + "deg)",
-                })
-            });
+import { useAuthStore } from '@/stores/auth';
+export default {
+    data() {
+        return {
+            items: [
+                { value: "10000" },
+                { value: "1000" },
+                { value: "30000" },
+                { value: "5000" },
+                { value: "꽝" },
+                { value: "한번 더!" }
+            ],
+            itemStyles: [],
+            lineStyles: [],
+            current: 0, // 실제 가리키는 데이터 위치
+            count: 0,
+            history: [],
         }
+    },
+    computed: {
+        segment() {
+            return 360 / this.items.length;
+        },
+        offset() {
+            return this.segment / 2;
+        },
+        angle() {
+            let temp = this.current * this.segment;
+            let randomOffset = Math.floor(Math.random() * this.segment) - this.offset - 1;
+            let cycle = this.count * 360 * 5; // 5바퀴
+            return -(temp + randomOffset + cycle); // 랜덤 변화
+        },
+        rouletteStyle() {
+            return {
+                "transform": "rotate(" + this.angle + "deg)"
+            }
+        },
+        currentItem() {
+            return this.items[this.current];
+        },
+    },
+    methods: {
+        play() {
+            this.count++;
+            this.current = Math.floor(Math.random() * this.items.length);
+            this.history.push(this.currentItem.value);
+
+            const authStore = useAuthStore();
+            const currentValue = this.currentItem.value;
+            
+
+            if (currentValue !== '꽝' && currentValue !== '한번 더!') {
+                const candyAmount = parseInt(currentValue, 10);
+                authStore.updateCottonCandy(candyAmount);
+            }else{
+                console.log('User 정보가 정의되지 않았습니다.');
+            }
+        }
+    },
+    created() {
+        // itemStyle 정의
+        this.items.forEach((el, idx) => {
+            // itemStyles 정의
+            this.itemStyles.push({
+                "transform": "rotate(" + this.segment * idx + "deg)",
+            });
+            // lineStyles 정의
+            this.lineStyles.push({
+                "transform": "rotate(" + (this.segment * idx + this.offset) + "deg)",
+            })
+        });
     }
+}
 </script>
+
 
 <style>
 
