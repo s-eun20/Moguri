@@ -9,7 +9,7 @@
         <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
           <template #button-content>
             <img
-              src="@/assets/img/너구리샘플.png"
+              src="@/assets/img/Moguri.png"
               alt="Profile Picture"
               class="profile-pic"
             />

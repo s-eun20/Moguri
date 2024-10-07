@@ -7,7 +7,7 @@
           <p>{{ spendingChangeMessage }}</p>
           <p>{{ topCategoryMessage }}</p>
         </div>
-        <img src="@/assets/img/너구리샘플.png" alt="Mascot" class="mascot-image" />
+        <img src="@/assets/img/Moguri.png" alt="Mascot" class="mascot-image" />
       </div>
     </div>
     
@@ -142,8 +142,8 @@ export default {
 }
 
 .mascot-image {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 110px;
   margin-top: 10px;
 }
 

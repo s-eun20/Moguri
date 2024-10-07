@@ -1,7 +1,7 @@
 <template>
   <div class="register-container">
     <div class="register-box">
-      <img src="@/assets/img/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+      <img src="@/assets/img/Moguri.png" alt="Moguri Logo" class="moguri-logo" />
       <h2 class="register-title">회원가입</h2>
       <form @submit.prevent="register" class="register-form">
         <div class="input-group">

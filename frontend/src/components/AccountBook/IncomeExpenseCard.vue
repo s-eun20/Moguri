@@ -13,6 +13,9 @@
       <div class="expense">
         <span>지출: -{{ formatCurrency(totalExpense) }}</span>
       </div>
+      <div class="savings">
+        <span>저축: +{{ formatCurrency(totalSavings) }}</span>
+      </div>
     </div>
     <div class="transactions">
       <div v-if="paginatedTransactions.length === 0">
@@ -33,21 +36,26 @@
           src="@/assets/img/expense.png"
           width="30px"
         />
+        <img
+          v-if="transaction.type === '저축'"
+          src="@/assets/img/savings.png"
+          width="30px"
+        />
         <div class="transaction-info">
           <span
             class="transaction-type"
-            :class="transaction.type === '수입' ? 'income' : 'expense'"
+            :class="getTransactionClass(transaction.type)"
           >
-            {{ transaction.category }}
+          {{ transaction.category === '-' ? '저축' : transaction.category }}
           </span>
           <span class="transaction-details">
             {{ transaction.description }}
           </span>
           <span
             class="transaction-amount"
-            :class="transaction.type === '수입' ? 'income' : 'expense'"
+            :class="getTransactionClass(transaction.type)"
           >
-            {{ transaction.type === '수입' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+            {{ getTransactionSign(transaction.type) }}{{ formatCurrency(transaction.amount) }}
           </span>
         </div>
         <div class="transaction-actions">
@@ -85,7 +93,6 @@ export default {
     const itemsPerPage = 5;
 
     const currentTransactions = computed(() => {
-      console.log("Current transactions:",  props.allTransactions);
       return showAllMode.value ? props.allTransactions : props.transactions;
     });
 
@@ -93,7 +100,6 @@ export default {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       const result = currentTransactions.value.slice(start, end);
-      console.log("Paginated transactions:", result);
       return result;
     });
 
@@ -112,9 +118,16 @@ export default {
         .filter((item) => item && item.type === '지출')
         .reduce((sum, item) => sum + (item.amount || 0), 0);
     });
+
+    const totalSavings = computed(() => {
+      return currentTransactions.value
+        .filter((item) => item && item.type === '저축')
+        .reduce((sum, item) => sum + (item.amount || 0), 0);
+    });
+
     const totalAssets = computed(() => {
       return props.allTransactions.reduce((total, transaction) => {
-        if (transaction.type === '수입') {
+        if (transaction.type === '수입' || transaction.type === '저축') {
           return total + transaction.amount;
         } else if (transaction.type === '지출') {
           return total - transaction.amount;
@@ -126,7 +139,6 @@ export default {
     watch(totalAssets, (newTotalAssets) => {
       emit('update:totalAssets', newTotalAssets);
     }, { immediate: true });
-
 
     const dayTitle = computed(() => {
       if (!props.selectedDate || props.selectedDate === '') return '날짜를 선택하세요';
@@ -178,7 +190,25 @@ export default {
     };
 
     const deleteTransaction = (accountBookId) => {
+      console.log(accountBookId);
       emit('delete', accountBookId);
+    };
+
+    const getTransactionClass = (type) => {
+      switch (type) {
+        case '수입':
+          return 'income';
+        case '지출':
+          return 'expense';
+        case '저축':
+          return 'savings';
+        default:
+          return '';
+      }
+    };
+
+    const getTransactionSign = (type) => {
+      return type === '지출' ? '-' : '+';
     };
 
     watch(() => props.selectedDate, () => {
@@ -192,6 +222,7 @@ export default {
       dayTitle,
       totalIncome,
       totalExpense,
+      totalSavings,
       paginatedTransactions,
       totalPages,
       formatCurrency,
@@ -201,6 +232,8 @@ export default {
       editTransaction,
       deleteTransaction,
       totalAssets,
+      getTransactionClass,
+      getTransactionSign,
     };
   },
 };

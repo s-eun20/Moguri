@@ -8,9 +8,17 @@
         </div>
         <div class="form-group">
           <label for="type">유형</label>
-          <select id="type" v-model="editedTransaction.type">
+          <select id="type" v-model="editedTransaction.type" @change="handleTypeChange">
             <option value="수입">수입</option>
             <option value="지출">지출</option>
+            <option value="저축">저축</option>
+          </select>
+        </div>
+        <div class="form-group" v-if="editedTransaction.type === '수입'">
+          <label for="incomeType">수입 유형</label>
+          <select id="incomeType" v-model="editedTransaction.category">
+            <option value="고정수입">고정수입</option>
+            <option value="부수입">부수입</option>
           </select>
         </div>
         <div class="form-group" v-if="editedTransaction.type === '지출'">
@@ -27,7 +35,7 @@
           <label for="description">거래 상세내역</label>
           <input type="text" id="description" v-model="editedTransaction.description" />
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="editedTransaction.type === '지출'">
           <label for="paymentMethod">결제 방법</label>
           <select id="paymentMethod" v-model="editedTransaction.paymentMethod">
             <option v-for="method in paymentMethods" :key="method" :value="method">{{ method }}</option>
@@ -57,6 +65,15 @@
         editedTransaction.value = { ...newTransaction };
       });
 
+      const handleTypeChange = () => {
+        // 저축일 경우 카테고리와 결제 방법을 초기화
+        if (editedTransaction.value.type === '저축') {
+          editedTransaction.value.category = null;
+          editedTransaction.value.paymentMethod = null;
+          editedTransaction.value.incomeType = null; // 수입 유형 초기화
+        }
+      };
+
       const updateTransaction = () => {
         emit('update', editedTransaction.value);
       };
@@ -71,6 +88,7 @@
         paymentMethods,
         updateTransaction,
         close,
+        handleTypeChange,
       };
     },
   };
