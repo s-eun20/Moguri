@@ -8,6 +8,11 @@
     font-weight: bold;
     font-size:18px;
   }
+  .savings {
+    color :#086d08;
+    font-weight: bold;
+    font-size:18px;
+  }
   h3 {
     text-align: center;
     margin-bottom: 20px;
@@ -29,7 +34,8 @@
   }
   
   .summary .income,
-  .summary .expense {
+  .summary .expense,
+  .summary .savings {
     padding: 10px 15px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
