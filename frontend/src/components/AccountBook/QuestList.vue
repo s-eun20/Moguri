@@ -6,8 +6,8 @@
         <button class="close-button" @click="$emit('close')">X</button>
       </div>
       <div class="category-tabs">
-        <button 
-          v-for="category in categories" 
+        <button
+          v-for="category in categories"
           :key="category"
           @click="selectedCategory = category"
           :class="{ active: selectedCategory === category }"
@@ -27,8 +27,12 @@
         </li>
       </ul>
       <div class="button-group">
-        <button @click="$emit('open-goal-modal')" class="add-button">직접 추가</button>
-        <button @click="addSelectedQuests" class="add-button">퀘스트 추가</button>
+        <button @click="$emit('open-goal-modal')" class="add-button">
+          저축 목표 추가
+        </button>
+        <button @click="addSelectedQuests" class="add-button">
+          퀘스트 추가
+        </button>
       </div>
     </div>
   </div>
@@ -38,33 +42,53 @@
 export default {
   props: {
     quests: Array,
-    previousMonthCategoryTotals: Object // 추가된 부분
+    previousMonthCategoryTotals: Object, // 추가된 부분
   },
   data() {
     return {
-      selectedCategory: '저축',
-      categories: ['저축', '식비', '교통비', '주거비', '통신비', '쇼핑', '건강'],
+      selectedCategory: "저축",
+      categories: [
+        "저축",
+        "식비",
+        "교통비",
+        "주거비",
+        "통신비",
+        "쇼핑",
+        "건강",
+      ],
       selectedQuests: [], // 선택된 퀘스트를 저장할 배열
     };
   },
   computed: {
     filteredQuests() {
-      return this.quests.filter(quest => quest.categoryName === this.selectedCategory);
+      return this.quests.filter(
+        (quest) => quest.categoryName === this.selectedCategory
+      );
     },
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(value);
+      return new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+      }).format(value);
     },
     addSelectedQuests() {
       const today = new Date();
-      this.selectedQuests.forEach(quest => {
-        const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
-        const endDate = new Date(today.setDate(today.getDate() + quest.questDays)).toISOString().split('T')[0];
+      this.selectedQuests.forEach((quest) => {
+        const startDate = today.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+        const endDate = new Date(
+          today.setDate(today.getDate() + quest.questDays)
+        )
+          .toISOString()
+          .split("T")[0];
         console.log(this.previousMonthCategoryTotals);
         // previousMonthAmount를 사용하여 newGoalAmount 계산
-        const previousMonthAmount = this.previousMonthCategoryTotals[quest.categoryName]; // 기본값 0
-        const newGoalAmount = previousMonthAmount - (previousMonthAmount * (quest.targetPercent / 100));
+        const previousMonthAmount =
+          this.previousMonthCategoryTotals[quest.categoryName]; // 기본값 0
+        const newGoalAmount =
+          previousMonthAmount -
+          previousMonthAmount * (quest.targetPercent / 100);
 
         const newGoal = {
           goalName: quest.questTitle,
@@ -73,13 +97,13 @@ export default {
           endDate: endDate,
           targetPercent: quest.targetPercent,
           currentAmount: quest.currentAmount,
-          goalAmount : newGoalAmount,
+          goalAmount: newGoalAmount,
           rewardAmount: quest.rewardAmount,
-          goalCategory: quest.categoryName
+          goalCategory: quest.categoryName,
         };
-        this.$emit('add-goal', newGoal);
+        this.$emit("add-goal", newGoal);
       });
-      this.$emit('close'); // 모달 닫기
+      this.$emit("close"); // 모달 닫기
     },
   },
 };
@@ -96,7 +120,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 
 .quest-list-modal {
@@ -106,7 +129,6 @@ export default {
   max-width: 80%;
   max-height: 80%;
   overflow-y: auto;
-  
 }
 
 h3 {
@@ -182,7 +204,6 @@ h3 {
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
-  
 }
 
 .add-button {

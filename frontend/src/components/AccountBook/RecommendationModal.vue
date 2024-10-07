@@ -7,13 +7,23 @@
       </div>
       <div class="mascot-message">
         <div class="speech-bubble">
-          <p><span class="highlight">{{ category }}</span> 카테고리에서 가장 많은 지출이 있었구리!</p>
-          <p><span class="highlight">{{ category }}</span> 지출 줄이기 퀘스트에 도전해 포인트도 받아가면 일석이조구리!</p>
+          <p>
+            <span class="highlight">{{ category }}</span> 카테고리에서 가장 많은
+            지출이 있었구리!
+          </p>
+          <p>
+            <span class="highlight">{{ category }}</span> 지출 줄이기 퀘스트에
+            도전해 포인트도 받아가면 일석이조구리!
+          </p>
         </div>
         <img src="@/assets/img/Moguri.png" alt="Mascot" class="mascot-image" />
       </div>
       <div class="quest-list">
-        <div v-for="quest in recommendedQuests" :key="quest.id" class="quest-item">
+        <div
+          v-for="quest in recommendedQuests"
+          :key="quest.id"
+          class="quest-item"
+        >
           <input type="checkbox" v-model="selectedQuests" :value="quest" />
           <div class="quest-info">
             <p class="title">{{ quest.questTitle }}</p>
@@ -33,27 +43,28 @@
 </template>
 
 <script>
-import { useGoalStore } from '@/stores/goalStore';
-import { ref } from 'vue'
+import { useGoalStore } from "@/stores/goalStore";
+import { ref } from "vue";
 
 export default {
   props: {
     category: String,
-    recommendedQuests: Array
+    recommendedQuests: Array,
   },
-  emits: ['close', 'add-quest'],
+  emits: ["close", "add-quest"],
   setup(props, { emit }) {
     const goalStore = useGoalStore();
     const selectedQuests = ref([]); // 선택된 퀘스트를 저장할 배열
 
-    
     const addSelectedQuests = async () => {
       for (const quest of selectedQuests.value) {
         try {
           const startDate = new Date(); // 현재 날짜
           const endDate = new Date(startDate);
-          const newGoalAmount = quest.previousMonthAmount - (quest.previousMonthAmount * (quest.targetPercent / 100));
-          
+          const newGoalAmount =
+            quest.previousMonthAmount -
+            quest.previousMonthAmount * (quest.targetPercent / 100);
+
           endDate.setDate(startDate.getDate() + quest.questDays); // questDays만큼 더하기
 
           await goalStore.addGoal({
@@ -62,25 +73,25 @@ export default {
             rewardAmount: quest.rewardAmount,
             targetPercent: quest.targetPercent,
             currentAmount: quest.currentAmount,
-            startDate: startDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
-            endDate: endDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
+            startDate: startDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
+            endDate: endDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
             goalAmount: newGoalAmount, // 추가: goalAmount 필드
-            goalCategory: quest.categoryName // 필요한 경우 카테고리 추가
+            goalCategory: quest.categoryName, // 필요한 경우 카테고리 추가
           });
         } catch (error) {
-          console.error('Error adding quest:', error);
+          console.error("Error adding quest:", error);
         }
       }
       // 퀘스트 추가 후 모달 닫기
-      emit('close'); // 수정: emit 사용
+      emit("close"); // 수정: emit 사용
     };
 
     return {
       selectedQuests,
-      addSelectedQuests
+      addSelectedQuests,
     };
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -165,7 +176,7 @@ export default {
 }
 
 .quest-reward {
-  margin-left: auto; 
+  margin-left: auto;
   font-weight: bold;
   color: #f7cb54;
 }
@@ -176,7 +187,8 @@ export default {
   margin-top: 20px;
 }
 
-.add-button, .close-button {
+.add-button,
+.close-button {
   padding: 10px 20px;
   margin-left: 10px;
   border: none;

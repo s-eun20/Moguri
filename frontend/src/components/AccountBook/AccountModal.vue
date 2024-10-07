@@ -37,9 +37,25 @@
       <div class="form-group">
         <label for="description">상세내역</label>
         <div class="input-wrapper">
-          <input type="text" id="description" v-model="description" @input="filterGoals" />
-          <ul v-if="type === '저축' && filteredGoals.length > 0 && description.trim() !== ''" class="goal-list">
-            <li v-for="goal in filteredGoals" :key="goal.goalName" @click="selectGoal(goal)">
+          <input
+            type="text"
+            id="description"
+            v-model="description"
+            @input="filterGoals"
+          />
+          <ul
+            v-if="
+              type === '저축' &&
+              filteredGoals.length > 0 &&
+              description.trim() !== ''
+            "
+            class="goal-list"
+          >
+            <li
+              v-for="goal in filteredGoals"
+              :key="goal.goalName"
+              @click="selectGoal(goal)"
+            >
               {{ goal.goalName }}
             </li>
           </ul>
@@ -49,7 +65,9 @@
         <label for="paymentMethod">결제 방법</label>
         <select id="paymentMethod" v-model="paymentMethod">
           <option value="">결제 방법 선택</option>
-          <option v-for="method in paymentMethods" :key="method">{{ method }}</option>
+          <option v-for="method in paymentMethods" :key="method">
+            {{ method }}
+          </option>
         </select>
       </div>
       <div class="buttons">
@@ -61,30 +79,37 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watch } from 'vue';
-import { useGoalStore } from '@/stores/goalStore';
+import { defineComponent, ref, computed, watch } from "vue";
+import { useGoalStore } from "@/stores/goalStore";
 
 export default defineComponent({
   props: {
-    isVisible: Boolean
+    isVisible: Boolean,
   },
   setup(props, { emit }) {
     const goalStore = useGoalStore();
-    
+
     const memberId = ref(1);
-    const transactionDate = ref('');
-    const type = ref('');
-    const category = ref('');
-    const incomeType = ref('');
+    const transactionDate = ref("");
+    const type = ref("");
+    const category = ref("");
+    const incomeType = ref("");
     const amount = ref(0);
-    const description = ref('');
-    const paymentMethod = ref('');
-    const categories = ref(['식비', '교통비', '건강', '쇼핑', '통신비','주거비']);
-    const paymentMethods = ref(['현금', '신용카드', '체크카드', '계좌이체']);
+    const description = ref("");
+    const paymentMethod = ref("");
+    const categories = ref([
+      "식비",
+      "교통비",
+      "건강",
+      "쇼핑",
+      "통신비",
+      "주거비",
+    ]);
+    const paymentMethods = ref(["현금", "신용카드", "체크카드", "계좌이체"]);
     const filteredGoals = ref([]);
 
     const handleTypeChange = async () => {
-      if (type.value === '저축'|| description.value.trim() === '') {
+      if (type.value === "저축" || description.value.trim() === "") {
         await goalStore.fetchGoals();
         filterGoals();
       } else {
@@ -93,12 +118,13 @@ export default defineComponent({
     };
 
     const filterGoals = () => {
-      if (type.value !== '저축') return;
+      if (type.value !== "저축") return;
 
       const searchText = description.value.toLowerCase().trim();
-      filteredGoals.value = goalStore.goals.filter(goal => 
-        goal.goalCategory === null && 
-        goal.goalName.toLowerCase().includes(searchText)
+      filteredGoals.value = goalStore.goals.filter(
+        (goal) =>
+          goal.goalCategory === null &&
+          goal.goalName.toLowerCase().includes(searchText)
       );
     };
 
@@ -110,33 +136,46 @@ export default defineComponent({
     watch(type, handleTypeChange);
 
     const closeModal = () => {
-      emit('close');
+      emit("close");
       resetForm();
     };
 
     const addTransaction = () => {
-  const newTransaction = {
-    memberId: memberId.value,
-    transactionDate: transactionDate.value,
-    type: type.value,
-    category: type.value === '지출' ? category.value : 
-              (type.value === '수입' ? incomeType.value : null), // 저축의 경우 category를 null로 설정
-    amount: amount.value,
-    description: description.value,
-    paymentMethod: type.value === '지출' ? paymentMethod.value : '',
-  };
-  emit('add', newTransaction);
-  console.log(newTransaction);
-  closeModal();
-};
+      const newTransaction = {
+        memberId: memberId.value,
+        transactionDate: transactionDate.value,
+        type: type.value,
+        category:
+          type.value === "지출"
+            ? category.value
+            : type.value === "수입"
+            ? incomeType.value
+            : null, // 저축의 경우 category를 null로 설정
+        amount: amount.value,
+        description: description.value,
+        paymentMethod: type.value === "지출" ? paymentMethod.value : "",
+      };
+      emit("add", newTransaction);
+      console.log(newTransaction);
+      if (type.value === "저축") {
+        const matchingGoal = goalStore.goals.find(
+          (goal) => goal.goalName === description.value
+        );
+        if (matchingGoal) {
+          matchingGoal.currentAmount += amount.value; // Update the current amount
+          goalStore.updateGoal(matchingGoal); // Call the API to update the goal
+        }
+      }
+      closeModal();
+    };
     const resetForm = () => {
-      transactionDate.value = '';
-      type.value = '';
-      category.value = '';
-      incomeType.value = '';
+      transactionDate.value = "";
+      type.value = "";
+      category.value = "";
+      incomeType.value = "";
       amount.value = 0;
-      description.value = '';
-      paymentMethod.value = '';
+      description.value = "";
+      paymentMethod.value = "";
       filteredGoals.value = [];
     };
 
@@ -157,11 +196,10 @@ export default defineComponent({
       selectGoal,
       closeModal,
       addTransaction,
-      resetForm
+      resetForm,
     };
-  }
+  },
 });
 </script>
 
-<style src="./Modal.css" scoped>
-</style>
+<style src="./Modal.css" scoped></style>
