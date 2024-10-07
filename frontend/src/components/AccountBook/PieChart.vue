@@ -131,6 +131,7 @@ export default {
 
       const options = {
         chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
+        legend: { visible: false },
         series: {
           dataLabels: {
             visible: true,

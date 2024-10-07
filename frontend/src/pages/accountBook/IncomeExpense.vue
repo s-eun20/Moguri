@@ -243,26 +243,26 @@ export default {
 
   :deep(.fc) {
   height: 100% !important;
-  font-size: 0.85em; /* 폰트 크기를 더 줄임 */
+  font-size: 0.85em; 
 }
 
-/* 헤더 (요일 표시) 부분의 패딩 줄임 */
+
 :deep(.fc-col-header-cell) {
   padding: 4px 0 !important;
 }
 
-/* 날짜 셀의 패딩 줄임 */
+
 :deep(.fc-daygrid-day) {
   padding: 1px !important;
 }
 
-/* 날짜 숫자 크기 줄임 */
+
 :deep(.fc-daygrid-day-number) {
   font-size: 0.9em;
   padding: 2px;
 }
 
-/* 이벤트 텍스트 크기 줄임 */
+
 :deep(.fc-event-title) {
   font-size: 0.85em;
 }
@@ -273,12 +273,12 @@ export default {
   }
   
   .calendar-container {
-    height: calc(65vh - 60px); /* 모바일에서 높이 더 줄임 */
+    height: calc(65vh - 60px); 
     max-height: 500px;
   }
 
   :deep(.fc) {
-    font-size: 0.75em; /* 모바일에서 폰트 크기 더 줄임 */
+    font-size: 0.75em;
   }
 }
 
@@ -295,5 +295,4 @@ export default {
   color: #4a4a4a;
 }
 
-/* ... 기존 스타일 ... */
 </style>

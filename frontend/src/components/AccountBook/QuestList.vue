@@ -82,14 +82,6 @@ export default {
         )
           .toISOString()
           .split("T")[0];
-        console.log(this.previousMonthCategoryTotals);
-        // previousMonthAmount를 사용하여 newGoalAmount 계산
-        const previousMonthAmount =
-          this.previousMonthCategoryTotals[quest.categoryName]; // 기본값 0
-        const newGoalAmount =
-          previousMonthAmount -
-          previousMonthAmount * (quest.targetPercent / 100);
-
         const newGoal = {
           goalName: quest.questTitle,
           description: quest.questDescription,
@@ -97,7 +89,7 @@ export default {
           endDate: endDate,
           targetPercent: quest.targetPercent,
           currentAmount: quest.currentAmount,
-          goalAmount: newGoalAmount,
+          goalAmount: quest.goalAmount,
           rewardAmount: quest.rewardAmount,
           goalCategory: quest.categoryName,
         };

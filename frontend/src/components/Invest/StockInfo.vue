@@ -178,7 +178,7 @@ export default {
       intervalId = setInterval(() => {
         updateStockPrice(stockStore.selectedStock);
         stockStore.setSelectedStock({...stockStore.selectedStock});
-      }, 5000);
+      }, 1000);
     };
 
     onMounted(() => {

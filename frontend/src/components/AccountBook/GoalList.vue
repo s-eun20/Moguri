@@ -8,7 +8,6 @@
     <table class="goal-table" v-if="props.activeTab === 'saving'">
       <thead>
         <tr>
-          <th>카테고리</th>
           <th>목표 제목</th>
           <th>기간</th>
           <th>목표 금액</th>
@@ -19,7 +18,6 @@
       </thead>
       <tbody>
         <tr v-for="goal in filteredGoals" :key="goal.goalId">
-          <td>{{ goal.goalCategory || "저축" }}</td>
           <td>{{ goal.goalName }}</td>
           <td>{{ formatDateRange(goal.startDate, goal.endDate) }}</td>
           <td>{{ formatCurrency(goal.goalAmount) }}</td>
@@ -34,7 +32,7 @@
             <span class="progress-text">{{ calculateProgress(goal) }}%</span>
           </td>
           <td>
-            <button @click="editGoal(goal.goalId)" class="edit-button">수정</button>
+            <button @click="editGoal(goal)" class="edit-button">수정</button>
             <button @click="deleteGoal(goal.goalId)" class="delete-button">삭제</button>
           </td>
         </tr>
@@ -52,7 +50,7 @@
     <table class="goal-table">
       <thead>
         <tr>
-          <th>카테고리</th>
+          <th v-if="props.activeTab === 'expense'">카테고리</th>
           <th>퀘스트 제목</th>
           <th>기간</th>
           <th v-if="props.activeTab === 'saving'">목표 금액</th>
@@ -64,7 +62,7 @@
       </thead>
       <tbody>
         <tr v-for="quest in filteredQuests" :key="quest.goalId">
-          <td>{{ quest.goalCategory || "저축" }}</td>
+          <td>{{ quest.goalCategory }}</td>
           <td>{{ quest.goalName }} {{ quest.description }}</td>
           <td>{{ formatDateRange(quest.startDate, quest.endDate) }}</td>
           <td>{{ formatCurrency(quest.goalAmount) }}</td>
@@ -81,6 +79,13 @@
         </tr>
       </tbody>
     </table>
+    <GoalEditModal
+      v-if="isModalVisible"
+      :isVisible="isModalVisible"
+      :goal="selectedGoal"
+      @close="closeModal"
+      @goal-updated="fetchGoals"
+    />
   </div>
 </template>
 
@@ -88,19 +93,38 @@
 import { useGoalStore } from "@/stores/goalStore";
 import { useAccountStore } from "@/stores/accountStore";
 import { onMounted, computed, ref, watch } from "vue";
+import GoalEditModal from "./GoalEditModal.vue";
 
 export default {
+  components: {
+    GoalEditModal,
+  },
   props: {
     title: String,
     activeTab: String,
   },
   setup(props) {
     const goalStore = useGoalStore();
-    const accountStore = useAccountStore(); // 가계부 스토어 인스턴스 생성
-
+    const accountStore = useAccountStore(); 
+    const isModalVisible = ref(false);
+    const selectedGoal = ref(null); 
     onMounted(() => {
-      goalStore.fetchGoals(); // 목표 데이터만 가져오기
+      fetchGoals(); 
     });
+
+    const fetchGoals = () => {
+      goalStore.fetchGoals(); 
+    };
+
+    const editGoal = (goal) => {
+      selectedGoal.value = goal; 
+      isModalVisible.value = true; 
+    };
+
+    const closeModal = () => {
+      isModalVisible.value = false;
+      selectedGoal.value = null; 
+    };
 
     const filteredGoals = computed(() => {
       return goalStore.goals.filter((goal) => {
@@ -108,14 +132,13 @@ export default {
         if (props.activeTab === "saving") {
           return goal.goalCategory === null && goal.rewardAmount === null;
         } else {
-          return false; // 지출 목표는 표시하지 않음
+          return false; 
         }
       });
     });
 
     const filteredQuests = computed(() => {
       return goalStore.goals.filter((goal) => {
-        // rewardAmount가 0이 아닌 경우 퀘스트로 간주
         if (props.activeTab === "saving") {
           return goal.goalCategory === null && goal.rewardAmount > 0;
         } else {
@@ -147,9 +170,6 @@ export default {
       return Math.round((goal.currentAmount / goal.goalAmount) * 100);
     };
 
-    const editGoal = (goalId) => {
-      console.log(`Edit goal with ID: ${goalId}`);
-    };
 
     const deleteGoal = (goalId) => {
       console.log(goalId);
@@ -158,7 +178,7 @@ export default {
       }
     };
 
-    // 거래가 추가될 때마다 currentAmount 업데이트
+    
     watch(
       () => accountStore.transactions,
       () => {
@@ -171,17 +191,15 @@ export default {
     );
 
     const updateCurrentAmount = (goalCategory) => {
-      // 해당 목표를 찾습니다.
       const goalToUpdate = goalStore.goals.find(
         (goal) => goal.goalCategory === goalCategory
       );
 
       if (goalToUpdate) {
-        // 목표의 시작일과 종료일을 가져옵니다.
         const startDate = new Date(goalToUpdate.startDate);
         const endDate = new Date(goalToUpdate.endDate);
 
-        // 해당 기간 내의 거래 금액을 계산합니다.
+        
         const totalAmount = accountStore.transactions
           .filter((transaction) => {
             const transactionDate = new Date(transaction.transactionDate);
@@ -193,15 +211,14 @@ export default {
           })
           .reduce((total, transaction) => total + transaction.amount, 0);
 
-        // 목표의 currentAmount 업데이트
         goalToUpdate.currentAmount = totalAmount;
 
-        // 목표 업데이트 API 호출
         goalStore.updateGoal(goalToUpdate);
       }
     };
 
     return {
+      closeModal,
       filteredGoals,
       filteredQuests,
       formatCurrency,
@@ -210,6 +227,9 @@ export default {
       editGoal,
       deleteGoal,
       props,
+      isModalVisible,
+      selectedGoal,
+      fetchGoals,
     };
   },
 };
