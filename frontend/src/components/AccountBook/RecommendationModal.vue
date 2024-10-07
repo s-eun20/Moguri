@@ -14,9 +14,10 @@
       </div>
       <div class="quest-list">
         <div v-for="quest in recommendedQuests" :key="quest.id" class="quest-item">
+          <input type="checkbox" v-model="selectedQuests" :value="quest" />
           <div class="quest-info">
-            <p class="title">{{ quest.title }}</p>
-            <p>{{ quest.description }}</p>
+            <p class="title">{{ quest.questTitle }}</p>
+            <p>{{ quest.questDescription }}</p>
             <p>기간: {{ quest.questDays }}일</p>
           </div>
           <div class="quest-reward">
@@ -25,8 +26,7 @@
         </div>
       </div>
       <div class="button-group">
-        <button class="add-button" @click="addQuest(recommendedQuests[0])">추가</button>
-        <button class="close-button" @click="$emit('close')">취소</button>
+        <button class="add-button" @click="addSelectedQuests">추가</button>
       </div>
     </div>
   </div>
@@ -34,6 +34,7 @@
 
 <script>
 import { useGoalStore } from '@/stores/goalStore';
+import { ref } from 'vue'
 
 export default {
   props: {
@@ -43,34 +44,40 @@ export default {
   emits: ['close', 'add-quest'],
   setup(props, { emit }) {
     const goalStore = useGoalStore();
+    const selectedQuests = ref([]); // 선택된 퀘스트를 저장할 배열
 
-    const addQuest = async (quest) => {
-      try {
-        const startDate = new Date(); // 현재 날짜
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + quest.questDays); // questDays만큼 더하기
+    
+    const addSelectedQuests = async () => {
+      for (const quest of selectedQuests.value) {
+        try {
+          const startDate = new Date(); // 현재 날짜
+          const endDate = new Date(startDate);
+          const newGoalAmount = quest.previousMonthAmount - (quest.previousMonthAmount * (quest.targetPercent / 100));
+          
+          endDate.setDate(startDate.getDate() + quest.questDays); // questDays만큼 더하기
 
-        await goalStore.addGoal({
-          goalName: quest.title,
-          description: quest.description,
-          //rewardAmount: quest.rewardAmount,
-          //questDays: quest.questDays,
-          targetPercent : 0,
-          currentAmount : 0,
-          startDate: startDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
-          endDate: endDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
-          goalAmount: quest.rewardAmount, // 추가: goalAmount 필드
-          goalCategory: quest.category // 필요한 경우 카테고리 추가
-        });
-        // 퀘스트 추가 후 모달 닫기
-        emit('close'); // 수정: emit 사용
-      } catch (error) {
-        console.error('Error adding quest:', error);
+          await goalStore.addGoal({
+            goalName: quest.questTitle,
+            description: quest.questDescription,
+            rewardAmount: quest.rewardAmount,
+            targetPercent: quest.targetPercent,
+            currentAmount: quest.currentAmount,
+            startDate: startDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
+            endDate: endDate.toISOString().split('T')[0], // YYYY-MM-DD 형식
+            goalAmount: newGoalAmount, // 추가: goalAmount 필드
+            goalCategory: quest.categoryName // 필요한 경우 카테고리 추가
+          });
+        } catch (error) {
+          console.error('Error adding quest:', error);
+        }
       }
+      // 퀘스트 추가 후 모달 닫기
+      emit('close'); // 수정: emit 사용
     };
 
     return {
-      addQuest
+      selectedQuests,
+      addSelectedQuests
     };
   }
 }
@@ -103,7 +110,6 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   font-weight: bold;
-  
 }
 
 .mascot-message {
@@ -134,19 +140,23 @@ export default {
 .quest-list {
   max-height: 300px;
   overflow-y: auto;
+  margin-bottom: 20px; /* 추가: 퀘스트 목록과 버튼 사이의 간격 */
 }
 
 .quest-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: center; /* 수직 정렬 */
   border-bottom: 1px solid #e0e0e0;
   padding: 10px 0;
 }
 
+.quest-item input[type="checkbox"] {
+  margin-right: 10px; /* 체크박스와 텍스트 간격 조정 */
+}
+
 .title {
   margin: 0 0 5px 0;
-  font-size : 22px;
+  font-size: 22px;
   font-weight: bold;
 }
 
@@ -155,8 +165,9 @@ export default {
 }
 
 .quest-reward {
+  margin-left: auto; 
   font-weight: bold;
-  color:#f7cb54;
+  color: #f7cb54;
 }
 
 .button-group {
@@ -174,12 +185,10 @@ export default {
 }
 
 .add-button {
-  background-color: #28a745;
-  color: white;
+  background-color: #ffdf9f;
 }
 
 .close-button {
-  background-color: #dc3545;
-  color: white;
+  background-color: #ffadad;
 }
 </style>

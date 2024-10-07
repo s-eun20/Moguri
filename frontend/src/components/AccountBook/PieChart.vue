@@ -42,10 +42,9 @@ import { PieChart } from "@toast-ui/chart";
 import { useAccountStore } from '@/stores/accountStore';
 import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
 import debounce from 'lodash/debounce';
-import { Colors } from "chart.js";
 
 export default {
-  setup(props, { emit }) {  // emit 추가
+  setup(props, { emit }) {
     const accountStore = useAccountStore();
     const currentDate = new Date();
     const selectedYear = ref(currentDate.getFullYear());
@@ -87,7 +86,36 @@ export default {
       monthlyData.value.reduce((total, item) => total + item.amount, 0)
     );
 
-    const selectedSeries = computed(() => monthlyData.value);
+    const previousMonthData = computed(() => {
+      const monthIndex = months.indexOf(selectedMonth.value);
+      const previousMonthIndex = monthIndex === 0 ? 11 : monthIndex - 1;
+      const previousYear = monthIndex === 0 ? selectedYear.value - 1 : selectedYear.value;
+      const startDate = new Date(previousYear, previousMonthIndex, 1);
+      const endDate = new Date(previousYear, previousMonthIndex + 1, 0);
+
+      const transactions = accountStore.transactions.filter(t => 
+        new Date(t.transactionDate) >= startDate && 
+        new Date(t.transactionDate) <= endDate &&
+        t.type === '지출' &&
+        t.category !== '수입'
+      );
+
+      return transactions.reduce((total, t) => total + t.amount, 0);
+    });
+
+    const selectedSeries = computed(() => {
+      const series = monthlyData.value;
+
+      // 가장 많이 쓴 카테고리 계산
+      if (series.length > 0) {
+        const topCategory = series.reduce((max, current) => (current.amount > max.amount ? current : max));
+        series.forEach(item => {
+          item.isTopSpending = item.name === topCategory.name; // 가장 많이 쓴 카테고리 표시
+        });
+      }
+
+      return series;
+    });
 
     const updateChart = debounce(async () => {
       await nextTick();
@@ -102,7 +130,7 @@ export default {
       };
 
       const options = {
-        chart: { width: 700, height: 400 },
+        chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
         series: {
           dataLabels: {
             visible: true,
@@ -126,65 +154,22 @@ export default {
         data,
         options,
       });
-    }, 400);
 
-    const previousMonthData = computed(() => {
-      const currentMonthIndex = months.indexOf(selectedMonth.value);
-      const previousMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
-      const previousYear = currentMonthIndex === 0 ? selectedYear.value - 1 : selectedYear.value;
-      const startDate = new Date(previousYear, previousMonthIndex, 1);
-      const endDate = new Date(previousYear, previousMonthIndex + 1, 0);
+      // 통계 업데이트 이벤트 발생
+      const spendingChangePercentage = previousMonthData.value === 0 ? 0 : ((totalExpenditure.value - previousMonthData.value) / previousMonthData.value) * 100;
 
-      return calculateMonthlyExpenditure(startDate, endDate);
-    });
-
-    const calculateMonthlyExpenditure = (startDate, endDate) => {
-      const transactions = accountStore.transactions.filter(t => 
-        new Date(t.transactionDate) >= startDate && 
-        new Date(t.transactionDate) <= endDate &&
-        t.type === '지출' &&
-        t.category !== '수입'
-      );
-
-      return transactions.reduce((total, t) => total + t.amount, 0);
-    };
-
-    const spendingChangePercentage = computed(() => {
-      if (previousMonthData.value === 0) return 0;
-      const change = ((totalExpenditure.value - previousMonthData.value) / previousMonthData.value) * 100;
-      return Number(change.toFixed(1));
-    });
-
-    const topSpendingCategory = computed(() => {
-      if (selectedSeries.value.length === 0) return '없음';
-      return selectedSeries.value.reduce((max, current) => 
-        max.amount > current.amount ? max : current
-      ).name;
-    });
-
-    const emitStatistics = () => {
       emit('update:statistics', {
         currentMonthSpending: totalExpenditure.value,
         previousMonthSpending: previousMonthData.value,
-        spendingChangePercentage: spendingChangePercentage.value,
-        topCategory: topSpendingCategory.value
+        spendingChangePercentage: Math.round(spendingChangePercentage),
+        topCategory: selectedSeries.value.length > 0 ? selectedSeries.value.reduce((max, current) => (current.amount > max.amount ? current : max)).name : '없음'
       });
-    };
-
-    watch([selectedYear, selectedMonth], () => {
-      updateChart();
-      nextTick(() => {
-        emitStatistics();
-      });
-    });
-
-    watch(() => accountStore.transactions, { deep: true });
+    }, 400);
 
     onMounted(async () => {
       try {
         await accountStore.fetchAllTransactions();
         updateChart();
-        emitStatistics();
       } catch (error) {
         console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
       } finally {
@@ -192,14 +177,15 @@ export default {
       }
     });
 
-    watch(topSpendingCategory, (newValue) => {
-  emit('update:topSpendingCategory', newValue);
-});
     onUnmounted(() => {
       if (chart) {
         chart.destroy();
         chart = null;
       }
+    });
+
+    watch([selectedYear, selectedMonth], () => {
+      updateChart();
     });
 
     return {
@@ -209,6 +195,7 @@ export default {
       months,
       selectedSeries,
       totalExpenditure,
+      previousMonthData,
       updateChart,
       isLoading,
       chartContainer,
@@ -219,15 +206,17 @@ export default {
 
 <style scoped>
 .PieChart {
-  font-family: 'HakgyoansimWoojuR', sans-serif;
- 
+  font-family: 'HakgyoansimWoojuR';
+  width: 100%;
 }
-
+.pie-chart {
+  width: 100%;
+  height: 400px;
+}
 .chart-content {
   display: flex;
   flex-direction: column;
 }
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -238,12 +227,10 @@ export default {
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
 .selector {
   display: flex;
   gap: 10px;
 }
-
 #year, #month {
   font-weight: bold;
   padding: 8px 12px;
@@ -256,17 +243,14 @@ export default {
   background-color: white;
   transition: all 0.3s ease;
 }
-
 #year:hover, #month:hover {
   border-color: #007bff;
 }
-
 #year:focus, #month:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
-
 .total-amount {
   font-size: 18px;
   font-weight: bold;
@@ -274,33 +258,24 @@ export default {
   padding: 8px 15px;
   border-radius: 8px;
 }
-
 .chart-and-category {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   gap: 20px;
 }
-
 .chart-container, .category-list {
   background-color: #ffffff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
-
 .chart-container {
-  width : 60%;
+  width: 75%;
 }
 .category-list {
-  width :40%;
+  width: 25%;
 }
-
-.pie-chart {
-  height: auto;
-
-}
-
 .category-list h3 {
   margin-top: 0;
   color: #333;
@@ -310,7 +285,6 @@ export default {
   padding-bottom: 10px;
   font-weight: bold;
 }
-
 ul {
   list-style-type: none;
   padding: 0;
@@ -318,7 +292,6 @@ ul {
   height: calc(400px - 50px); /* 차트 높이에서 제목 높이를 뺀 값 */
   overflow-y: auto;
 }
-
 li {
   font-size: 16px;
   margin-bottom: 10px;
@@ -330,41 +303,33 @@ li {
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-
 li:hover {
   background-color: #f0f4f8;
 }
-
 .category-name {
   font-weight: bold;
-  font-size :18px;
+  font-size: 18px;
 }
-
 .category-amount {
   font-size: 18px;
   color: #000000;
   font-weight: bold;
 }
-
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-
   .chart-and-category {
     flex-direction: column;
   }
-
   .chart-container, .category-list {
     max-width: 100%;
   }
-
   .pie-chart {
     height: 300px;
   }
-
   ul {
     height: auto;
     max-height: 300px;

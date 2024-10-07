@@ -131,9 +131,6 @@ export default {
     };
 
     const filteredTransactions = computed(() => {
-      console.log('Computed 실행 - 선택된 날짜:', selectedDate.value);
-      console.log('Computed 실행 - 전체 거래:', transactions.value);
-      
       if (!selectedDate.value) return [];
       
       let selectedDateString;
@@ -160,9 +157,7 @@ export default {
       } 
     });
 
-    watch(transactions, (newTransactions) => {
-      console.log('거래 내역이 업데이트되었습니다:', newTransactions);
-    });
+   
 
     return {
       transactions,
@@ -189,7 +184,7 @@ export default {
 
 <style scoped>
   .income-expense-page {
-    width: 70%;
+    width: 75%;
   margin: 0 auto;
   padding: 20px;
   font-family: 'HakgyoansimWoojuR';
@@ -212,7 +207,7 @@ export default {
 
   .calendar-container {
     height: calc(75vh - 70px); 
-  max-height: 600px;
+  max-height: 700px;
     flex: 2; 
     background-color: #fff;
     border-radius: 8px;
@@ -222,7 +217,7 @@ export default {
   }
 
   .transactions-container {
-    flex: 1.4; 
+    flex: 1.3; 
     overflow: auto; 
   }
 

@@ -1,7 +1,10 @@
 <template>
   <div class="quest-list-overlay">
     <div class="quest-list-modal">
-      <h3>퀘스트 목록</h3>
+      <div class="modal-header">
+        <h3>퀘스트 목록</h3>
+        <button class="close-button" @click="$emit('close')">X</button>
+      </div>
       <div class="category-tabs">
         <button 
           v-for="category in categories" 
@@ -13,10 +16,11 @@
         </button>
       </div>
       <ul class="quest-items">
-        <li v-for="quest in filteredQuests" :key="quest.id" @click="selectQuest(quest)">
+        <li v-for="quest in filteredQuests" :key="quest.questId">
+          <input type="checkbox" v-model="selectedQuests" :value="quest" />
           <div class="quest-info">
-            <span class="quest-name">{{ quest.title }}</span>
-            <span class="quest-description">{{ quest.description }}</span>
+            <span class="quest-name">{{ quest.questTitle }}</span>
+            <span class="quest-description">{{ quest.questDescription }}</span>
             <span class="quest-period">기간: {{ quest.questDays }}일</span>
             <span class="quest-reward">리워드: {{ quest.rewardAmount }}P</span>
           </div>
@@ -24,7 +28,7 @@
       </ul>
       <div class="button-group">
         <button @click="$emit('open-goal-modal')" class="add-button">직접 추가</button>
-        <button @click="$emit('close')" class="close-button">취소</button>
+        <button @click="addSelectedQuests" class="add-button">퀘스트 추가</button>
       </div>
     </div>
   </div>
@@ -34,47 +38,49 @@
 export default {
   props: {
     quests: Array,
+    previousMonthCategoryTotals: Object // 추가된 부분
   },
   data() {
     return {
       selectedCategory: '저축',
       categories: ['저축', '식비', '교통비', '주거비', '통신비', '쇼핑', '건강'],
+      selectedQuests: [], // 선택된 퀘스트를 저장할 배열
     };
   },
   computed: {
     filteredQuests() {
-      return this.quests.filter(quest => quest.category === this.selectedCategory);
+      return this.quests.filter(quest => quest.categoryName === this.selectedCategory);
     },
   },
   methods: {
-    selectQuest(quest) {
-      const today = new Date();
-      const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
-      const endDate = new Date(today.setDate(today.getDate() + quest.questDays)).toISOString().split('T')[0];
-
-      const newGoal = {
-        id: quest.id,
-        category: quest.category,
-        title: quest.title,
-        description: quest.description,
-        questDays: quest.questDays,
-        startDate: startDate,
-        endDate: endDate,
-        targetAmount: quest.targetAmount,
-        currentAmount: quest.currentAmount,
-        rewardAmount: quest.rewardAmount
-      };
-      this.$emit('add-goal', newGoal);
-      this.$emit('close');
+    formatCurrency(value) {
+      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(value);
     },
+    addSelectedQuests() {
+      const today = new Date();
+      this.selectedQuests.forEach(quest => {
+        const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+        const endDate = new Date(today.setDate(today.getDate() + quest.questDays)).toISOString().split('T')[0];
+        console.log(this.previousMonthCategoryTotals);
+        // previousMonthAmount를 사용하여 newGoalAmount 계산
+        const previousMonthAmount = this.previousMonthCategoryTotals[quest.categoryName]; // 기본값 0
+        const newGoalAmount = previousMonthAmount - (previousMonthAmount * (quest.targetPercent / 100));
 
-    formatDate(date) {
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
+        const newGoal = {
+          goalName: quest.questTitle,
+          description: quest.questDescription,
+          startDate: startDate,
+          endDate: endDate,
+          targetPercent: quest.targetPercent,
+          currentAmount: quest.currentAmount,
+          goalAmount : newGoalAmount,
+          rewardAmount: quest.rewardAmount,
+          goalCategory: quest.categoryName
+        };
+        this.$emit('add-goal', newGoal);
+      });
+      this.$emit('close'); // 모달 닫기
+    },
   },
 };
 </script>
@@ -90,6 +96,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .quest-list-modal {
@@ -99,11 +106,12 @@ export default {
   max-width: 80%;
   max-height: 80%;
   overflow-y: auto;
+  
 }
 
 h3 {
-  text-align: center;
-  margin-bottom: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .category-tabs {
@@ -113,15 +121,14 @@ h3 {
 }
 
 .category-tabs button {
+  font-weight: bold;
   padding: 10px;
   border: none;
-  background-color: #f0f0f0;
   cursor: pointer;
 }
 
 .category-tabs button.active {
   background-color: #ffc95d;
-  color: white;
 }
 
 .quest-items {
@@ -133,6 +140,8 @@ h3 {
   padding: 15px;
   border-bottom: 1px solid #e0e0e0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .quest-items li:hover {
@@ -140,18 +149,20 @@ h3 {
 }
 
 .quest-info {
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1; /* 추가: 공간을 차지하도록 설정 */
 }
 
 .quest-name {
+  font-size: 20px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
 .quest-description {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 16px;
   margin-bottom: 5px;
 }
 
@@ -171,6 +182,7 @@ h3 {
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
+  
 }
 
 .add-button {
@@ -179,14 +191,17 @@ h3 {
   border-radius: 5px;
   cursor: pointer;
   background-color: #ffdf9f;
-  color: rgb(0, 0, 0);
+  font-weight: bold;
 }
 
 .close-button {
+  margin-left: auto;
+  margin-bottom: 10px;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   background-color: #ffadad;
+  font-weight: bold;
 }
 </style>

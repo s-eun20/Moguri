@@ -34,13 +34,14 @@
       :category="topSpendingCategory"
       :recommendedQuests="recommendedQuests"
       @close="closeRecommendationModal"
-      @add-quest="addRecommendedQuest"
+      @add-quest="addQuest"
     />
 
     <QuestList
       v-if="isQuestListVisible"
       :quests="quests"
-      @add-goal="addGoal"
+      :previousMonthCategoryTotals="previousMonthCategoryTotals" 
+      @add-goal="addQuest"
       @close="closeQuestList"
       @open-goal-modal="openGoalModal"
     />
@@ -54,7 +55,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useGoalStore } from '@/stores/goalStore'
 import { useAccountStore } from '@/stores/accountStore'
 import GoalList from "@/components/AccountBook/GoalList.vue"
@@ -78,23 +79,9 @@ export default {
     const isRecommendationModalVisible = ref(false)
     const topSpendingCategory = ref(null)
     const recommendedQuests = ref([])
+    const previousMonthCategoryTotals = ref({}) // 저번 달 카테고리 금액을 저장할 ref
 
-    const quests = ref([
-      { id: 1, title: "가까운 거리는 대중교통 대신 자전거로!", description: "교통비 10% 줄이기", category: "교통비", targetAmount: 10.00, currentAmount: 0.00, questDays: 60, rewardAmount: 50000.00 },
-      { id: 2, title: "교통비 다이어트 시작!", description: "교통비 5% 줄이기", category: "교통비", targetAmount: 5.00, currentAmount: 0.00, questDays: 30, rewardAmount: 25000.00 },
-      { id: 3, title: "쇼핑 멈추고, 절약 시작!", description: "쇼핑 지출 10% 줄이기", category: "쇼핑", targetAmount: 10.00, currentAmount: 0.00, questDays: 60, rewardAmount: 40000.00 },
-      { id: 4, title: "장바구니 줄이기 도전!", description: "쇼핑 지출 5% 줄이기", category: "쇼핑", targetAmount: 5.00, currentAmount: 0.00, questDays: 14, rewardAmount: 20000.00 },
-      { id: 5, title: "가계 통신비 절약!", description: "통신비 5% 줄이기", category: "통신비", targetAmount: 5.00, currentAmount: 0.00, questDays: 30, rewardAmount: 15000.00 },
-      { id: 6, title: "데이터 절약으로 통신비 감소!", description: "통신비 10% 줄이기", category: "통신비", targetAmount: 10.00, currentAmount: 0.00, questDays: 30, rewardAmount: 30000.00 },
-      { id: 7, title: "내 집 비용 다이어트!", description: "주거비 3% 줄이기", category: "주거비", targetAmount: 3.00, currentAmount: 0.00, questDays: 30, rewardAmount: 25000.00 },
-      { id: 8, title: "살림살이 슬림하게!", description: "주거비 7% 줄이기", category: "주거비", targetAmount: 7.00, currentAmount: 0.00, questDays: 60, rewardAmount: 50000.00 },
-      { id: 9, title: "건강 유지하며 절약도 하기!", description: "건강 지출 5% 줄이기", category: "건강", targetAmount: 5.00, currentAmount: 0.00, questDays: 30, rewardAmount: 10000.00 },
-      { id: 10, title: "헬스장 대신 야외 운동 도전!", description: "건강 지출 10% 줄이기", category: "건강", targetAmount: 10.00, currentAmount: 0.00, questDays: 30, rewardAmount: 20000.00 },
-      { id: 11, title: "외식 줄이기 챌린지!", description: "식비 5% 줄이기", category: "식비", targetAmount: 5.00, currentAmount: 0.00, questDays: 14, rewardAmount: 30000.00 },
-      { id: 12, title: "집밥 요리왕 도전!", description: "식비 15% 줄이기", category: "식비", targetAmount: 15.00, currentAmount: 0.00, questDays: 30, rewardAmount: 60000.00 },
-      { id: 13, title: "작은 지출 큰 절약!", description: "기타 지출 10% 줄이기", category: "기타", targetAmount: 10.00, currentAmount: 0.00, questDays: 14, rewardAmount: 20000.00 },
-      { id: 14, title: "작은 습관 큰 변화!", description: "기타 지출 15% 줄이기", category: "기타", targetAmount: 15.00, currentAmount: 0.00, questDays: 60, rewardAmount: 35000.00 }
-    ])
+    const quests = ref([]) // 퀘스트 리스트를 API에서 가져올 것이므로 초기화
 
     const activeTabTitle = computed(() => activeTab.value === 'saving' ? '저축 목표' : '지출 목표')
 
@@ -113,31 +100,62 @@ export default {
       const currentYear = currentDate.getFullYear()
       const currentMonth = currentDate.getMonth()
       
+      // 현재 달의 거래 내역 필터링
       const transactions = accountStore.transactions.filter(t => 
         new Date(t.transactionDate).getFullYear() === currentYear &&
         new Date(t.transactionDate).getMonth() === currentMonth &&
         t.type === '지출'
       )
 
+      // 카테고리별 총액 계산
       const categoryTotals = transactions.reduce((acc, t) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount
         return acc
       }, {})
 
+      // 가장 많이 지출한 카테고리 계산
       topSpendingCategory.value = Object.entries(categoryTotals).reduce((a, b) => a[1] > b[1] ? a : b)[0]
       
-      recommendedQuests.value = quests.value.filter(quest => quest.category === topSpendingCategory.value)
+      // 저번 달의 카테고리별 금액 계산
+      previousMonthCategoryTotals.value = calculatePreviousMonthCategoryTotals(currentYear, currentMonth)
+
+      // 추천 퀘스트 필터링
+      recommendedQuests.value = quests.value.filter(quest => quest.categoryName === topSpendingCategory.value)
+
+      // 추천 퀘스트에 저번 달 카테고리 금액 추가
+      recommendedQuests.value.forEach(quest => {
+        quest.previousMonthAmount = previousMonthCategoryTotals.value[quest.categoryName] || 0
+      })
+
+      console.log(recommendedQuests.value)
       
       if (recommendedQuests.value.length > 0) {
         isRecommendationModalVisible.value = true
       }
     }
 
+    // 저번 달 카테고리별 금액 계산 함수
+    const calculatePreviousMonthCategoryTotals = (year, month) => {
+      const previousMonth = month === 0 ? 11 : month - 1
+      const previousYear = month === 0 ? year - 1 : year
+
+      const transactions = accountStore.transactions.filter(t => 
+        new Date(t.transactionDate).getFullYear() === previousYear &&
+        new Date(t.transactionDate).getMonth() === previousMonth &&
+        t.type === '지출'
+      )
+
+      return transactions.reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount
+        return acc
+      }, {})
+    }
+
     const closeRecommendationModal = () => {
       isRecommendationModalVisible.value = false
     }
 
-    const addRecommendedQuest = (quest) => {
+    const addQuest = (quest) => {
       goalStore.addGoal(quest)
       closeRecommendationModal()
     }
@@ -166,6 +184,10 @@ export default {
     onMounted(async () => {
       await goalStore.fetchGoals()
       await accountStore.fetchAllTransactions()
+      await goalStore.fetchQuests(); // 퀘스트 데이터 가져오기
+      console.log(goalStore.goalquests);
+      quests.value = goalStore.goalquests; 
+      recommendedQuests.value = goalStore.goalquests; 
       await calculateTopSpendingCategory()
     })
 
@@ -178,6 +200,7 @@ export default {
       topSpendingCategory,
       recommendedQuests,
       quests,
+      previousMonthCategoryTotals, // 추가된 부분
       openModal,
       closeModal,
       openQuestList,
@@ -185,7 +208,7 @@ export default {
       openGoalModal,
       showRecommendationModal,
       closeRecommendationModal,
-      addRecommendedQuest
+      addQuest
     }
   }
 }
@@ -246,7 +269,7 @@ export default {
 
 .add-goal-btn {
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #ffadad;
   color: #000000;
   border: none;
   border-radius: 5px;

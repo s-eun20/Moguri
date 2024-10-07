@@ -46,7 +46,7 @@
             class="transaction-type"
             :class="getTransactionClass(transaction.type)"
           >
-            {{ transaction.category || '저축' }}
+          {{ transaction.category === '-' ? '저축' : transaction.category }}
           </span>
           <span class="transaction-details">
             {{ transaction.description }}
@@ -93,7 +93,6 @@ export default {
     const itemsPerPage = 5;
 
     const currentTransactions = computed(() => {
-      console.log("Current transactions:",  props.allTransactions);
       return showAllMode.value ? props.allTransactions : props.transactions;
     });
 
@@ -101,7 +100,6 @@ export default {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       const result = currentTransactions.value.slice(start, end);
-      console.log("Paginated transactions:", result);
       return result;
     });
 
