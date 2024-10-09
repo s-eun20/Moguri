@@ -3,15 +3,15 @@
     <h1 class="page-title">매도/매수</h1>
     <div class="content-wrapper">
       <div class="stock-info-container">
-        <StockInfo />
+        <StockInfo @updateCurrentPrice="updateCurrentPrice" />
       </div>
       <div class="trade-form-container">
-        <TradeForm />
+        <TradeForm :currentPrice="currentPrice" />
       </div>
     </div>
     <div class="stock-holding-container">
-      <StockHolding :stockName="'삼성전자'" :currentPrice="63300" />
-      </div>
+      <StockHolding :stockName="'삼성전자'" :currentPrice="currentPrice" />
+    </div>
   </div>
 </template>
 
@@ -25,6 +25,17 @@ export default {
     StockInfo,
     TradeForm,
     StockHolding
+  },
+  data() {
+    return {
+      currentPrice: 0 // Initialize currentPrice
+    };
+  },
+  methods: {
+    updateCurrentPrice(price) {
+      console.log('현재 가격 업데이트:', price);
+      this.currentPrice = price; // Update currentPrice
+    }
   }
 };
 </script>

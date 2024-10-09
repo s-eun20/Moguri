@@ -12,7 +12,7 @@
       </div>
       <div class="form-group">
         <label>{{ tradeType === 'buy' ? '매수가격' : '매도가격' }}</label>
-        <input type="number" v-model="orderPrice" />
+        <input type="text" v-model="orderPrice"/>
       </div>
       <div class="form-group">
         <label>주문총액</label>
@@ -49,11 +49,17 @@
 
 <script>
 export default {
+  props: {
+    currentPrice: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       tradeType: 'buy',
       orderQuantity: 0,
-      orderPrice: 0,
+      orderPrice: 0, // 초기값을 0으로 설정
       showingHistory: false,
       tradeHistory: [
         { type: 'buy', stockName: '삼성전자', quantity: 10, price: 63000, date: '2023-05-01' },
@@ -67,6 +73,18 @@ export default {
       return this.orderQuantity * this.orderPrice;
     }
   },
+  mounted() {
+    // 로컬 스토리지에서 selectedStock 불러오기
+    const savedStock = localStorage.getItem('selectedStock');
+    if (savedStock) {
+      const stockData = JSON.parse(savedStock);
+      this.orderPrice = stockData.currentPrice; // selectedStock의 currentPrice로 초기화
+    } else {
+      this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
+    }
+    console.log("Current Price in TradeForm.vue:", this.orderPrice); 
+  },
+ 
   methods: {
     setTradeType(type) {
       this.tradeType = type;
@@ -74,7 +92,7 @@ export default {
     },
     resetForm() {
       this.orderQuantity = 0;
-      this.orderPrice = 0;
+      this.orderPrice = this.currentPrice; 
     },
     placeOrder() {
       const trade = {
@@ -88,16 +106,25 @@ export default {
       // 여기에 실제 주문 처리 로직을 추가할 수 있습니다.
       this.$emit('updateBalance', this.newBalance);
       this.resetForm();
+      // 주문 가격을 로컬 스토리지에 저장
+      localStorage.setItem('orderPrice', this.orderPrice);
     },
     showHistory() {
-    this.showingHistory = !this.showingHistory;
-    if (this.showingHistory) {
-      this.tradeType = null;
+      this.showingHistory = !this.showingHistory;
+      if (this.showingHistory) {
+        this.tradeType = null;
+      }
     }
-  }
+  },
+  
+  watch: {
+    currentPrice(newPrice) {
+      this.orderPrice = newPrice; 
+    }
   }
 }
 </script>
+
 
 <style scoped>
 .trade-form {

@@ -58,7 +58,7 @@
     },
     setup(props, { emit }) {
       const editedTransaction = ref({ ...props.transaction });
-      const categories = ['식비', '교통비', '건강', '쇼핑', '통신비'];
+      const categories = ['식비', '교통비', '건강', '쇼핑', '통신비','주거비'];
       const paymentMethods = ['현금', '신용카드', '체크카드', '계좌이체'];
 
       watch(() => props.transaction, (newTransaction) => {

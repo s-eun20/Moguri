@@ -18,7 +18,7 @@
       <ul class="quest-items">
         <li v-for="quest in filteredQuests" :key="quest.questId">
           <input type="checkbox" v-model="selectedQuests" :value="quest" />
-          <div class="quest-info">
+          <div class="quest-info">                                                              
             <span class="quest-name">{{ quest.questTitle }}</span>
             <span class="quest-description">{{ quest.questDescription }}</span>
             <span class="quest-period">기간: {{ quest.questDays }}일</span>

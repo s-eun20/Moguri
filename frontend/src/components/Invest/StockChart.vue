@@ -53,6 +53,9 @@ export default {
     let chart = null;
 
     const updateChart = async () => {
+      if (!props.stockCode || props.stockCode.trim() === '') {
+        return; 
+      }
       await stockStore.fetchStockChart(props.stockCode, selectedPeriod.value);
       const data = stockStore.chartData;
 
@@ -134,9 +137,7 @@ export default {
       updateChart();
     });
 
-    watch(() => props.stockCode, () => {
-      updateChart();
-    });
+ 
 
     return {
       selectedPeriod,

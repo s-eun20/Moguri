@@ -12,6 +12,7 @@ export const useStockStore = defineStore('stock', {
     lastPrices: {}, // 각 종목의 마지막으로 조회한 가격을 저장
   }),
 
+
   actions: {
     // 보유종목 조회
     async fetchHoldings() {
@@ -27,6 +28,7 @@ export const useStockStore = defineStore('stock', {
 
     async fetchStockChart(stockCode, period = 'DAY') {
       try {
+        console.log(stockCode);
         const response = await axios.get(`http://localhost:8080/api/stocks/chart/${stockCode}?period=${period}`);
         if (response.data.returnCode === '0000') {
           this.chartData = this.processChartData(response.data.data);
@@ -38,6 +40,28 @@ export const useStockStore = defineStore('stock', {
         console.error('차트 데이터 로딩 실패:', error);
         this.error = '차트 데이터를 불러오는데 실패했습니다.';
         this.chartData = null;
+      }
+    },
+    async fetchLatestStockData(stockCode) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/stocks/chart/${stockCode}?period=DAY`);
+        if (response.data.returnCode === '0000') {
+          const latestData = response.data.data[0]; // 가장 최신 데이터
+          return {
+            date: latestData.stckBsopDate,
+            open: parseFloat(latestData.stckOprc),
+            high: parseFloat(latestData.stckHgpr),
+            low: parseFloat(latestData.stckLwpr),
+            close: parseFloat(latestData.stckClpr),
+            volume: parseInt(latestData.acmlVol)
+          };
+        } else {
+          throw new Error(response.data.returnMessage);
+        }
+      } catch (error) {
+        console.error('최신 데이터 조회 실패:', error);
+        this.error = '최신 데이터를 불러오는데 실패했습니다.';
+        return null;
       }
     },
 
@@ -60,7 +84,10 @@ export const useStockStore = defineStore('stock', {
       try {
         const response = await axios.get(`http://localhost:8080/api/stocks/price/${stockCode}`);
         if (response.data.returnCode === '0000') {
-          return parseFloat(response.data.data);
+          return {
+            currentPrice: parseFloat(response.data.data.stck_prpr),
+            priceChangePercent: parseFloat(response.data.data.prdy_ctrt),
+          };
         } else {
           throw new Error(response.data.returnMessage);
         }

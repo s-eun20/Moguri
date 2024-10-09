@@ -27,7 +27,6 @@
         <div class="stock-price">
           {{ selectedStock.currentPrice.toLocaleString() }}
           <span :class="['price-change', selectedStock.priceChange > 0 ? 'positive' : 'negative']">
-            {{ selectedStock.priceChange > 0 ? '+' : '' }}{{ selectedStock.priceChange.toLocaleString() }} 
             ({{ selectedStock.priceChangePercent }}%)
           </span>
         </div>
@@ -71,10 +70,23 @@ export default {
   components: {
     StockChart
   },
-  setup() {
+  setup(_, { emit }) {
     const stockStore = useStockStore();
     const searchQuery = ref('');
     let intervalId = null;
+
+    const selectedStock = ref({
+      name: '',
+      code: '',
+      currentPrice: 0,
+      priceChange: 0,
+      priceChangePercent: 0,
+      openPrice: 0,
+      highPrice: 0,
+      lowPrice: 0,
+      volume: 0,
+    });
+    
 
     const stocks = [
       { 
@@ -157,38 +169,44 @@ export default {
       // 실시간 검색을 위해 별도의 함수 호출 없이 computed 속성 사용
     };
 
-    const updateStockPrice = (stock) => {
-      const previousPrice = stock.currentPrice;
-      const randomChange = Math.floor(Math.random() * (previousPrice * 0.02)) - (previousPrice * 0.01); // 현재가의 ±1% 범위 내에서 변동
-      stock.currentPrice = Math.max(previousPrice + randomChange, 1);
-      stock.priceChange = stock.currentPrice - previousPrice;
-      stock.priceChangePercent = ((stock.priceChange / previousPrice) * 100).toFixed(2);
-    };
-
     const selectStock = async (stock) => {
-      updateStockPrice(stock);
-      await stockStore.setSelectedStock({...stock});
-      searchQuery.value = '';
-      localStorage.setItem('selectedStock', JSON.stringify(stock));
+  const priceData = await stockStore.fetchCurrentPrice(stock.code); // stockStore에서 호출
+  if (priceData) {
+    // 가장 최신 데이터 가져오기
+    const latestData = await stockStore.fetchLatestStockData(stock.code); // stockStore에서 호출
+    if (latestData) {
+      selectedStock.value = {
+        ...stock,
+        currentPrice: priceData.currentPrice,
+        priceChangePercent: priceData.priceChangePercent,
+        openPrice: latestData.open, // 시가
+        highPrice: latestData.high, // 고가
+        lowPrice: latestData.low, // 저가
+        volume: latestData.volume // 거래량
+      };
+      emit('updateCurrentPrice', priceData.currentPrice); 
+      await stockStore.setSelectedStock({ ...selectedStock.value });
+      localStorage.setItem('selectedStock', JSON.stringify(selectedStock.value)); 
+    }
+  }
+  searchQuery.value = '';
 
-      // 이전 인터벌 제거
-      if (intervalId) clearInterval(intervalId);
+  // 이전 인터벌 제거
+  if (intervalId) clearInterval(intervalId);
 
-      // 새로운 5초 인터벌 설정
-      intervalId = setInterval(() => {
-        updateStockPrice(stockStore.selectedStock);
-        stockStore.setSelectedStock({...stockStore.selectedStock});
-      }, 1000);
-    };
-
+  // 새로운 3초 인터벌 설정
+  intervalId = setInterval(async () => {
+    const updatedPriceData = await stockStore.fetchCurrentPrice(stock.code); 
+    if (updatedPriceData) {
+      selectedStock.value.currentPrice = updatedPriceData.currentPrice;
+      selectedStock.value.priceChangePercent = updatedPriceData.priceChangePercent;
+    }
+  }, 3000); // 3초마다 업데이트
+};
     onMounted(() => {
       const savedStock = localStorage.getItem('selectedStock');
       if (savedStock) {
-        const parsedStock = JSON.parse(savedStock);
-        const stockToUpdate = stocks.find(s => s.code === parsedStock.code);
-        if (stockToUpdate) {
-          selectStock(stockToUpdate);
-        }
+        selectedStock.value = JSON.parse(savedStock); 
       }
     });
 
@@ -201,7 +219,7 @@ export default {
       searchStocks,
       selectStock,
       filteredStocks,
-      selectedStock: computed(() => stockStore.selectedStock),
+      selectedStock,
     };
   },
 };

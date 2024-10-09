@@ -58,6 +58,7 @@
           <th v-if="props.activeTab === 'saving'">현재 저축 현황</th>
           <th v-if="props.activeTab === 'expense'">현재 지출 현황</th>
           <th>리워드</th>
+          <th>작업</th>
         </tr>
       </thead>
       <tbody>
@@ -76,6 +77,9 @@
             <span class="progress-text">{{ calculateProgress(quest) }}%</span>
           </td>
           <td>{{ formatCurrency(quest.rewardAmount) }}</td>
+          <td>
+            <button @click="deleteGoal(quest.goalId)" class="delete-button">삭제</button>
+          </td>
         </tr>
       </tbody>
     </table>
