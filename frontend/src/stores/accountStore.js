@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';  // auth 스토어 가져오기
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
@@ -12,15 +13,23 @@ export const useAccountStore = defineStore('account', {
   actions: {
     // 거래 내역 조회
     async fetchTransactions(page = 0, limit = 30) {
+      const authStore = useAuthStore(); // auth 스토어에서 memberId 가져오기
+      const memberId = authStore.state.user.memberId; // 로그인된 사용자의 memberId
+
       try {
         const response = await axios.get('/api/accountbook', {
-          params: { page, limit }
+          params: { page, limit, memberId }
         });
+
         if (response.data.returnCode === '0000') {
-          this.transactions = response.data.data.contents;
-          this.totalCount = response.data.data.totalCount;
-          this.totalPage = response.data.data.totalPage;
-          this.currentPage = response.data.data.pageRequest.page;
+          if (!response.data.data.accountBooks || !Array.isArray(response.data.data.accountBooks)) {
+            throw new Error('거래 내역이 없습니다.');
+          }
+
+          this.transactions = response.data.data.accountBooks;
+          this.totalItems = response.data.data.totalCount;
+          this.totalPages = Math.ceil(this.totalItems / limit);
+          this.currentPage = page;
         } else {
           throw new Error(response.data.returnMessage || '거래 내역을 가져오는데 실패했습니다.');
         }
@@ -31,16 +40,19 @@ export const useAccountStore = defineStore('account', {
     },
 
     async fetchAllTransactions() {
+      const authStore = useAuthStore(); // auth 스토어에서 memberId 가져오기
+      const memberId = authStore.state.user.memberId;
+
       try {
         let allTransactions = [];
         let currentPage = 0;
         let hasMorePages = true;
 
         while (hasMorePages) {
-          await this.fetchTransactions(currentPage);
+          await this.fetchTransactions(currentPage, 30); // memberId는 fetchTransactions 안에서 처리
           allTransactions = [...allTransactions, ...this.transactions];
           currentPage++;
-          hasMorePages = currentPage < this.totalPage;
+          hasMorePages = currentPage < this.totalPages;
         }
 
         this.transactions = allTransactions;
@@ -53,8 +65,13 @@ export const useAccountStore = defineStore('account', {
 
     // 개별 거래 내역 조회
     async fetchTransaction(accountBookId) {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
+
       try {
-        const response = await axios.get(`http://localhost:8080/api/accountbook/${accountBookId}`);
+        const response = await axios.get(`http://localhost:8080/api/accountbook/${accountBookId}`, {
+          params: { memberId }
+        });
         return response.data.data;
       } catch (error) {
         console.error('Error fetching transaction:', error);
@@ -63,35 +80,38 @@ export const useAccountStore = defineStore('account', {
 
     // 거래 내역 추가
     async addTransaction(newTransaction) {
-      try {
-        console.log('Sending transaction data:', newTransaction); // 로그 추가
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
 
-        const response = await axios.post('/api/accountbook', newTransaction, {
+      try {
+        const response = await axios.post('/api/accountbook', { ...newTransaction, memberId }, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        console.log('Server response:', response.data); // 로그 추가
-
         if (response.data.returnCode === '0000') {
-          console.log('Transaction added successfully');
           await this.fetchAllTransactions();
         } else {
           console.error('Error adding transaction:', response.data.returnMessage);
         }
       } catch (error) {
         console.error('Error adding transaction:', error.response ? error.response.data : error.message);
-        throw error; // 에러를 다시 던져서 호출한 곳에서 처리할 수 있게 함
+        throw error;
       }
     },
 
     // 거래 내역 수정
     async updateTransaction(updatedTransaction) {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
+
       try {
-        const response = await axios.patch(`/api/accountbook/${updatedTransaction.accountBookId}`, updatedTransaction);
+        const response = await axios.patch(`http://localhost:8080/api/accountbook/${updatedTransaction.accountBookId}`, updatedTransaction, {
+          params: { memberId }
+        });
+
         if (response.data.returnCode === '0000') {
-          // 성공적으로 업데이트된 경우, 로컬 상태도 업데이트
           const index = this.transactions.findIndex(t => t.accountBookId === updatedTransaction.accountBookId);
           if (index !== -1) {
             this.transactions[index] = updatedTransaction;
@@ -106,33 +126,16 @@ export const useAccountStore = defineStore('account', {
       }
     },
 
-
-    // 저축 목표 삭제
-    async deleteSavingGoal(memberId, goalId) {
-      try {
-        await axios.delete(`http://localhost:8080/api/account/goal/${memberId}/${goalId}`);
-        this.savingGoals = this.savingGoals.filter(goal => goal.goalId !== goalId);
-      } catch (error) {
-        console.error('Error deleting saving goal:', error);
-      }
-    },
-
-    // 통계 정보 조회
-    async fetchStatistics(startDate, endDate) {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/account`, {
-          params: { startDate, endDate },
-        });
-        this.statistics = response.data; // 통계 데이터 저장
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-
+    // 거래 내역 삭제
     async deleteTransaction(accountBookId) {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
+
       try {
-        console.log(accountBookId)
-        const response = await axios.delete(`/api/accountbook/${accountBookId}`);
+        const response = await axios.delete(`http://localhost:8080/api/accountbook/${accountBookId}`, {
+          params: { memberId }
+        });
+
         if (response.data.returnCode === '0000') {
           await this.fetchAllTransactions();
           return true;
@@ -146,15 +149,11 @@ export const useAccountStore = defineStore('account', {
     },
   },
 
-
   getters: {
     filteredTransactions: (state) => (selectedDate) => {
-      console.log('필터링 시도 - 선택된 날짜:', selectedDate);
-      console.log('필터링 전 전체 거래 내역:', state.transactions);
-      
       if (!selectedDate) return [];
-      
-      const filtered = state.transactions.filter(transaction => {
+
+      return state.transactions.filter(transaction => {
         const transactionDate = new Date(transaction.transactionDate);
         return transactionDate.toDateString() === selectedDate.toDateString();
       });

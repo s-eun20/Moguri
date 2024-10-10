@@ -3,7 +3,7 @@
     <div class="modal-overlay" v-if="showModal" @click.self="closeModal">
       <div class="login-box">
         <button class="close-modal" @click="closeModal">&times;</button> <!-- 오른쪽 상단에 닫기 버튼 추가 -->
-        <img src="@/assets/img/너구리샘플.png" alt="Moguri Logo" class="moguri-logo" />
+        <img src="@/assets/img/Moguri.png" alt="Moguri Logo" class="moguri-logo" />
         <h2 class="login-title">로그인</h2>
         <form @submit.prevent="login" class="login-form">
           <div class="input-group">

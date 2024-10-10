@@ -84,9 +84,9 @@ export default {
       isAddModalVisible.value = false;
     };
 
-    const addTransaction = async (newTransaction) => {
+    const addTransaction = async (newTransaction, memberId) => {
       try {
-        await accountStore.addTransaction(newTransaction);
+        await accountStore.addTransaction(newTransaction,memberId);
         closeAddModal();
       } catch (error) {
         console.error('거래 추가 중 오류가 발생했습니다:', error);
