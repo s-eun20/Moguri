@@ -54,18 +54,15 @@ export default {
   emits: ["close", "add-quest"],
   setup(props, { emit }) {
     const goalStore = useGoalStore();
-    const selectedQuests = ref([]); // 선택된 퀘스트를 저장할 배열
+    const selectedQuests = ref([]);
 
     const addSelectedQuests = async () => {
       for (const quest of selectedQuests.value) {
         try {
-          const startDate = new Date(); // 현재 날짜
+          const startDate = new Date(); 
           const endDate = new Date(startDate);
-          const newGoalAmount =
-            quest.previousMonthAmount -
-            quest.previousMonthAmount * (quest.targetPercent / 100);
-
-          endDate.setDate(startDate.getDate() + quest.questDays); // questDays만큼 더하기
+    
+          endDate.setDate(startDate.getDate() + quest.questDays); 
 
           await goalStore.addGoal({
             goalName: quest.questTitle,
@@ -73,10 +70,10 @@ export default {
             rewardAmount: quest.rewardAmount,
             targetPercent: quest.targetPercent,
             currentAmount: quest.currentAmount,
-            startDate: startDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
-            endDate: endDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
-            goalAmount: newGoalAmount, // 추가: goalAmount 필드
-            goalCategory: quest.categoryName, // 필요한 경우 카테고리 추가
+            startDate: startDate.toISOString().split("T")[0], 
+            endDate: endDate.toISOString().split("T")[0],
+            goalAmount: quest.goalAmount, 
+            goalCategory: quest.categoryName, 
           });
         } catch (error) {
           console.error("Error adding quest:", error);

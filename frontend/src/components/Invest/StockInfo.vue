@@ -2,49 +2,62 @@
   <div class="stock-info-page">
     <div class="stock-search">
       <div class="search-container">
-        <input 
-          v-model="searchQuery" 
+        <input
+          v-model="searchQuery"
           @input="searchStocks"
-          placeholder="주식 종목 검색" 
+          placeholder="주식 종목 검색"
           class="search-input"
         />
-        <img 
-          src="@/assets/img/search.png" 
-          alt="Search" 
-          class="search-icon" 
-        />
+        <img src="@/assets/img/search.png" alt="Search" class="search-icon" />
       </div>
       <ul v-if="filteredStocks.length > 0" class="search-results">
-        <li v-for="stock in filteredStocks" :key="stock.code" @click="selectStock(stock)">
+        <li
+          v-for="stock in filteredStocks"
+          :key="stock.code"
+          @click="selectStock(stock)"
+        >
           {{ stock.name }} ({{ stock.code }})
         </li>
       </ul>
     </div>
-      
+
     <div v-if="selectedStock" class="stock-detail">
       <div class="stock-header">
-        <h2>{{ selectedStock.name }} <span class="stock-code">{{ selectedStock.code }}</span></h2>
+        <h2>
+          {{ selectedStock.name }}
+          <span class="stock-code">{{ selectedStock.code }}</span>
+        </h2>
         <div class="stock-price">
           {{ selectedStock.currentPrice.toLocaleString() }}
-          <span :class="['price-change', selectedStock.priceChange > 0 ? 'positive' : 'negative']">
-            {{ selectedStock.priceChange > 0 ? '+' : '' }}{{ selectedStock.priceChange.toLocaleString() }} 
+          <span
+            :class="[
+              'price-change',
+              selectedStock.priceChange > 0 ? 'positive' : 'negative',
+            ]"
+          >
             ({{ selectedStock.priceChangePercent }}%)
           </span>
         </div>
       </div>
-      
+
       <div class="stock-info-grid">
         <div class="info-item">
           <span class="label">시가</span>
-          <span class="value">{{ selectedStock.openPrice.toLocaleString() }}</span>
+          <span class="value">{{
+            selectedStock.openPrice.toLocaleString()
+          }}</span>
         </div>
         <div class="info-item">
           <span class="label">고가</span>
-          <span class="value">{{ selectedStock.highPrice.toLocaleString() }}</span>
+          <span class="value">{{
+            selectedStock.highPrice.toLocaleString()
+          }}</span>
         </div>
         <div class="info-item">
           <span class="label">저가</span>
-          <span class="value">{{ selectedStock.lowPrice.toLocaleString() }}</span>
+          <span class="value">{{
+            selectedStock.lowPrice.toLocaleString()
+          }}</span>
         </div>
         <div class="info-item">
           <span class="label">거래량</span>
@@ -52,7 +65,7 @@
         </div>
       </div>
 
-      <StockChart 
+      <StockChart
         v-if="selectedStock"
         :stockName="selectedStock.name"
         :stockCode="selectedStock.code"
@@ -63,23 +76,35 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useStockStore } from '@/stores/stockStore';
-import StockChart from './StockChart.vue';
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useStockStore } from "@/stores/stockStore";
+import StockChart from "./StockChart.vue";
 
 export default {
   components: {
-    StockChart
+    StockChart,
   },
-  setup() {
+  setup(_, { emit }) {
     const stockStore = useStockStore();
-    const searchQuery = ref('');
+    const searchQuery = ref("");
     let intervalId = null;
 
+    const selectedStock = ref({
+      name: "",
+      code: "",
+      currentPrice: 0,
+      priceChange: 0,
+      priceChangePercent: 0,
+      openPrice: 0,
+      highPrice: 0,
+      lowPrice: 0,
+      volume: 0,
+    });
+
     const stocks = [
-      { 
-        code: '005930', 
-        name: '삼성전자', 
+      {
+        code: "005930",
+        name: "삼성전자",
         currentPrice: 63300,
         priceChange: -1300,
         priceChangePercent: -2.01,
@@ -88,9 +113,9 @@ export default {
         lowPrice: 63100,
         volume: 9800000,
       },
-      { 
-        code: '000660', 
-        name: 'SK하이닉스', 
+      {
+        code: "000660",
+        name: "SK하이닉스",
         currentPrice: 120000,
         priceChange: 2000,
         priceChangePercent: 1.69,
@@ -100,8 +125,8 @@ export default {
         volume: 3200000,
       },
       {
-        code: '035720',
-        name: '카카오',
+        code: "035720",
+        name: "카카오",
         currentPrice: 56800,
         priceChange: 1200,
         priceChangePercent: 2.16,
@@ -111,8 +136,8 @@ export default {
         volume: 2500000,
       },
       {
-        code: '005380',
-        name: '현대차',
+        code: "005380",
+        name: "현대차",
         currentPrice: 185000,
         priceChange: -3000,
         priceChangePercent: -1.59,
@@ -122,8 +147,8 @@ export default {
         volume: 1200000,
       },
       {
-        code: '051910',
-        name: 'LG화학',
+        code: "051910",
+        name: "LG화학",
         currentPrice: 720000,
         priceChange: 15000,
         priceChangePercent: 2.13,
@@ -133,11 +158,11 @@ export default {
         volume: 350000,
       },
       {
-        code: '035420',
-        name: 'NAVER',
+        code: "035420",
+        name: "NAVER",
         currentPrice: 198000,
         priceChange: -2000,
-        priceChangePercent: -1.00,
+        priceChangePercent: -1.0,
         openPrice: 199500,
         highPrice: 200000,
         lowPrice: 197500,
@@ -146,10 +171,11 @@ export default {
     ];
 
     const filteredStocks = computed(() => {
-      if (searchQuery.value.trim() === '') return [];
-      return stocks.filter(stock => 
-        stock.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        stock.code.includes(searchQuery.value)
+      if (searchQuery.value.trim() === "") return [];
+      return stocks.filter(
+        (stock) =>
+          stock.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          stock.code.includes(searchQuery.value)
       );
     });
 
@@ -157,39 +183,64 @@ export default {
       // 실시간 검색을 위해 별도의 함수 호출 없이 computed 속성 사용
     };
 
-    const updateStockPrice = (stock) => {
-      const previousPrice = stock.currentPrice;
-      const randomChange = Math.floor(Math.random() * (previousPrice * 0.02)) - (previousPrice * 0.01); // 현재가의 ±1% 범위 내에서 변동
-      stock.currentPrice = Math.max(previousPrice + randomChange, 1);
-      stock.priceChange = stock.currentPrice - previousPrice;
-      stock.priceChangePercent = ((stock.priceChange / previousPrice) * 100).toFixed(2);
+    const selectStock = async (stock) => {
+      try {
+        const priceData = await stockStore.fetchCurrentPrice(stock.code);
+        if (priceData) {
+          const latestData = await stockStore.fetchLatestStockData(stock.code);
+          if (latestData) {
+            selectedStock.value = {
+              ...stock,
+              currentPrice: priceData.currentPrice,
+              priceChangePercent: priceData.priceChangePercent,
+              openPrice: latestData.open,
+              highPrice: latestData.high,
+              lowPrice: latestData.low,
+              volume: latestData.volume,
+            };
+            emit("updateCurrentPrice", priceData.currentPrice);
+            await stockStore.setSelectedStock({ ...selectedStock.value });
+            localStorage.setItem(
+              "selectedStock",
+              JSON.stringify(selectedStock.value)
+            );
+          }
+        }
+        searchQuery.value = "";
+
+        // 이전 인터벌 제거
+        if (intervalId) clearInterval(intervalId);
+
+        // 새로운 3초 인터벌 설정
+        intervalId = setInterval(updateStockPrice, 3000); // updateStockPrice 함수 사용
+      } catch (error) {
+        console.error("Error selecting stock:", error);
+      }
     };
 
-    const selectStock = async (stock) => {
-      updateStockPrice(stock);
-      await stockStore.setSelectedStock({...stock});
-      searchQuery.value = '';
-      localStorage.setItem('selectedStock', JSON.stringify(stock));
-
-      // 이전 인터벌 제거
-      if (intervalId) clearInterval(intervalId);
-
-      // 새로운 5초 인터벌 설정
-      intervalId = setInterval(() => {
-        updateStockPrice(stockStore.selectedStock);
-        stockStore.setSelectedStock({...stockStore.selectedStock});
-      }, 5000);
+    const updateStockPrice = async () => {
+      try {
+        const updatedPriceData = await stockStore.fetchCurrentPrice(
+          selectedStock.value.code
+        );
+        if (updatedPriceData) {
+          selectedStock.value.currentPrice = updatedPriceData.currentPrice;
+          selectedStock.value.priceChangePercent =
+            updatedPriceData.priceChangePercent;
+          emit("updateCurrentPrice", updatedPriceData.currentPrice);
+        }
+      } catch (error) {
+        console.error("Error fetching updated price:", error);
+      }
     };
 
     onMounted(() => {
-      const savedStock = localStorage.getItem('selectedStock');
+      const savedStock = localStorage.getItem("selectedStock");
       if (savedStock) {
-        const parsedStock = JSON.parse(savedStock);
-        const stockToUpdate = stocks.find(s => s.code === parsedStock.code);
-        if (stockToUpdate) {
-          selectStock(stockToUpdate);
-        }
+        selectedStock.value = JSON.parse(savedStock);
       }
+      updateStockPrice();
+      intervalId = setInterval(updateStockPrice, 3000);
     });
 
     onUnmounted(() => {
@@ -201,7 +252,7 @@ export default {
       searchStocks,
       selectStock,
       filteredStocks,
-      selectedStock: computed(() => stockStore.selectedStock),
+      selectedStock,
     };
   },
 };
@@ -222,7 +273,7 @@ export default {
   color: #000000;
   margin-bottom: 30px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #FFCC00;
+  border-bottom: 2px solid #ffcc00;
   width: 1600px;
 }
 
@@ -319,8 +370,12 @@ export default {
   margin-left: 10px;
 }
 
-.positive { color: #4caf50; }
-.negative { color: #f44336; }
+.positive {
+  color: #4caf50;
+}
+.negative {
+  color: #f44336;
+}
 
 .stock-info-grid {
   display: grid;

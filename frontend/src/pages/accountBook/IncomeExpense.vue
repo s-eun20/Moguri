@@ -183,8 +183,8 @@ export default {
 </script>
 
 <style scoped>
-  .income-expense-page {
-    width: 75%;
+.income-expense-page {
+  width: 75%;
   margin: 0 auto;
   padding: 20px;
   font-family: 'HakgyoansimWoojuR';
@@ -195,90 +195,100 @@ export default {
 .page-title {
   text-align: center;
   margin-bottom: 30px;
-  font-size : 35px;
+  font-size: 35px;
   color: #333;
   font-weight: bold;
 }
-  .content-wrapper {
-    display: flex;
-    gap: 30px;
-    margin-top: 30px;
-  }
 
-  .calendar-container {
-    height: calc(75vh - 70px); 
-  max-height: 700px;
-    flex: 2; 
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    overflow: auto;
-  }
-
-  .transactions-container {
-    flex: 1.3; 
-    overflow: auto; 
-  }
-
-  .add-transaction-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #FFCC00;
-    color: #000000;
-    border: none;
-    border-radius: 50px;
-    padding: 15px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  .add-transaction-btn:hover {
-    background-color: #E6B800;
-  }
-
-  :deep(.fc) {
-  height: 100% !important;
-  font-size: 0.85em; /* 폰트 크기를 더 줄임 */
+.content-wrapper {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
 }
 
-/* 헤더 (요일 표시) 부분의 패딩 줄임 */
+.calendar-container {
+  height: calc(75vh - 70px);
+  max-height: 700px;
+  flex: 2;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow: auto;
+  min-width: 300px; /* 최소 너비 설정 */
+}
+
+.transactions-container {
+  flex: 1.3;
+  overflow: auto; /* 스크롤 가능하도록 설정 */
+  min-width: 300px; /* 최소 너비 설정 */
+  min-height: 400px; /* 최소 높이 설정 */
+}
+
+.add-transaction-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #FFCC00;
+  color: #000000;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.add-transaction-btn:hover {
+  background-color: #E6B800;
+}
+
+:deep(.fc) {
+  height: 100% !important;
+  font-size: 0.85em;
+}
+
 :deep(.fc-col-header-cell) {
   padding: 4px 0 !important;
 }
 
-/* 날짜 셀의 패딩 줄임 */
 :deep(.fc-daygrid-day) {
   padding: 1px !important;
 }
 
-/* 날짜 숫자 크기 줄임 */
 :deep(.fc-daygrid-day-number) {
   font-size: 0.9em;
   padding: 2px;
 }
 
-/* 이벤트 텍스트 크기 줄임 */
 :deep(.fc-event-title) {
   font-size: 0.85em;
 }
 
+/* 반응형 스타일 추가 */
 @media (max-width: 768px) {
   .income-expense-page {
     padding: 10px;
   }
-  
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
   .calendar-container {
-    height: calc(65vh - 60px); /* 모바일에서 높이 더 줄임 */
+    height: calc(65vh - 60px);
     max-height: 500px;
+    margin-bottom: 20px; 
+  }
+
+  .transactions-container {
+    flex: none; 
   }
 
   :deep(.fc) {
-    font-size: 0.75em; /* 모바일에서 폰트 크기 더 줄임 */
+    font-size: 0.75em;
   }
 }
 
@@ -294,6 +304,4 @@ export default {
   font-weight: bold;
   color: #4a4a4a;
 }
-
-/* ... 기존 스타일 ... */
 </style>

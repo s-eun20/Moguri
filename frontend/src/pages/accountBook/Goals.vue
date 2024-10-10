@@ -40,7 +40,6 @@
     <QuestList
       v-if="isQuestListVisible"
       :quests="quests"
-      :previousMonthCategoryTotals="previousMonthCategoryTotals" 
       @add-goal="addQuest"
       @close="closeQuestList"
       @open-goal-modal="openGoalModal"
@@ -79,9 +78,8 @@ export default {
     const isRecommendationModalVisible = ref(false)
     const topSpendingCategory = ref(null)
     const recommendedQuests = ref([])
-    const previousMonthCategoryTotals = ref({}) // 저번 달 카테고리 금액을 저장할 ref
 
-    const quests = ref([]) // 퀘스트 리스트를 API에서 가져올 것이므로 초기화
+    const quests = ref([]) 
 
     const activeTabTitle = computed(() => activeTab.value === 'saving' ? '저축 목표' : '지출 목표')
 
@@ -90,7 +88,6 @@ export default {
       if (recommendedQuests.value.length > 0) {
         isRecommendationModalVisible.value = true
       } else {
-        // 추천 퀘스트가 없을 경우 사용자에게 알림
         alert('현재 추천할 퀘스트가 없습니다.')
       }
     }
@@ -99,33 +96,19 @@ export default {
       const currentDate = new Date()
       const currentYear = currentDate.getFullYear()
       const currentMonth = currentDate.getMonth()
-      
-      // 현재 달의 거래 내역 필터링
+
       const transactions = accountStore.transactions.filter(t => 
         new Date(t.transactionDate).getFullYear() === currentYear &&
         new Date(t.transactionDate).getMonth() === currentMonth &&
         t.type === '지출'
       )
 
-      // 카테고리별 총액 계산
       const categoryTotals = transactions.reduce((acc, t) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount
         return acc
       }, {})
-
-      // 가장 많이 지출한 카테고리 계산
       topSpendingCategory.value = Object.entries(categoryTotals).reduce((a, b) => a[1] > b[1] ? a : b)[0]
-      
-      // 저번 달의 카테고리별 금액 계산
-      previousMonthCategoryTotals.value = calculatePreviousMonthCategoryTotals(currentYear, currentMonth)
-
-      // 추천 퀘스트 필터링
       recommendedQuests.value = quests.value.filter(quest => quest.categoryName === topSpendingCategory.value)
-
-      // 추천 퀘스트에 저번 달 카테고리 금액 추가
-      recommendedQuests.value.forEach(quest => {
-        quest.previousMonthAmount = previousMonthCategoryTotals.value[quest.categoryName] || 0
-      })
 
       console.log(recommendedQuests.value)
       
@@ -134,23 +117,7 @@ export default {
       }
     }
 
-    // 저번 달 카테고리별 금액 계산 함수
-    const calculatePreviousMonthCategoryTotals = (year, month) => {
-      const previousMonth = month === 0 ? 11 : month - 1
-      const previousYear = month === 0 ? year - 1 : year
-
-      const transactions = accountStore.transactions.filter(t => 
-        new Date(t.transactionDate).getFullYear() === previousYear &&
-        new Date(t.transactionDate).getMonth() === previousMonth &&
-        t.type === '지출'
-      )
-
-      return transactions.reduce((acc, t) => {
-        acc[t.category] = (acc[t.category] || 0) + t.amount
-        return acc
-      }, {})
-    }
-
+  
     const closeRecommendationModal = () => {
       isRecommendationModalVisible.value = false
     }
@@ -200,7 +167,6 @@ export default {
       topSpendingCategory,
       recommendedQuests,
       quests,
-      previousMonthCategoryTotals, // 추가된 부분
       openModal,
       closeModal,
       openQuestList,
@@ -282,7 +248,7 @@ export default {
   border-radius: 10px;
   padding: 2%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  flex-grow: 1; /* 남은 공간을 채우도록 설정 */
+  flex-grow: 1; 
   display: flex;
   flex-direction: column;
 }
@@ -293,10 +259,10 @@ export default {
 }
 
 .goal-list-container {
-  min-height: 30vh; /* 뷰포트 높이의 30% */
-  max-height: 70vh; /* 뷰포트 높이의 70% */
+  min-height: 30vh; 
+  max-height: 70vh; 
   overflow-y: auto;
-  flex-grow: 1; /* 남은 공간을 채우도록 설정 */
+  flex-grow: 1; 
 }
 
 .mascot-message {

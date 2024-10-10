@@ -88,7 +88,7 @@ export default {
         chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
         xAxis: { title: '월' },
         yAxis: { title: '금액 (원)' },
-        legend: { align: 'bottom' },
+        legend: { visible: false },
         series: {
           dataLabels: { visible: true },
           colors: chartColors,

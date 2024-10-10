@@ -173,8 +173,8 @@ export default defineComponent({
           (goal) => goal.goalName === description.value
         );
         if (matchingGoal) {
-          matchingGoal.currentAmount += amount.value; // Update the current amount
-          goalStore.updateGoal(matchingGoal); // Call the API to update the goal
+          matchingGoal.currentAmount += amount.value; 
+          goalStore.updateGoal(matchingGoal); 
         }
       }
       closeModal();

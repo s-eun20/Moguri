@@ -131,6 +131,7 @@ export default {
 
       const options = {
         chart: { width: chartContainer.value.clientWidth, height: chartContainer.value.clientHeight },
+        legend: { visible: false },
         series: {
           dataLabels: {
             visible: true,
@@ -209,14 +210,17 @@ export default {
   font-family: 'HakgyoansimWoojuR';
   width: 100%;
 }
+
 .pie-chart {
   width: 100%;
-  height: 400px;
+  height: 400px; /* 기본 높이 설정 */
 }
+
 .chart-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 세로 방향으로 정렬 */
 }
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -227,10 +231,12 @@ export default {
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
+
 .selector {
   display: flex;
   gap: 10px;
 }
+
 #year, #month {
   font-weight: bold;
   padding: 8px 12px;
@@ -243,14 +249,17 @@ export default {
   background-color: white;
   transition: all 0.3s ease;
 }
+
 #year:hover, #month:hover {
   border-color: #007bff;
 }
+
 #year:focus, #month:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
+
 .total-amount {
   font-size: 18px;
   font-weight: bold;
@@ -258,24 +267,29 @@ export default {
   padding: 8px 15px;
   border-radius: 8px;
 }
+
 .chart-and-category {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   gap: 20px;
 }
+
 .chart-container, .category-list {
   background-color: #ffffff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
+
 .chart-container {
   width: 75%;
 }
+
 .category-list {
   width: 25%;
 }
+
 .category-list h3 {
   margin-top: 0;
   color: #333;
@@ -285,6 +299,7 @@ export default {
   padding-bottom: 10px;
   font-weight: bold;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
@@ -292,6 +307,7 @@ ul {
   height: calc(400px - 50px); /* 차트 높이에서 제목 높이를 뺀 값 */
   overflow-y: auto;
 }
+
 li {
   font-size: 16px;
   margin-bottom: 10px;
@@ -303,36 +319,45 @@ li {
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
+
 li:hover {
   background-color: #f0f4f8;
 }
+
 .category-name {
   font-weight: bold;
   font-size: 18px;
 }
+
 .category-amount {
   font-size: 18px;
   color: #000000;
   font-weight: bold;
 }
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
+
   .chart-and-category {
-    flex-direction: column;
+    flex-direction: column; /* 세로 방향으로 변경 */
   }
+
   .chart-container, .category-list {
-    max-width: 100%;
+    max-width: 100%; /* 최대 너비를 100%로 설정 */
+    width: 100%; /* 너비를 100%로 설정 */
   }
+
   .pie-chart {
-    height: 300px;
+    height: 300px; /* 차트 높이 조정 */
   }
+
   ul {
-    height: auto;
-    max-height: 300px;
+    height: auto; /* 높이를 자동으로 조정 */
+    max-height: 300px; /* 최대 높이 설정 */
   }
 }
 </style>
