@@ -41,8 +41,10 @@
       </ul>
     </div>
     <div v-if="!showingHistory" class="form-actions">
-      <button @click="resetForm">초기화</button>
-      <button @click="placeOrder">{{ tradeType === 'buy' ? '매수' : '매도' }}</button>
+      <button class="reset" @click="resetForm">초기화</button>
+      <button :class="tradeType === 'buy' ? 'buy' : 'sell'" @click="placeOrder">
+        {{ tradeType === 'buy' ? '매수' : '매도' }}
+      </button>
     </div>
   </div>
 </template>
@@ -147,18 +149,22 @@ export default {
   padding: 10px;
   font-size: 16px;
   font-weight: bold;
-}
-
-.buy, .sell, .history {
-  background-color: #f7ea81;
   border-radius: 5px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.buy:hover, .sell:hover, .history:hover {
-  background-color: #f5e456;
+.buy {
+  background-color: #b4e1ec; 
+}
+
+.sell {
+  background-color: #f5c3c7; 
+}
+
+.history {
+  background-color: #f7ea81; /* 기존 색상 유지 */
 }
 
 .form {
@@ -172,7 +178,7 @@ export default {
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-size :23px;
+  font-size: 23px;
 }
 
 .form-group input {
@@ -190,16 +196,35 @@ export default {
 .form-actions button {
   width: 45%;
   padding: 10px;
-  background-color: #ffe3ae;
   font-size: 16px;
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.trade-buttons button.active {
-  opacity: 0.7;
+.reset {
+  background-color: #ece9e3; 
+}
+
+.reset:hover {
+  background-color: #ffd54f; 
+}
+
+.form-actions button.buy {
+  background-color: #b4e1ec; 
+}
+
+.form-actions button.sell {
+  background-color: #f5c3c7; 
+}
+
+.form-actions button.buy:hover {
+  background-color: #a0d3e0; 
+}
+
+.form-actions button.sell:hover {
+  background-color: #f1b2b5; 
 }
 
 .history-list {
@@ -223,7 +248,7 @@ export default {
   padding: 15px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .trade-info {
@@ -257,8 +282,8 @@ export default {
 }
 
 .trade-type.buy {
-  background-color: #e6f7ff;
-  color: #1890ff;
+  background-color: #e9fafa;
+  color : #5aa9bd;
 }
 
 .trade-type.sell {
@@ -270,6 +295,7 @@ export default {
   font-size: 20px;
   color: #333;
 }
+
 .trade-price {
   font-size: 17px;
   color: #e10202;
