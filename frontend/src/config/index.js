@@ -18,8 +18,7 @@ export default {
     ],
   
     eventMenus: [
-      { title: '출석', url: '/event/check' },
-      { title: '룰렛', url: '/event/roulette' },
+      { title: '출석/ 룰렛', url: '/event/check' },
       { title: '금융 퀴즈', url: '/event/quiz' }
     ],
 
