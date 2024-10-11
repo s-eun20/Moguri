@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export const useStockStore = defineStore('stock', {
   state: () => ({
+    searchResults : [],
     holdings: [],
     investmentKing: null,
     selectedStock: null,
@@ -14,6 +15,22 @@ export const useStockStore = defineStore('stock', {
 
 
   actions: {
+
+    // 주식 검색
+    async fetchStocks(keyword) {
+      try {
+        console.log("Searching for:", keyword); // 검색어 로그
+        const response = await axios.get(`http://localhost:8080/api/stocks?keyword=${keyword}`);
+        if (response.data.returnCode === '0000') {
+          this.searchResults = response.data.data.contents; 
+        } else {
+          throw new Error(response.data.returnMessage);
+        }
+      } catch (error) {
+        console.error('주식 검색 실패:', error);
+        this.error = '주식 검색에 실패했습니다.';
+      }
+    },
     // 보유종목 조회
     async fetchHoldings() {
       try {

@@ -5,6 +5,7 @@
         <input
           v-model="searchQuery"
           @input="searchStocks"
+          @keydown.enter="searchStocks"
           placeholder="주식 종목 검색"
           class="search-input"
         />
@@ -13,29 +14,44 @@
       <ul v-if="filteredStocks.length > 0" class="search-results">
         <li
           v-for="stock in filteredStocks"
-          :key="stock.code"
+          :key="stock.stockCode"
           @click="selectStock(stock)"
         >
-          {{ stock.name }} ({{ stock.code }})
+          {{ stock.stockNameKR }} ({{ stock.stockCode }})
+          <span class="market-type" style="float: right">{{
+            stock.marketType
+          }}</span>
         </li>
       </ul>
+      <p v-else-if="searchQuery && filteredStocks.length === 0">
+        검색 결과가 없습니다.
+      </p>
     </div>
 
     <div v-if="selectedStock" class="stock-detail">
       <div class="stock-header">
         <h2>
-          {{ selectedStock.name }}
-          <span class="stock-code">{{ selectedStock.code }}</span>
+          {{ selectedStock.stockNameKR }}
+          <span class="stock-code">{{ selectedStock.stockCode }}</span>
+          <span class="stock-marketType">{{ selectedStock.marketType }}</span>
         </h2>
         <div class="stock-price">
-          {{ selectedStock.currentPrice.toLocaleString() }}
+          {{
+            selectedStock.currentPrice
+              ? selectedStock.currentPrice.toLocaleString()
+              : "N/A"
+          }}
           <span
             :class="[
               'price-change',
               selectedStock.priceChange > 0 ? 'positive' : 'negative',
             ]"
           >
-            ({{ selectedStock.priceChangePercent }}%)
+            ({{
+              selectedStock.priceChangePercent
+                ? selectedStock.priceChangePercent
+                : "N/A"
+            }}%)
           </span>
         </div>
       </div>
@@ -44,32 +60,40 @@
         <div class="info-item">
           <span class="label">시가</span>
           <span class="value">{{
-            selectedStock.openPrice.toLocaleString()
+            selectedStock.openPrice
+              ? selectedStock.openPrice.toLocaleString()
+              : "N/A"
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">고가</span>
           <span class="value">{{
-            selectedStock.highPrice.toLocaleString()
+            selectedStock.highPrice
+              ? selectedStock.highPrice.toLocaleString()
+              : "N/A"
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">저가</span>
           <span class="value">{{
-            selectedStock.lowPrice.toLocaleString()
+            selectedStock.lowPrice
+              ? selectedStock.lowPrice.toLocaleString()
+              : "N/A"
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">거래량</span>
-          <span class="value">{{ selectedStock.volume.toLocaleString() }}</span>
+          <span class="value">{{
+            selectedStock.volume ? selectedStock.volume.toLocaleString() : "N/A"
+          }}</span>
         </div>
       </div>
 
       <StockChart
         v-if="selectedStock"
-        :stockName="selectedStock.name"
-        :stockCode="selectedStock.code"
-        :key="selectedStock.code"
+        :stockName="selectedStock.stockNameKR"
+        :stockCode="selectedStock.stockCode"
+        :key="selectedStock.stockCode"
       />
     </div>
   </div>
@@ -87,107 +111,33 @@ export default {
   setup(_, { emit }) {
     const stockStore = useStockStore();
     const searchQuery = ref("");
+    const filteredStocks = computed(() => stockStore.searchResults);
     let intervalId = null;
 
-    const selectedStock = ref({
-      name: "",
-      code: "",
-      currentPrice: 0,
-      priceChange: 0,
-      priceChangePercent: 0,
-      openPrice: 0,
-      highPrice: 0,
-      lowPrice: 0,
-      volume: 0,
-    });
+    const selectedStock = ref(null); // 초기값을 null로 설정
 
-    const stocks = [
-      {
-        code: "005930",
-        name: "삼성전자",
-        currentPrice: 63300,
-        priceChange: -1300,
-        priceChangePercent: -2.01,
-        openPrice: 64500,
-        highPrice: 64900,
-        lowPrice: 63100,
-        volume: 9800000,
-      },
-      {
-        code: "000660",
-        name: "SK하이닉스",
-        currentPrice: 120000,
-        priceChange: 2000,
-        priceChangePercent: 1.69,
-        openPrice: 118500,
-        highPrice: 121000,
-        lowPrice: 118000,
-        volume: 3200000,
-      },
-      {
-        code: "035720",
-        name: "카카오",
-        currentPrice: 56800,
-        priceChange: 1200,
-        priceChangePercent: 2.16,
-        openPrice: 55900,
-        highPrice: 57000,
-        lowPrice: 55700,
-        volume: 2500000,
-      },
-      {
-        code: "005380",
-        name: "현대차",
-        currentPrice: 185000,
-        priceChange: -3000,
-        priceChangePercent: -1.59,
-        openPrice: 187500,
-        highPrice: 188000,
-        lowPrice: 184500,
-        volume: 1200000,
-      },
-      {
-        code: "051910",
-        name: "LG화학",
-        currentPrice: 720000,
-        priceChange: 15000,
-        priceChangePercent: 2.13,
-        openPrice: 708000,
-        highPrice: 722000,
-        lowPrice: 707000,
-        volume: 350000,
-      },
-      {
-        code: "035420",
-        name: "NAVER",
-        currentPrice: 198000,
-        priceChange: -2000,
-        priceChangePercent: -1.0,
-        openPrice: 199500,
-        highPrice: 200000,
-        lowPrice: 197500,
-        volume: 800000,
-      },
-    ];
-
-    const filteredStocks = computed(() => {
-      if (searchQuery.value.trim() === "") return [];
-      return stocks.filter(
-        (stock) =>
-          stock.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          stock.code.includes(searchQuery.value)
-      );
-    });
-
-    const searchStocks = () => {
-      // 실시간 검색을 위해 별도의 함수 호출 없이 computed 속성 사용
+    const searchStocks = async () => {
+      const trimmedQuery = searchQuery.value.trim(); // 공백 제거
+      if (trimmedQuery === "") {
+        stockStore.searchResults = [];
+        return;
+      }
+      console.log("Searching for:", trimmedQuery);
+      try {
+        await stockStore.fetchStocks(trimmedQuery); // 트리밍된 검색어 사용
+        console.log("Search results:", stockStore.searchResults);
+      } catch (error) {
+        console.error("Error fetching stocks:", error);
+      }
     };
 
     const selectStock = async (stock) => {
       try {
-        const priceData = await stockStore.fetchCurrentPrice(stock.code);
+        const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
         if (priceData) {
-          const latestData = await stockStore.fetchLatestStockData(stock.code);
+          const latestData = await stockStore.fetchLatestStockData(
+            stock.stockCode
+          );
           if (latestData) {
             selectedStock.value = {
               ...stock,
@@ -207,12 +157,12 @@ export default {
           }
         }
         searchQuery.value = "";
+        stockStore.searchResults = [];
 
-        // 이전 인터벌 제거
         if (intervalId) clearInterval(intervalId);
 
         // 새로운 3초 인터벌 설정
-        intervalId = setInterval(updateStockPrice, 3000); // updateStockPrice 함수 사용
+        intervalId = setInterval(updateStockPrice, 3000);
       } catch (error) {
         console.error("Error selecting stock:", error);
       }
@@ -221,7 +171,7 @@ export default {
     const updateStockPrice = async () => {
       try {
         const updatedPriceData = await stockStore.fetchCurrentPrice(
-          selectedStock.value.code
+          selectedStock.value.stockCode
         );
         if (updatedPriceData) {
           selectedStock.value.currentPrice = updatedPriceData.currentPrice;
@@ -249,10 +199,10 @@ export default {
 
     return {
       searchQuery,
-      searchStocks,
       selectStock,
       filteredStocks,
       selectedStock,
+      searchStocks,
     };
   },
 };
@@ -265,16 +215,6 @@ export default {
   box-sizing: border-box;
   font-family: "HakgyoansimWoojuR";
   font-weight: bold;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #ffcc00;
-  width: 1600px;
 }
 
 .stock-search {
@@ -319,6 +259,12 @@ export default {
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+}
+
+.stock-marketType {
+  font-size: 17px;
+  margin-left: 15px;
+  color: #888;
 }
 
 .search-results li {
@@ -406,11 +352,6 @@ export default {
 @media (max-width: 768px) {
   .stock-info-page {
     padding: 15px;
-  }
-
-  .page-title {
-    font-size: 20px;
-    margin-bottom: 15px;
   }
 
   .stock-info-grid {
