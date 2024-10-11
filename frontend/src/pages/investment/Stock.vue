@@ -53,7 +53,7 @@ export default {
       this.stockCode = code; 
     },
     async refreshHoldings() {
-      await this.$refs.stockHoldings.refreshHoldings(); 
+      await this.$refs.stockHoldings.loadHoldings(); 
     },
     selectStock(stock) {
       console.log("Selecting stock in parent:", stock);
