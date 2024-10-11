@@ -84,9 +84,9 @@ export default {
        if (savedStock) {
            const stockData = JSON.parse(savedStock);
            this.orderPrice = stockData.currentPrice; 
-           await stockStore.fetchTradeHistory(stockData.stockCode); // Wait for the fetch to complete
-           this.tradeHistory = stockStore.tradeHistory; // Update local tradeHistory
-           console.log('Trade history on mount:', this.tradeHistory); // Log after fetching
+           await stockStore.fetchTradeHistory(stockData.stockCode); 
+           this.tradeHistory = stockStore.tradeHistory; 
+           console.log('Trade history on mount:', this.tradeHistory); 
        } else {
            this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
        }
@@ -126,6 +126,8 @@ export default {
       // 주문 가격을 로컬 스토리지에 저장
       localStorage.setItem('orderPrice', this.orderPrice);
       localStorage.setItem('stockCode', this.stockCode);
+      await stockStore.fetchHoldings();
+      this.$emit('refreshHoldings');
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;

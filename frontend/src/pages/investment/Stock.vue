@@ -3,14 +3,26 @@
     <h1 class="page-title">매수/매도</h1>
     <div class="content-wrapper">
       <div class="stock-info-container">
-        <StockInfo @updateCurrentPrice="updateCurrentPrice" @updateStockCode="updateStockCode" />
+        <StockInfo 
+          ref="stockInfo"
+          @updateCurrentPrice="updateCurrentPrice" 
+          @updateStockCode="updateStockCode" 
+          :selectedStock="selectedStock" 
+        />
       </div>
       <div class="trade-form-container">
-        <TradeForm :currentPrice="currentPrice" :stockCode="stockCode" />
+        <TradeForm 
+          :currentPrice="currentPrice" 
+          :stockCode="stockCode" 
+          @refreshHoldings="refreshHoldings" 
+        />
       </div>
     </div>
     <div class="stock-holding-container">
-      <StockHolding :stockName="'삼성전자'" :currentPrice="currentPrice" />
+      <StockHolding 
+        ref="stockHoldings" 
+        @select-stock="selectStock"
+      />
     </div>
   </div>
 </template>
@@ -28,18 +40,27 @@ export default {
   },
   data() {
     return {
-      currentPrice: 0, // Initialize currentPrice
-      stockCode: '' // Initialize stockCode
+      currentPrice: 0, 
+      stockCode: '', 
+      selectedStock: null 
     };
   },
   methods: {
     updateCurrentPrice(price) {
-      console.log('현재 가격 업데이트:', price);
-      this.currentPrice = price; // Update currentPrice
+      this.currentPrice = price;
     },
     updateStockCode(code) {
-      console.log('주식 코드 업데이트:', code);
-      this.stockCode = code; // Update stockCode
+      this.stockCode = code; 
+    },
+    async refreshHoldings() {
+      await this.$refs.stockHoldings.refreshHoldings(); 
+    },
+    selectStock(stock) {
+      console.log("Selecting stock in parent:", stock);
+      this.selectedStock = stock; 
+      this.updateCurrentPrice(stock.currentPrice); 
+      this.updateStockCode(stock.stockCode); 
+      this.$refs.stockInfo.selectStock(stock); 
     }
   }
 };
