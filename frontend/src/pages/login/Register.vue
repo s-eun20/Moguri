@@ -20,17 +20,15 @@
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
       <p class="login-link">
-        이미 계정이 있으신가요? <router-link to="/login">로그인</router-link>
+        이미 계정이 있으신가요? <router-link to="/">로그인</router-link>
       </p>
     </div>
   </div>
 </template>
-
 <script>
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
 export default {
   setup() {
     const email = ref('dlugr12008@naver.com');
@@ -39,7 +37,6 @@ export default {
     const confirmPassword = ref('1234');
     const errorMessage = ref('');
     const router = useRouter();
-
     const register = async () => {
       if (password.value !== confirmPassword.value) {
         errorMessage.value = '비밀번호가 일치하지 않습니다.';
@@ -52,13 +49,12 @@ export default {
           password: password.value,
         });
         alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.'); // 팝업창 추가
-        router.push('/login'); // 회원가입 성공 시 로그인 페이지로 이동
+        router.push('/'); // 회원가입 성공 시 로그인 페이지로 이동
       } catch (error) {
         console.error('회원가입 실패:', error);
-        errorMessage.value = '회원가입 실패. 다시 시도하세요.';
+        errorMessage.value = '중복된 이메일입니다.';
       }
     };
-
     return {
       email,
       nickname,
@@ -70,7 +66,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .register-container {
   display: flex;
@@ -88,14 +83,12 @@ export default {
   width: 100%;
   max-width: 400px;
 }
-
 .moguri-logo {
   width: 80px;
   height: auto;
   display: block;
   margin: 0 auto 20px;
 }
-
 .register-title {
   color: #333;
   font-size: 24px;
@@ -110,7 +103,6 @@ export default {
 .input-group {
   margin-bottom: 20px;
 }
-
 input[type="text"],
 input[type="password"] {
   width: 100%;
@@ -138,11 +130,9 @@ input[type="password"]:focus {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 .register-button:hover {
-  background-color: #f0b300;
+  background-color: #F0B300;
 }
-
 .error {
   color: #e74c3c;
   text-align: center;
@@ -154,7 +144,6 @@ input[type="password"]:focus {
   margin-top: 20px;
   color: #555;
 }
-
 .login-link a {
   color: #FECD72;
   text-decoration: none;

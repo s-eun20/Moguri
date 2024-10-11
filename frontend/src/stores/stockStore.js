@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth'; 
 
 export const useStockStore = defineStore('stock', {
   state: () => ({
@@ -10,7 +11,8 @@ export const useStockStore = defineStore('stock', {
     chartData: null,
     searchResults: [],
     error: null,
-    lastPrices: {}, // 각 종목의 마지막으로 조회한 가격을 저장
+    lastPrices: {}, 
+    tradeHistory: [],
   }),
 
 
@@ -33,8 +35,10 @@ export const useStockStore = defineStore('stock', {
     },
     // 보유종목 조회
     async fetchHoldings() {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
       try {
-        const response = await axios.get('http://localhost:8080/api/stocks');
+        const response = await axios.get('http://localhost:8080/api/stocks/',memberId);
         this.holdings = response.data;
         this.error = null;
       } catch (error) {
@@ -79,6 +83,102 @@ export const useStockStore = defineStore('stock', {
         console.error('최신 데이터 조회 실패:', error);
         this.error = '최신 데이터를 불러오는데 실패했습니다.';
         return null;
+      }
+    },
+
+    async buyStock(stockCode, trade) {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
+      try {
+          const response = await axios.post(`/api/stocks/price/${stockCode}/BUY`, {
+              memberId,
+              price: trade.price,
+              quantity: trade.quantity,
+              totalAmount: trade.totalAmount
+          });
+          
+          if (response.data.returnCode === '0000') {
+              console.log('매수 성공:', response.data);
+              authStore.getCottonCandy();
+              return response.data; 
+          } else {
+              throw new Error(response.data.returnMessage);
+          }
+      } catch (error) {
+          console.error('매수 실패:', error);
+          this.error = '매수에 실패했습니다.';
+          return null;
+      }
+    },
+
+    // 매도 함수
+    async sellStock(stockCode, trade) {
+      const authStore = useAuthStore();
+      const memberId = authStore.state.user.memberId;
+      try {
+        const response = await axios.post(`/api/stocks/price/${stockCode}/SELL`, {
+          memberId,
+          price: trade.price,
+          quantity: trade.quantity, 
+          totalAmount: trade.totalAmount
+      });
+        if (response.data.returnCode === '0000') {
+          console.log('매도 성공:', response.data);
+          authStore.getCottonCandy();
+          return response.data; 
+        } else {
+          throw new Error(response.data.returnMessage);
+        }
+      } catch (error) {
+        console.error('매도 실패:', error);
+        this.error = '매도에 실패했습니다.';
+        return null;
+      }
+    },
+
+    // 보유주식 조회
+    async fetchHoldings() {
+    const authStore = useAuthStore(); 
+    const memberId = authStore.state.user.memberId;
+
+    try {
+        const response = await axios.get(`http://localhost:8080/api/stocks/${memberId}`); 
+        if (response.data.returnCode === '0000') {
+            this.holdings = response.data; // 보유 주식 정보를 상태에 저장
+            this.error = null; // 오류 상태 초기화
+        } else {
+            throw new Error(response.data.returnMessage); // 오류 처리
+        }
+    } catch (error) {
+        console.error('보유주식 조회 실패:', error);
+        this.error = '보유주식을 불러오는데 실패했습니다.'; // 오류 메시지 설정
+    }
+},
+
+
+    // 거래내역 조회 
+
+    async fetchTradeHistory(stockCode, page = 0, limit = 10) {
+      const authStore = useAuthStore(); // authStore를 가져옵니다.
+      const memberId = authStore.state.user.memberId; // 사용자 ID를 가져옵니다.
+
+      console.log("거래내역" ,stockCode);
+      try {
+        const response = await axios.get(`http://localhost:8080/api/stocks/${stockCode}/${memberId}`, {
+          params: {
+            page: page,
+            limit: limit,
+          },
+        }); // API 호출
+        if (response.data.returnCode === '0000') {
+          this.tradeHistory = response.data.data.contents; // 거래 내역 정보를 상태에 저장
+          this.error = null; // 오류 상태 초기화
+        } else {
+          throw new Error(response.data.returnMessage); // 오류 처리
+        }
+      } catch (error) {
+        console.error('거래 내역 조회 실패:', error);
+        this.error = '거래 내역을 불러오는데 실패했습니다.'; // 오류 메시지 설정
       }
     },
 
