@@ -1,0 +1,158 @@
+@font-face {
+  font-family: 'ChosunCentennial';
+  src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/ChosunCentennial.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+.element-container { 
+  font-family: 'ChosunCentennial';
+  font-weight: 800 !important;
+  background-image: url('../../assets/element/element_back2.png');
+  background-size:cover;
+  background-repeat: no-repeat;   
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px auto;
+  text-align: center;
+  width: 500px;
+  height: 110vh; /* 화면의 높이를 100%로 설정 */
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(53, 152, 210, 0.968);
+  padding: 20px;
+  overflow: auto;
+}
+.header {
+  position: relative;
+  display: flex;
+  width: 100%; 
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: none; 
+  color: white;
+}
+
+.character{
+  position: absolute;
+  bottom: 35%; 
+  left: 48%;
+  transform: translate(-50%, 50%);
+  width: 70%;
+  z-index: 10; 
+  transition: all 0.5s ease;
+
+}
+.start{
+  margin-top: 10px;
+  color:white;
+}
+
+ .carousel{
+  width: 100%;
+ }
+.carousel-item img{
+  width: 100%;
+  max-height: 400px;
+  height: 100%;
+  object-fit: contain;
+}
+.carousel-indicators {
+  list-style: none;
+}
+/* 작은 화면 */
+@media (max-width: 767px) {
+  .carousel-item img {
+    height: 200px; /* 모바일에서 적절한 높이 설정 */
+  }
+}
+/* 중간 화면 (예: 태블릿) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .carousel-item img {
+    height: 300px; /* 태블릿에서 적절한 높이 설정 */
+  }
+}
+/* 큰 화면 (예: 데스크탑) */
+@media (min-width: 1024px) {
+  .carousel-item img {
+    height: 400px; /* 데스크탑에서 적절한 높이 설정 */
+  }
+}
+
+ #questionbox{
+  border-radius: 8px;
+  color:white;
+ }
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.start-btn{
+  width: 50%;
+  padding: 15px;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  transition: background-color 0.3s;
+  font-size: large;
+  position: absolute; 
+  bottom: 10%; 
+  left: 0; 
+  right: 0;
+  margin: 0 auto 0 auto;
+  z-index:10;
+}
+.answer-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  transition: background-color 0.3s;
+  font-size: large;
+}
+
+.answer-btn:hover {
+  background-color: #e8e8e8;
+}
+.result{
+  border:1px solid white;
+  height: 90%;
+  border-radius: 8px;
+}
+.exp{
+  height: 50%;
+  padding: 20px;
+  
+}
+.resultElement{
+  color: white;
+}
+.resultExp {
+  color:white;
+  font-size:large;
+}
+
+.resultimg {
+  padding: 20px;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+}
+
+
+.btn_comm{
+  border-color: transparent;
+  background-color: transparent ;
+}
+.link-icon { position: relative; display: inline-block; width: auto; font-size: 14px; font-weight: 500; color: #333; margin-right: 10px; padding-top: 50px; }
+.link-icon.twitter { background-image: url(@/assets/element/twitter.png); background-repeat: no-repeat; }
+.link-icon.facebook { background-image: url(@/assets/element/facebook.png); background-repeat: no-repeat; } 
