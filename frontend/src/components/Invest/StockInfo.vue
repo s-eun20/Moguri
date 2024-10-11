@@ -132,57 +132,50 @@ export default {
     };
 
     const selectStock = async (stock) => {
-      try {
-        const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
-        if (priceData) {
-          const latestData = await stockStore.fetchLatestStockData(
-            stock.stockCode
-          );
-          if (latestData) {
-            selectedStock.value = {
-              ...stock,
-              currentPrice: priceData.currentPrice,
-              priceChangePercent: priceData.priceChangePercent,
-              openPrice: latestData.open,
-              highPrice: latestData.high,
-              lowPrice: latestData.low,
-              volume: latestData.volume,
-            };
-            emit("updateCurrentPrice", priceData.currentPrice);
-            await stockStore.setSelectedStock({ ...selectedStock.value });
-            localStorage.setItem(
-              "selectedStock",
-              JSON.stringify(selectedStock.value)
-            );
-          }
-        }
-        searchQuery.value = "";
-        stockStore.searchResults = [];
-
-        if (intervalId) clearInterval(intervalId);
-
-        // 새로운 3초 인터벌 설정
-        intervalId = setInterval(updateStockPrice, 3000);
-      } catch (error) {
-        console.error("Error selecting stock:", error);
+  try {
+    const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
+    if (priceData) {
+      const latestData = await stockStore.fetchLatestStockData(stock.stockCode);
+      if (latestData) {
+        selectedStock.value = {
+          ...stock,
+          currentPrice: priceData.currentPrice,
+          priceChangePercent: priceData.priceChangePercent,
+          openPrice: latestData.open,
+          highPrice: latestData.high,
+          lowPrice: latestData.low,
+          volume: latestData.volume,
+        };
+        emit("updateCurrentPrice", priceData.currentPrice);
+        emit("updateStockCode", stock.stockCode); // stockCode emit
+        await stockStore.setSelectedStock({ ...selectedStock.value });
+        localStorage.setItem("selectedStock", JSON.stringify(selectedStock.value));
+      } else {
+        console.error("Failed to fetch latest stock data.");
       }
-    };
+    } else {
+      console.error("Failed to fetch current price.");
+    }
+  } catch (error) {
+    console.error("Error selecting stock:", error);
+  }
+};
 
-    const updateStockPrice = async () => {
-      try {
-        const updatedPriceData = await stockStore.fetchCurrentPrice(
-          selectedStock.value.stockCode
-        );
-        if (updatedPriceData) {
-          selectedStock.value.currentPrice = updatedPriceData.currentPrice;
-          selectedStock.value.priceChangePercent =
-            updatedPriceData.priceChangePercent;
-          emit("updateCurrentPrice", updatedPriceData.currentPrice);
-        }
-      } catch (error) {
-        console.error("Error fetching updated price:", error);
-      }
-    };
+const updateStockPrice = async () => {
+  try {
+    const updatedPriceData = await stockStore.fetchCurrentPrice(selectedStock.value.stockCode);
+    if (updatedPriceData) {
+      selectedStock.value.currentPrice = updatedPriceData.currentPrice;
+      selectedStock.value.priceChangePercent = updatedPriceData.priceChangePercent;
+      emit("updateCurrentPrice", updatedPriceData.currentPrice);
+      emit("updateStockCode", selectedStock.value.stockCode); // stockCode emit
+    } else {
+      console.error("Failed to fetch updated price.");
+    }
+  } catch (error) {
+    console.error("Error fetching updated price:", error);
+  }
+};
 
     onMounted(() => {
       const savedStock = localStorage.getItem("selectedStock");

@@ -13,7 +13,7 @@ export default {
     ],
   
     investmentMenus: [
-      { title: '매도/매수', url: '/investment/stock' },
+      { title: '매수/매도', url: '/investment/stock' },
       { title: '랭킹', url: '/investment/rank' }
     ],
   
