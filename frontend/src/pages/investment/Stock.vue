@@ -1,12 +1,12 @@
 <template>
   <div class="stock-page">
-    <h1 class="page-title">매도/매수</h1>
+    <h1 class="page-title">매수/매도</h1>
     <div class="content-wrapper">
       <div class="stock-info-container">
-        <StockInfo @updateCurrentPrice="updateCurrentPrice" />
+        <StockInfo @updateCurrentPrice="updateCurrentPrice" @updateStockCode="updateStockCode" />
       </div>
       <div class="trade-form-container">
-        <TradeForm :currentPrice="currentPrice" />
+        <TradeForm :currentPrice="currentPrice" :stockCode="stockCode" />
       </div>
     </div>
     <div class="stock-holding-container">
@@ -28,13 +28,18 @@ export default {
   },
   data() {
     return {
-      currentPrice: 0 // Initialize currentPrice
+      currentPrice: 0, // Initialize currentPrice
+      stockCode: '' // Initialize stockCode
     };
   },
   methods: {
     updateCurrentPrice(price) {
       console.log('현재 가격 업데이트:', price);
       this.currentPrice = price; // Update currentPrice
+    },
+    updateStockCode(code) {
+      console.log('주식 코드 업데이트:', code);
+      this.stockCode = code; // Update stockCode
     }
   }
 };

@@ -57,12 +57,18 @@ export const useAuthStore = defineStore('auth', () => {
     const auth = localStorage.getItem(AUTH_KEY);
     console.log('로컬 스토리지에서 로드된 데이터:', auth);
     if (auth) {
-      state.value = JSON.parse(auth);
-      if (!state.value.user.nickname || !state.value.user.memberId) {
-        state.value = { ...initState };
-      }
+        try {
+            state.value = JSON.parse(auth);
+            // user 객체가 존재하는지 확인
+            if (!state.value.user || !state.value.user.nickname || !state.value.user.memberId) {
+                state.value = { ...initState };
+            }
+        } catch (error) {
+            console.error('로컬 스토리지 데이터 파싱 오류:', error);
+            state.value = { ...initState }; // 초기 상태로 리셋
+        }
     }
-  };
+};
 
   const updateCottonCandy = async (amount) => {
     const userId = state.value.user.memberId;
@@ -80,11 +86,30 @@ export const useAuthStore = defineStore('auth', () => {
       await axios.patch(`http://localhost:8080/api/members/${userId}/cotton-candy`, {
         cottonCandy: newCottonCandyAmount,
       });
-      console.log('코튼 캔디 업데이트 성공');
+      console.log('코튼 캔디 업데이트 성공',newCottonCandyAmount );
     } catch (error) {
       console.error('코튼 캔디 업데이트 실패:', error);
     }
   };
+
+  const getCottonCandy = async () => {
+    const userId = state.value.user.memberId;
+
+    if (!userId) {
+        console.error('사용자 ID가 정의되지 않았습니다.');
+        return;
+    }
+
+    try {
+        const response = await axios.get(`http://localhost:8080/api/members/${userId}/cotton-candy`);
+        const cottonCandyAmount = response.data.data; 
+        state.value.user.cottonCandy = cottonCandyAmount;
+        localStorage.setItem(AUTH_KEY, JSON.stringify(state.value)); 
+        console.log('코튼 캔디 가져오기 성공:', cottonCandyAmount);
+    } catch (error) {
+        console.error('코튼 캔디 가져오기 실패:', error);
+    }
+};
 
   load();
 
@@ -97,6 +122,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     cottonCandy,
     isLoading,
+    getCottonCandy,
     updateCottonCandy,
     load,
   };

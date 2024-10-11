@@ -14,7 +14,7 @@
               class="profile-pic"
             />
           </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges"
+           <b-dropdown-item class="dropdown-item" @click="goToBadges"
             >🛡️ 뱃지함</b-dropdown-item
           >
           <b-dropdown-item class="dropdown-item" @click="collectMoguri"
@@ -53,6 +53,7 @@ import { useAuthStore } from '@/stores/auth';
 import MenuGroup from './Menu/menuGroup.vue';
 import { useRouter } from 'vue-router';
 import LoginModal from '@/pages/login/LoginModal.vue';
+import '@/assets/styles/global.css';
 
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
@@ -88,6 +89,11 @@ const closeLoginModal = () => {
 </script>
 
 <style scoped>
+
+.navbar-custom {
+  font-family: 'HakgyoansimWoojuR' !important;
+}
+
 .nav-divider {
   height: 1px;
   background-color: #e0e0e0; 
@@ -100,12 +106,10 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   font-weight: bold;
   font-size: 24px;
-  font-family: 'HakgyoansimWoojuR';
 }
 
 .menu {
   margin-right: auto;
-  font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
   font-size: 19px;
 }
@@ -147,7 +151,6 @@ const closeLoginModal = () => {
 
 .user-name {
   font-weight: bold;
-  font-family: 'BMJUA';
   font-size: 24px; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
 }

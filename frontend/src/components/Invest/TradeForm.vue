@@ -1,8 +1,8 @@
 <template>
   <div class="trade-form">
     <div class="trade-buttons">
-      <button :class="['buy', { active: tradeType === 'buy' }]" @click="setTradeType('buy')">매수</button>
-      <button :class="['sell', { active: tradeType === 'sell' }]" @click="setTradeType('sell')">매도</button>
+      <button :class="['buy', { active: tradeType === 'BUY' }]" @click="setTradeType('BUY')">매수</button>
+      <button :class="['sell', { active: tradeType === 'SELL' }]" @click="setTradeType('SELL')">매도</button>
       <button :class="['history', { active: showingHistory }]" @click="showHistory">거래내역</button>
     </div>
     <div v-if="!showingHistory" class="form">
@@ -11,8 +11,8 @@
         <input type="number" v-model="orderQuantity" />
       </div>
       <div class="form-group">
-        <label>{{ tradeType === 'buy' ? '매수가격' : '매도가격' }}</label>
-        <input type="text" v-model="orderPrice"/>
+        <label>{{ tradeType === 'BUY' ? '매수가격' : '매도가격' }}</label>
+        <input type="text" v-model="orderPrice" />
       </div>
       <div class="form-group">
         <label>주문총액</label>
@@ -24,38 +24,45 @@
       <ul>
         <li v-for="(trade, index) in tradeHistory" :key="index">
           <div class="trade-info">
-            <span class="trade-date">{{ trade.date }}</span>
-            <span class="trade-stock">{{ trade.stockName }}</span>
+            <span class="trade-date">{{ trade.tradeAt }}</span>
+            <span class="trade-stock">{{ trade.stockNameKR }}</span> <!-- 종목 이름 사용 -->
           </div>
           <div class="trade-details">
-            <span :class="['trade-type', trade.type]">
-              {{ trade.type === 'buy' ? '매수' : '매도' }}
+            <span :class="['trade-type', trade.tradeType]">
+              {{ trade.tradeType === 'BUY' ? '매수' : '매도' }}
             </span>
             <span class="trade-quantity">{{ trade.quantity }}주</span>
-            <span class="trade-price">{{ trade.price.toLocaleString() }}원</span>
+            <span class="trade-price">{{ trade.price }}원</span>
           </div>
           <div class="trade-total">
-            {{ (trade.quantity * trade.price).toLocaleString() }}원
+            {{ trade.totalAmount }}원
           </div>
         </li>
       </ul>
     </div>
     <div v-if="!showingHistory" class="form-actions">
       <button class="reset" @click="resetForm">초기화</button>
-      <button :class="tradeType === 'buy' ? 'buy' : 'sell'" @click="placeOrder">
-        {{ tradeType === 'buy' ? '매수' : '매도' }}
+      <button :class="tradeType === 'BUY' ? 'buy' : 'sell'" @click="placeOrder">
+        {{ tradeType === 'BUY' ? '매수' : '매도' }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import { watch, onMounted } from 'vue';
+import { useStockStore } from '@/stores/stockStore'; // stockStore import
+
 export default {
   props: {
     currentPrice: {
       type: Number,
       required: true
-    }
+    },
+    stockCode: {
+      type: String, // 종목 코드는 문자열로 변경
+      required: true
+    },
   },
   data() {
     return {
@@ -63,11 +70,7 @@ export default {
       orderQuantity: 0,
       orderPrice: 0, // 초기값을 0으로 설정
       showingHistory: false,
-      tradeHistory: [
-        { type: 'buy', stockName: '삼성전자', quantity: 10, price: 63000, date: '2023-05-01' },
-        { type: 'sell', stockName: '삼성전자', quantity: 5, price: 63500, date: '2023-05-02' },
-        { type: 'buy', stockName: 'SK하이닉스', quantity: 20, price: 120000, date: '2023-05-03' }
-      ]
+      tradeHistory: [] // Local tradeHistory
     };
   },
   computed: {
@@ -75,17 +78,19 @@ export default {
       return this.orderQuantity * this.orderPrice;
     }
   },
-  mounted() {
-    // 로컬 스토리지에서 selectedStock 불러오기
-    const savedStock = localStorage.getItem('selectedStock');
-    if (savedStock) {
-      const stockData = JSON.parse(savedStock);
-      this.orderPrice = stockData.currentPrice; // selectedStock의 currentPrice로 초기화
-    } else {
-      this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
-    }
-    console.log("Current Price in TradeForm.vue:", this.orderPrice); 
-  },
+  async mounted() {
+       const savedStock = localStorage.getItem('selectedStock');
+       const stockStore = useStockStore(); 
+       if (savedStock) {
+           const stockData = JSON.parse(savedStock);
+           this.orderPrice = stockData.currentPrice; 
+           await stockStore.fetchTradeHistory(stockData.stockCode); // Wait for the fetch to complete
+           this.tradeHistory = stockStore.tradeHistory; // Update local tradeHistory
+           console.log('Trade history on mount:', this.tradeHistory); // Log after fetching
+       } else {
+           this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
+       }
+   },
  
   methods: {
     setTradeType(type) {
@@ -96,27 +101,38 @@ export default {
       this.orderQuantity = 0;
       this.orderPrice = this.currentPrice; 
     },
-    placeOrder() {
+    async placeOrder() {
+      const stockStore = useStockStore(); 
       const trade = {
-        type: this.tradeType,
         quantity: this.orderQuantity,
         price: this.orderPrice,
-        stockName: '삼성전자', // 예시로 삼성전자로 고정
-        date: new Date().toISOString().split('T')[0] // 현재 날짜
+        totalAmount: this.totalPrice
       };
-      this.tradeHistory.push(trade);
-      // 여기에 실제 주문 처리 로직을 추가할 수 있습니다.
-      this.$emit('updateBalance', this.newBalance);
+
+      // 매수 또는 매도 처리
+      if (this.tradeType === 'BUY') {
+        await stockStore.buyStock(this.stockCode, trade); 
+        console.log(this.stockCode);
+      } else {
+        await stockStore.sellStock(this.stockCode, trade); 
+      }
+
+      // Fetch trade history after placing the order
+      await stockStore.fetchTradeHistory(this.stockCode); 
+      this.tradeHistory = stockStore.tradeHistory; // Update local tradeHistory
+      console.log('Updated trade history after order:', this.tradeHistory);
+
       this.resetForm();
       // 주문 가격을 로컬 스토리지에 저장
       localStorage.setItem('orderPrice', this.orderPrice);
+      localStorage.setItem('stockCode', this.stockCode);
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;
       if (this.showingHistory) {
         this.tradeType = null;
       }
-    }
+    },
   },
   
   watch: {
@@ -156,15 +172,15 @@ export default {
 }
 
 .buy {
-  background-color: #b4e1ec; 
+  background-color: #b4e1ec; /* Sky blue for buy */
 }
 
 .sell {
-  background-color: #f5c3c7; 
+  background-color: #f5c3c7; /* Red for sell */
 }
 
 .history {
-  background-color: #f7ea81; /* 기존 색상 유지 */
+  background-color: #f7ea81; /* Existing color for history */
 }
 
 .form {
@@ -212,11 +228,11 @@ export default {
 }
 
 .form-actions button.buy {
-  background-color: #b4e1ec; 
+  background-color: #b4e1ec; /* Sky blue for buy */
 }
 
 .form-actions button.sell {
-  background-color: #f5c3c7; 
+  background-color: #f5c3c7; /* Red for sell */
 }
 
 .form-actions button.buy:hover {
@@ -281,12 +297,12 @@ export default {
   border-radius: 4px;
 }
 
-.trade-type.buy {
+.trade-type.BUY {
   background-color: #e9fafa;
-  color : #5aa9bd;
+  color: #5aa9bd;
 }
 
-.trade-type.sell {
+.trade-type.SELL {
   background-color: #fff1f0;
   color: #ff4d4f;
 }
