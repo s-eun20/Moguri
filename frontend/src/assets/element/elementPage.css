@@ -125,8 +125,9 @@
 }
 .result{
   border:1px solid white;
-  height: 90%;
+  height: 630px;
   border-radius: 8px;
+  margin-bottom: 15px;
 }
 .exp{
   height: 50%;

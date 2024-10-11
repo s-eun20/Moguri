@@ -18,10 +18,6 @@
   </button>
 </div>
 
-<!-- 질문 섹션: showQuestions가 true일 때 표시 -->
- <!-- vertical Direction bootstrap -->
- <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-<!-- 구 questionbox -->
  <div v-if="elementStore.showQuestions">
   <div class="progress mt-5">
     <div
@@ -94,7 +90,7 @@ const resultExplanation = computed(() => {
 });
 
 const initializeCarousel = () => {
-  const carouselElement = document.getElementById('elementCarousel'); // ID에서 '#' 제거
+  const carouselElement = document.getElementById('elementCarousel'); 
   if (carouselElement) {
     new Carousel(carouselElement, {
       interval: 2000,
