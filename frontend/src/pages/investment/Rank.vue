@@ -1,6 +1,5 @@
 <template>
     <div class="ranking-page">
-      <h1 class="page-title">이달의 투자왕👑</h1>
       <div class="content-wrapper">
         <InvestmentRanking :rankingData="rankingData" />
       </div>
@@ -17,13 +16,13 @@
     data() {
       return {
         rankingData: [
-          { name: '하기싫다#123', profitRate: 125 },
-          { name: '개발하고싶다#1', profitRate: 111 },
-          { name: '잡자자#123', profitRate: 96 },
-          { name: '으어어어어어#123', profitRate: 55 },
-          { name: 'ㅁㅇㅇㅇㅇㅇ#123', profitRate: 53 },
-          { name: 'ㅂㅈㄷㄱ#123', profitRate: 41 },
-          { name: 'ㅂㅈㄷㄱ#123', profitRate: 21 }
+          { name: 'user4', profitRate: 125 },
+          { name: 'user5', profitRate: 111 },
+          { name: 'user6', profitRate: 96 },
+          { name: 'user7', profitRate: 55 },
+          { name: 'user8', profitRate: 53 },
+          { name: 'user9', profitRate: 41 },
+          { name: 'user10', profitRate: 21 }
         ]
       }
     }

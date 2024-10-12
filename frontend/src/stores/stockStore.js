@@ -9,7 +9,6 @@ export const useStockStore = defineStore('stock', {
     investmentKing: null,
     selectedStock: null,
     chartData: null,
-    searchResults: [],
     error: null,
     lastPrices: {}, 
     tradeHistory: [],
@@ -33,19 +32,7 @@ export const useStockStore = defineStore('stock', {
         this.error = '주식 검색에 실패했습니다.';
       }
     },
-    // 보유종목 조회
-    async fetchHoldings() {
-      const authStore = useAuthStore();
-      const memberId = authStore.state.user.memberId;
-      try {
-        const response = await axios.get('http://localhost:8080/api/stocks/',memberId);
-        this.holdings = response.data;
-        this.error = null;
-      } catch (error) {
-        console.error('보유종목 조회 실패:', error);
-        this.error = '보유종목을 불러오는데 실패했습니다.';
-      }
-    },
+    
 
     async fetchStockChart(stockCode, period = 'DAY') {
       try {
@@ -86,6 +73,7 @@ export const useStockStore = defineStore('stock', {
       }
     },
 
+    // 매수 함수
     async buyStock(stockCode, trade) {
       const authStore = useAuthStore();
       const memberId = authStore.state.user.memberId;
@@ -99,8 +87,7 @@ export const useStockStore = defineStore('stock', {
           
           if (response.data.returnCode === '0000') {
               console.log('매수 성공:', response.data);
-              authStore.getCottonCandy();
-              return response.data; 
+              authStore.getCottonCandy(); 
           } else {
               throw new Error(response.data.returnMessage);
           }
@@ -144,7 +131,8 @@ export const useStockStore = defineStore('stock', {
     try {
         const response = await axios.get(`http://localhost:8080/api/stocks/${memberId}`); 
         if (response.data.returnCode === '0000') {
-            this.holdings = response.data; // 보유 주식 정보를 상태에 저장
+            this.holdings = response.data.data; 
+            console.log(this.holdings);
             this.error = null; // 오류 상태 초기화
         } else {
             throw new Error(response.data.returnMessage); // 오류 처리
@@ -157,7 +145,6 @@ export const useStockStore = defineStore('stock', {
 
 
     // 거래내역 조회 
-
     async fetchTradeHistory(stockCode, page = 0, limit = 10) {
       const authStore = useAuthStore(); // authStore를 가져옵니다.
       const memberId = authStore.state.user.memberId; // 사용자 ID를 가져옵니다.
