@@ -12,6 +12,8 @@ import Main from '@/pages/main/Main.vue'; //main 페이지 추가
 import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
 import Roulette from '@/pages/event/Roulette.vue'; // Roulette 컴포넌트 추가
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
+import ProfilePage from '@/pages/login/ProfilePage.vue'; // ProfilePage 경로 수정
+import EditProfile from '@/pages/mypage/EditProfile.vue'; 
 
 const routes = [
   {
@@ -46,6 +48,18 @@ const routes = [
     name: 'Login',
     component: Login,
   },
+  {
+    path: '/profile', // 프로필 수정 경로 추가
+    name: 'Profile',
+    component: ProfilePage,
+  },
+  
+  {
+    path: '/mypage/edit', // 마이 페이지 수정 경로 추가
+    name: 'EditProfile',
+    component: EditProfile,
+  },
+
   {
     path: '/register', // 회원가입 경로 추가
     name: 'Register',
