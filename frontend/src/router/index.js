@@ -13,6 +13,7 @@ import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추
 import Roulette from '@/pages/event/Roulette.vue'; // Roulette 컴포넌트 추가
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
 import ElementPage from '@/pages/element/ElementPage.vue';
+import MoguriIntro from '@/pages/main/MoguriIntro.vue';
 
 const routes = [
   {
@@ -63,9 +64,9 @@ const routes = [
     component: ElementPage,
   },
   {
-    path: '/whatismoguri', // 모구리 설명 페이지 경로 추가
-    name: 'WhatIsMoguri',
-    // component: WhatIsMoguri,
+    path: '/moguriintro', // 모구리 설명 페이지 경로 추가
+    name: 'MoguriIntro',
+    component: MoguriIntro,
   },
   {
     path: '/attendance', // 출석 체크 페이지 경로 추가

@@ -86,7 +86,7 @@
         <!-- 모구리 소개 칸 -->
         <div class="main_bottom_banner_btn_container">
           <button
-            @click="goToPage('/whatismoguri')"
+            @click="goToPage('/moguriintro')"
             class="main_bottom_banner_btn"
           >
             <div class="first-flex">
