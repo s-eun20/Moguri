@@ -1,24 +1,27 @@
 .subQuestion-div {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 700;
-    height: 310px;
-  }
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  height: 310px;
+}
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .cursor-pointer {
-    cursor: pointer;
-  }
+  cursor: pointer;
+}
 
 .hover\:example-label-gray:hover {
-    --tw-bg-opacity: 1;
-    background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
-  }
+  background-color: #f0f0f0;
+}
 
 .example-label-orange {
-  --tw-bg-opacity: 1;
-  background-color: rgba(255, 204, 0, var(--tw-bg-opacity));
+background-color: #ffd698;
+}
+
+.disabled-input {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
