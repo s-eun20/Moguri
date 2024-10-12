@@ -22,10 +22,10 @@
     <div v-else class="history-list">
       <h3>거래내역</h3>
       <ul>
-        <li v-for="(trade, index) in tradeHistory" :key="index">
+        <li v-for="(trade, index) in paginatedTrades" :key="index">
           <div class="trade-info">
             <span class="trade-date">{{ trade.tradeAt }}</span>
-            <span class="trade-stock">{{ trade.stockNameKR }}</span> <!-- 종목 이름 사용 -->
+            <span class="trade-stock">{{ trade.stockNameKR }}</span>
           </div>
           <div class="trade-details">
             <span :class="['trade-type', trade.tradeType]">
@@ -39,6 +39,13 @@
           </div>
         </li>
       </ul>
+
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+        <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+      </div>
     </div>
     <div v-if="!showingHistory" class="form-actions">
       <button class="reset" @click="resetForm">초기화</button>
@@ -50,7 +57,6 @@
 </template>
 
 <script>
-import { watch, onMounted } from 'vue';
 import { useStockStore } from '@/stores/stockStore'; // stockStore import
 
 export default {
@@ -60,38 +66,46 @@ export default {
       required: true
     },
     stockCode: {
-      type: String, // 종목 코드는 문자열로 변경
+      type: String,
       required: true
     },
   },
   data() {
     return {
-      tradeType: 'buy',
+      tradeType: 'BUY',
       orderQuantity: 0,
-      orderPrice: 0, // 초기값을 0으로 설정
+      orderPrice: 0,
       showingHistory: false,
-      tradeHistory: [] // Local tradeHistory
+      tradeHistory: [],
+      currentPage: 1,
+      itemsPerPage: 4,
     };
   },
   computed: {
     totalPrice() {
       return this.orderQuantity * this.orderPrice;
+    },
+    totalPages() {
+      return Math.ceil(this.tradeHistory.length / this.itemsPerPage);
+    },
+    paginatedTrades() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.tradeHistory.slice(start, start + this.itemsPerPage);
     }
   },
   async mounted() {
-       const savedStock = localStorage.getItem('selectedStock');
-       const stockStore = useStockStore(); 
-       if (savedStock) {
-           const stockData = JSON.parse(savedStock);
-           this.orderPrice = stockData.currentPrice; 
-           await stockStore.fetchTradeHistory(stockData.stockCode); // Wait for the fetch to complete
-           this.tradeHistory = stockStore.tradeHistory; // Update local tradeHistory
-           console.log('Trade history on mount:', this.tradeHistory); // Log after fetching
-       } else {
-           this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
-       }
-   },
- 
+    const savedStock = localStorage.getItem('selectedStock');
+    const stockStore = useStockStore(); 
+    if (savedStock) {
+      const stockData = JSON.parse(savedStock);
+      this.orderPrice = stockData.currentPrice; 
+      await stockStore.fetchTradeHistory(stockData.stockCode); 
+      this.tradeHistory = stockStore.tradeHistory; 
+      console.log('Trade history on mount:', this.tradeHistory); 
+    } else {
+      this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
+    }
+  },
   methods: {
     setTradeType(type) {
       this.tradeType = type;
@@ -126,6 +140,8 @@ export default {
       // 주문 가격을 로컬 스토리지에 저장
       localStorage.setItem('orderPrice', this.orderPrice);
       localStorage.setItem('stockCode', this.stockCode);
+      await stockStore.fetchHoldings();
+      this.$emit('refreshHoldings');
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;
@@ -133,14 +149,35 @@ export default {
         this.tradeType = null;
       }
     },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    async updateTradeHistory(stockCode) {
+      const stockStore = useStockStore(); 
+      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
+      this.tradeHistory = stockStore.tradeHistory; // 로컬 거래내역 업데이트
+      console.log('Updated trade history:', this.tradeHistory);
+    },
   },
-  
   watch: {
-    currentPrice(newPrice) {
-      this.orderPrice = newPrice; 
+  stockCode: {
+    immediate: true,
+    handler(newStockCode) {
+      this.updateTradeHistory(newStockCode);
     }
+  },
+  currentPrice(newPrice) {
+    this.orderPrice = newPrice; 
   }
 }
+};
 </script>
 
 
@@ -333,5 +370,39 @@ export default {
   .trade-type, .trade-quantity, .trade-price {
     margin-bottom: 5px;
   }
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  margin: 0 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination button:disabled {
+  background-color: #e0e0e0; /* 비활성화된 버튼 색상 */
+  color: #a0a0a0; /* 비활성화된 버튼 텍스트 색상 */
+  cursor: not-allowed; /* 커서 모양 변경 */
+}
+
+.pagination button:not(:disabled):hover {
+  background-color: #007bff; /* 버튼 호버 색상 */
+  color: white; /* 버튼 호버 시 텍스트 색상 */
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+  font-weight: bold;
 }
 </style>

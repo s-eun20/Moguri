@@ -23,9 +23,6 @@
           }}</span>
         </li>
       </ul>
-      <p v-else-if="searchQuery && filteredStocks.length === 0">
-        검색 결과가 없습니다.
-      </p>
     </div>
 
     <div v-if="selectedStock" class="stock-detail">
@@ -132,7 +129,8 @@ export default {
     };
 
     const selectStock = async (stock) => {
-  try {
+      try {
+    console.log("Selecting stock:", stock);
     const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
     if (priceData) {
       const latestData = await stockStore.fetchLatestStockData(stock.stockCode);
@@ -147,9 +145,12 @@ export default {
           volume: latestData.volume,
         };
         emit("updateCurrentPrice", priceData.currentPrice);
-        emit("updateStockCode", stock.stockCode); // stockCode emit
+        emit("updateStockCode", stock.stockCode); 
         await stockStore.setSelectedStock({ ...selectedStock.value });
         localStorage.setItem("selectedStock", JSON.stringify(selectedStock.value));
+        stockStore.searchResults = [];
+
+        emit("updateTradeHistory", stock.stockCode);
       } else {
         console.error("Failed to fetch latest stock data.");
       }
@@ -351,4 +352,5 @@ const updateStockPrice = async () => {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 </style>

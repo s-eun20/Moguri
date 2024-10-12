@@ -10,10 +10,11 @@ import Login from '@/pages/login/LoginModal.vue'; // Login 컴포넌트 import �
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
 import Main from '@/pages/main/Main.vue'; //main 페이지 추가
 import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
-import Roulette from '@/pages/event/Roulette.vue'; // Roulette 컴포넌트 추가
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
 import ProfilePage from '@/pages/login/ProfilePage.vue'; // ProfilePage 경로 수정
 import EditProfile from '@/pages/mypage/EditProfile.vue'; 
+import ElementPage from '@/pages/element/ElementPage.vue';
+import MoguriIntro from '@/pages/main/MoguriIntro.vue';
 
 const routes = [
   {
@@ -73,12 +74,12 @@ const routes = [
   {
     path: '/element', // 소비 원소 테스트 페이지 경로 추가
     name: 'ElementPage',
-    // component: ElementPage,
+    component: ElementPage,
   },
   {
-    path: '/whatismoguri', // 모구리 설명 페이지 경로 추가
-    name: 'WhatIsMoguri',
-    // component: WhatIsMoguri,
+    path: '/moguriintro', // 모구리 설명 페이지 경로 추가
+    name: 'MoguriIntro',
+    component: MoguriIntro,
   },
   {
     path: '/attendance', // 출석 체크 페이지 경로 추가
@@ -89,11 +90,6 @@ const routes = [
     path: '/event/check', // 출석체크 경로 추가
     name: 'Check',
     component: Check,
-  },
-  {
-    path: '/event/roulette', // 룰렛 이벤트 경로 추가
-    name: 'Roulette',
-    component: Roulette,
   },
   {
     path: '/event/quiz', // 금융 퀴즈 경로 추가
