@@ -11,6 +11,7 @@ import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추�
 import Main from '@/pages/main/Main.vue'; //main 페이지 추가
 import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
+import ElementPage from '@/pages/element/ElementPage.vue';
 
 const routes = [
   {
@@ -58,7 +59,7 @@ const routes = [
   {
     path: '/element', // 소비 원소 테스트 페이지 경로 추가
     name: 'ElementPage',
-    // component: ElementPage,
+    component: ElementPage,
   },
   {
     path: '/whatismoguri', // 모구리 설명 페이지 경로 추가
