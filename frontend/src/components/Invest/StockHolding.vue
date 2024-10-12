@@ -10,7 +10,7 @@
           <th>평가손익</th>
           <th>수익률</th>
           <th>수량</th>
-          <th>매입가</th>
+          <th>매입가 평균</th>
           <th>현재가</th>
         </tr>
       </thead>
@@ -85,6 +85,13 @@ export default {
     profitRate(stock) {
       const total = this.totalAmount(stock);
       return total > 0 ? (this.evaluationProfit(stock) / total) * 100 : 0; // 평가 손익 / 총금액 * 100
+    },
+    evaluationProfitClass(stock) {
+      return this.evaluationProfit(stock) > 0 ? 'positive' : 'negative'; // 평가 손익이 증가하면 'positive', 감소하면 'negative'
+    },
+    // 수익률 클래스 계산
+    profitRateClass(stock) {
+      return this.profitRate(stock) > 0 ? 'positive' : 'negative'; // 수익률이 증가하면 'positive', 감소하면 'negative'
     }
   }
 }
@@ -116,6 +123,13 @@ export default {
 .stock-holdings th {
   background-color: #f2f2f2;
   font-weight: bold;
+}
+.positive {
+  color: #92c5d1;/* 초록색 */
+}
+
+.negative {
+  color: #c06e77;  /* 빨간색 */
 }
 
 @media (max-width: 768px) {

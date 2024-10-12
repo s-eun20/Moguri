@@ -2,20 +2,20 @@
   <div class="investment-ranking">
     <h2 class="page-title">이달의 투자왕 👑</h2>
     <div class="top-three">
-      <div class="rank-container">
+      <div class="rank-container" v-if="sortedRankingData.length > 0">
         <div class="rank rank-1">1</div>
-        <div class="member-name">{{ rankingData[0]?.name || '-' }}</div>
-        <div class="profit-rate">{{ rankingData[0]?.profitRate || 0 }}%</div>
+        <div class="member-name">{{ sortedRankingData[0]?.nickName || '-' }}</div>
+        <div class="profit-rate">{{ sortedRankingData[0]?.profitPercentage || 0 }}%</div>
       </div>
-      <div class="rank-container">
+      <div class="rank-container" v-if="sortedRankingData.length > 1">
         <div class="rank rank-2">2</div>
-        <div class="member-name">{{ rankingData[1]?.name || '-' }}</div>
-        <div class="profit-rate">{{ rankingData[1]?.profitRate || 0 }}%</div>
+        <div class="member-name">{{ sortedRankingData[1]?.nickName || '-' }}</div>
+        <div class="profit-rate">{{ sortedRankingData[1]?.profitPercentage || 0 }}%</div>
       </div>
-      <div class="rank-container">
+      <div class="rank-container" v-if="sortedRankingData.length > 2">
         <div class="rank rank-3">3</div>
-        <div class="member-name">{{ rankingData[2]?.name || '-' }}</div>
-        <div class="profit-rate">{{ rankingData[2]?.profitRate || 0 }}%</div>
+        <div class="member-name">{{ sortedRankingData[2]?.nickName || '-' }}</div>
+        <div class="profit-rate">{{ sortedRankingData[2]?.profitPercentage || 0 }}%</div>
       </div>
     </div>
     <table class="ranking-table">
@@ -27,10 +27,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in rankingData" :key="index">
-          <td>{{ index + 4 }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.profitRate }}%</td>
+        <tr v-for="(item, index) in sortedRankingData.slice(3)" :key="index">
+          <td>{{ index + 4 }}</td> <!-- Start ranking from 4 -->
+          <td>{{ item.nickName }}</td>
+          <td>{{ item.profitPercentage }}%</td>
         </tr>
       </tbody>
     </table>
@@ -44,9 +44,15 @@ export default {
       type: Array,
       required: true
     }
+  },
+  computed: {
+    sortedRankingData() {
+      return this.rankingData.sort((a, b) => b.profitPercentage - a.profitPercentage); // Sort by profitPercentage in descending order
+    }
   }
 }
 </script>
+
 
 <style scoped>
 
