@@ -66,8 +66,9 @@ export default {
         marketType: stock.marketType,
         // 추가적으로 필요한 속성도 여기에 포함
       };
-      this.$emit('select-stock', selectedStock); // 부모 컴포넌트에 종목 정보 전달
+      this.$emit('select-stock', selectedStock); 
     },
+    
     // 총금액 계산
     totalAmount(stock) {
       return stock.quantity * stock.averagePrice; // 수량 * 매입가

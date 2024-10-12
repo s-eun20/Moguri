@@ -159,6 +159,12 @@ export default {
         this.currentPage++;
       }
     },
+    async updateTradeHistory(stockCode) {
+      const stockStore = useStockStore(); 
+      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
+      this.tradeHistory = stockStore.tradeHistory; // 로컬 거래내역 업데이트
+      console.log('Updated trade history:', this.tradeHistory);
+    },
   },
   watch: {
     currentPrice(newPrice) {

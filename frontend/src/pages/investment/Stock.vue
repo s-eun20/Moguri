@@ -12,6 +12,7 @@
       </div>
       <div class="trade-form-container">
         <TradeForm 
+          ref="tradeForm"
           :currentPrice="currentPrice" 
           :stockCode="stockCode" 
           @refreshHoldings="refreshHoldings" 
@@ -31,7 +32,6 @@
 import StockInfo from '@/components/Invest/StockInfo.vue';
 import TradeForm from '@/components/Invest/TradeForm.vue';
 import StockHolding from '@/components/Invest/StockHolding.vue';
-import { useStockStore } from '@/stores/stockStore';
 
 export default {
   components: {
@@ -59,9 +59,10 @@ export default {
    selectStock(stock) {
       console.log("Selecting stock in parent:", stock);
       this.selectedStock = stock; 
-      this.updateCurrentPrice(stock.currentPrice); 
+      this.updateCurrentPrice(stock.currentPrice || 0); 
       this.updateStockCode(stock.stockCode); 
       this.$refs.stockInfo.selectStock(stock); 
+      this.$refs.tradeForm.updateTradeHistory(stock.stockCode);
     }
   }
 };
