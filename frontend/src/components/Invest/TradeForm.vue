@@ -167,10 +167,16 @@ export default {
     },
   },
   watch: {
-    currentPrice(newPrice) {
-      this.orderPrice = newPrice; 
+  stockCode: {
+    immediate: true,
+    handler(newStockCode) {
+      this.updateTradeHistory(newStockCode);
     }
+  },
+  currentPrice(newPrice) {
+    this.orderPrice = newPrice; 
   }
+}
 };
 </script>
 

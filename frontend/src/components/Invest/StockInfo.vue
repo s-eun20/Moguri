@@ -149,6 +149,8 @@ export default {
         await stockStore.setSelectedStock({ ...selectedStock.value });
         localStorage.setItem("selectedStock", JSON.stringify(selectedStock.value));
         stockStore.searchResults = [];
+
+        emit("updateTradeHistory", stock.stockCode);
       } else {
         console.error("Failed to fetch latest stock data.");
       }

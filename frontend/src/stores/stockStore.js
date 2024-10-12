@@ -169,6 +169,22 @@ export const useStockStore = defineStore('stock', {
       }
     },
 
+    // 주식 랭킹 조회
+    async fetchStockRanking() {
+      try {
+        const response = await axios.get('/api/stocks/ranking');
+        if (response.data.returnCode === '0000') {
+          return response.data.data; // 랭킹 데이터를 반환
+        } else {
+          throw new Error(response.data.returnMessage);
+        }
+      } catch (error) {
+        console.error('주식 랭킹 조회 실패:', error);
+        this.error = '주식 랭킹을 불러오는데 실패했습니다.';
+        return null;
+      }
+    },
+
     processChartData(data) {
       return data
         .filter(item => item.stckBsopDate !== null) // null 데이터 제거

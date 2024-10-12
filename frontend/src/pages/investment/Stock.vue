@@ -8,6 +8,7 @@
           @updateCurrentPrice="updateCurrentPrice" 
           @updateStockCode="updateStockCode" 
           :selectedStock="selectedStock" 
+          @updateTradeHistory="updateTradeHistory"
         />
       </div>
       <div class="trade-form-container">
@@ -32,6 +33,7 @@
 import StockInfo from '@/components/Invest/StockInfo.vue';
 import TradeForm from '@/components/Invest/TradeForm.vue';
 import StockHolding from '@/components/Invest/StockHolding.vue';
+import { useStockStore } from '@/stores/stockStore';
 
 export default {
   components: {
@@ -47,6 +49,11 @@ export default {
     };
   },
   methods: {
+    async updateTradeHistory(stockCode) {
+      const stockStore = useStockStore();
+      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
+      this.$refs.tradeForm.updateTradeHistory(stockCode); // TradeForm의 메서드를 호출하여 거래내역 업데이트
+    },
     updateCurrentPrice(price) {
       this.currentPrice = price;
     },
