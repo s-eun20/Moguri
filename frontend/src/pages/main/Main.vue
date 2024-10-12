@@ -144,15 +144,107 @@
       </div>
     </div>
   </div>
+
+  <!-- 스크롤 시 서비스 소개 페이지-->
+  <div id="service-container">
+      <div id="section">
+        <section class="d-flex flex-column" id="section1">
+          <section id="section1-content">
+          <img src="../../assets/mainpage/머리.png" />
+          <p>내 모든 자산 내역을 한 눈에 조회하고 한 곳에서 관리하세요. <br/>
+              돈을 모으고 투자하는 방법을 알려주는 금융 서비스,<br/>
+              모구리와 함께라면 당신의 일상이 새로워집니다.</p>
+        </section>
+      </section>
+  
+        <section id="section2">
+          <section id="section2-header">
+          <h3>가계부</h3><br>
+          <h1>자산 관리,
+          <br>지출부터 목표 설정까지 
+          <br>똑똑하게</h1><br>
+          <div id="section2-content">
+          <h4>모구리에서 퀘스트를 설정하고<br>
+              시드머니를 모아봐요<br></h4>
+              <h4>퀘스트 성공 시 솜사탕을 획득하고<br>
+              모의투자에서 돈을 굴려보세요<br>   
+          </h4>
+          </div>
+        </section>
+          <div class="d-flex justify-content-end" id="section2-icon">
+          <img src="../../assets/mainpage/둘러보기.png">
+          <img src="../../assets/mainpage/퀘스트설정.png">
+          <img src="../../assets/mainpage/솜사탕.png">
+         </div>
+      </section>
+  
+        <section id="section3">
+          <div class="section3-header">
+          <h3>모의투자</h3><br>
+          <h1>간편하고 재미있게,
+          <br>모의 투자로 
+          <br>투자 경험을 쌓아봐요
+          </h1>
+          <div class="section3-content">
+            <h4>이해하기 쉬운 용어<br>
+            설명이 필요 없는
+            직관적인 화면 구성<br></h4>
+            <h4>그리고 실제 투자에 도움을 주는<br>
+            매도/매수 경험까지 한 번에</h4>
+          </div>
+        </div>
+          <img class="section3-img" src="../../assets/mainpage/모의투자컴터.png">
+        </section>
+  
+        <section id="section4">
+          <h3>이벤트</h3><br>
+          <h1>금융 퀴즈, 룰렛 돌리기 등
+          <br>다양한 게임을 통해
+          <br>솜사탕을 획득해 보아요
+          </h1>
+          <img class="section4-img" src="../../assets/mainpage/이벤트 배경.png">
+        </section>
+      </div>
+  </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { Carousel } from 'bootstrap';
 
 const router = useRouter();
+const activeSection= ref(null);
 
+const scrollToSection = (sectionId) => {
+        const section = document.getElementById(sectionId);
+        const navHeight = document.querySelector(".nav").offsetHeight;
+        const sectionPosition = section.offsetTop - navHeight;
+  
+        window.scrollTo({
+          top: sectionPosition,
+          behavior: "smooth"
+        });
+      };
+    
+  //scroll event 처리
+  const onScroll=() => {
+        const sections = document.querySelectorAll("section");
+        const scrollPosition = window.scrollY + window.innerHeight / 3;
+  
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+  
+          if (
+            scrollPosition >= sectionTop &&
+            scrollPosition < sectionTop + sectionHeight
+          ) {
+            activeSection.value = section.getAttribute("id");
+          }
+        });
+      }
+//페이지 이동 함수
 const goToPage = (path) => {
   router.push(path);
 };
@@ -166,99 +258,14 @@ onMounted(() => {
       wrap: true, // 마지막 슬라이드에서 첫 번째로 순환
     });
   }
+  window.addEventListener('scroll', onScroll);
+}); 
+// 컴포넌트가 언마운트될 시, 스크롤 이벤트 리스터 제거
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll);
 });
 </script>
 
 <style scoped>
-/* === 배너 === */
-#main_banner_container {
-  margin: 0 auto;
-  width: 100%;
-  margin-bottom: 35px;
-}
-.carousel {
-  width: 100%;
-}
-.carousel-item img {
-  width: 100%; /* 너비를 100%로 설정하여 Carousel의 너비에 맞춤 */
-  height: auto; /* 높이를 자동으로 설정 */
-  object-fit: cover; /* 이미지가 잘리더라도 비율 유지 */
-}
-
-/* 작은 화면 (예: 모바일) */
-@media (max-width: 767px) {
-  .carousel-item img {
-    height: 200px; /* 모바일에서 적절한 높이 설정 */
-  }
-}
-/* 중간 화면 (예: 태블릿) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .carousel-item img {
-    height: 300px; /* 태블릿에서 적절한 높이 설정 */
-  }
-}
-/* 큰 화면 (예: 데스크탑) */
-@media (min-width: 1024px) {
-  .carousel-item img {
-    height: 400px; /* 데스크탑에서 적절한 높이 설정 */
-  }
-}
-
-/* === 아래 === */
-#main_under_container {
-  padding-right: 10%;
-  padding-left: 10%;
-  margin: 0 auto;
-  align-items: center;
-  text-align: center;
-  font-family: 'Pretendard-Regular';
-  /* font-family: 'HakgyoansimWoojuR'; */
-}
-#main_under_title_1 {
-  font-weight: 800;
-  font-size: 1.5rem;
-}
-#main_under_title_2 {
-  margin-bottom: 10px;
-  color: #7b7b7b;
-}
-.main_bottom_banner_btn_container {
-  width: 100%; /* 너비를 100%로 설정하여 flex에 맞춤 */
-}
-.main_bottom_banner_btn {
-  width: 300px;
-  border: none; /* 기본 테두리 제거 */
-  border-radius: 10px;
-  background: none; /* 기본 배경 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  cursor: pointer; /* 커서 모양 변경 */
-  padding-top: 15px;
-  transition: box-shadow 0.3s ease; /* 부드러운 그림자 애니메이션 */
-}
-.main_bottom_banner_btn:hover {
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* 오른쪽과 아래에 그림자 추가 */
-}
-
-.main_img_btn {
-  width: 90px;
-  height: 90px;
-}
-.middle-flex {
-  gap: 24px;
-}
-.last-flex {
-  color: rgb(31, 41, 55);
-}
-.last-flex-1 {
-  font-size: 20px;
-  font-weight: 800;
-}
-.last-flex-2 {
-  font-size: 15px;
-  font-weight: 200;
-  height: 100px;
-}
-.carousel-indicators {
-  list-style: none;
-}
+@import '../../assets/mainpage/Main.css';
 </style>
