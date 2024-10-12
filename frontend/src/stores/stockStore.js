@@ -32,19 +32,7 @@ export const useStockStore = defineStore('stock', {
         this.error = '주식 검색에 실패했습니다.';
       }
     },
-    // 보유종목 조회
-    async fetchHoldings() {
-      const authStore = useAuthStore();
-      const memberId = authStore.state.user.memberId;
-      try {
-        const response = await axios.get('http://localhost:8080/api/stocks/',memberId);
-        this.holdings = response.data;
-        this.error = null;
-      } catch (error) {
-        console.error('보유종목 조회 실패:', error);
-        this.error = '보유종목을 불러오는데 실패했습니다.';
-      }
-    },
+    
 
     async fetchStockChart(stockCode, period = 'DAY') {
       try {

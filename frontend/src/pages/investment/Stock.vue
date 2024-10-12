@@ -31,6 +31,7 @@
 import StockInfo from '@/components/Invest/StockInfo.vue';
 import TradeForm from '@/components/Invest/TradeForm.vue';
 import StockHolding from '@/components/Invest/StockHolding.vue';
+import { useStockStore } from '@/stores/stockStore';
 
 export default {
   components: {
@@ -55,7 +56,7 @@ export default {
     async refreshHoldings() {
       await this.$refs.stockHoldings.loadHoldings(); 
     },
-    selectStock(stock) {
+   selectStock(stock) {
       console.log("Selecting stock in parent:", stock);
       this.selectedStock = stock; 
       this.updateCurrentPrice(stock.currentPrice); 
