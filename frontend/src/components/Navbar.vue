@@ -103,6 +103,7 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   font-weight: bold;
   font-size: 24px;
+  z-index:1;
 }
 
 .menu {
