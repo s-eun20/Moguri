@@ -146,14 +146,37 @@
     justify-content: center; /* 수직 방향으로 가운데 정렬 */
     align-items: center; /* 수평 방향으로 가운데 정렬 */
     text-align: center;
-    transition: all 0.8s ease;
-  }
+  }   
 
   #section1 img{
     height: 100px;
     margin-bottom: 20px;
-    transition: all 0.8s ease;
   }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px); /* 아래에서 위로 이동 */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* 원래 위치 */
+    }
+  }
+  
+  /* 초기 상태: 숨겨진 상태 */
+  #section1-content {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  /* 부모인 #section1에 마우스를 올렸을 때 자식이 나타남 */
+  #section1:hover #section1-content {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0s; /* 지연 시간 설정 */
+  }
+  
   #section2 {
     height: 700px;
     background-color: white;
@@ -167,33 +190,79 @@
     color:#f0b300;
     text-align: left;
     padding-top: 5%;
-    transition: all 0.8s ease;
   }
   /* 가계부 헤더 설명글 */
   #section2 h1{
     color:black;
     text-align: left;
-    transition: all 0.8s ease;
   }
   #section2-content{
     color: black;
     text-align: left;
-    transition: all 1s ease;
   }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px); /* 아래에서 위로 이동 */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* 원래 위치 */
+    }
+  }
+  
+  #section2-left {
+    opacity: 0; /* 초기 상태: 보이지 않음 */
+    transform: translateY(20px); /* 기본 위치를 아래로 설정 */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* 부드러운 전환 효과 */
+  }
+
   /* 가계부 아이콘 */
   #section2-icon{
    height: 200px;
    margin-top: -180px;   
    margin-bottom: 70px;
-   transition: all 0.8s ease;
   }
-  /* #section2-content{
-    color: black;
-    text-align: left;
-    width: 400px;
-    margin-top: -20px;
-    margin-left:700px;
-  } */
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px); /* 아래에서 위로 이동 */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* 원래 위치 */
+    }
+  }
+  #section2:hover #section2-left{
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  
+  #둘러보기, #퀘스트, #솜사탕 {
+    opacity: 0; /* 초기 상태: 보이지 않음 */
+    transform: translateY(20px); /* 기본 위치를 아래로 설정 */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* 부드러운 전환 효과 */
+  }
+  
+  #section2:hover #둘러보기 {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s; /* 글 이후에 첫 번째 등장 */
+  }
+  
+  #section2:hover #퀘스트 {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1s; /* 0.5초 후 등장 */
+  }
+  
+  #section2:hover #솜사탕 {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.5s; /* 1초 후 등장 */
+  }
+  
   #section3 {
     height: 700px;
     background-color: #f9fafb;
@@ -212,29 +281,51 @@
     margin:0 40px 0 1000px;
     text-align: left;
   }
-  .section3-img{
+
+  #section3-right{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #section3:hover #section3-right {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s; /* 글 이후에 첫 번째 등장 */
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px); /* 아래에서 위로 이동 */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* 원래 위치 */
+    }
+  }
+  
+  .section3-img {
     width: 550px;
     float: left;
-    margin: -100px 30px 0 200px; /* 상단, 우측, 하단, 좌측 여백 조정 */
+    margin: -100px 30px 0 200px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
-  .section3-coin{
-    width:500px;
-    height:600px;
-    margin: -110px 30px 0 200px; 
-    padding-bottom: 0;
+  
+  #section3:hover .section3-img {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  #section3 .section3-img {
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
   .section3-content{
+  margin-top: 20px;
     color:black;
   }
-  .section3-flycoin{
-    width:10%;
-  }
-  .section3-coin{
-    width:10%;
-    margin-right:70%;
-    padding-bottom: 50%;
-    z-index: 10;
-  }
+
   #section4 {
     height: 700px;
     color: #fff;
@@ -250,9 +341,37 @@
     color:black;
     text-align: left;
   }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px); /* 아래에서 위로 이동 */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* 원래 위치 */
+    }
+  }
+  #section4-content{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #section4:hover #section4-content{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .section4-img{
     float:right;
     width:  600px;
     height: 420px;
     margin-top:-150px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #section4:hover .section4-img {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s; 
   }
