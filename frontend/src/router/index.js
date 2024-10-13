@@ -13,6 +13,7 @@ import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
 import ElementPage from '@/pages/element/ElementPage.vue';
 import MoguriIntro from '@/pages/main/MoguriIntro.vue';
+import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
 
 const routes = [
   {
@@ -33,14 +34,13 @@ const routes = [
   {
     path: '/investment/stock',
     name: 'Stock',
-    component: Stock
+    component: Stock,
   },
-
 
   {
     path: '/investment/rank',
     name: 'Rank',
-    component: Rank
+    component: Rank,
   },
   {
     path: '/login', // 로그인 경로 추가
@@ -73,6 +73,10 @@ const routes = [
     // component: AttendancePage,
   },
   {
+    path: '/cottoncandyshop',
+    name: 'CottonCandyShop',
+    component: CottonCandyShop,
+  },
     path: '/event/check', // 출석체크 경로 추가
     name: 'Check',
     component: Check,
