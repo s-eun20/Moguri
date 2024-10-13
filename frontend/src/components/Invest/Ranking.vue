@@ -1,38 +1,41 @@
 <template>
   <div class="investment-ranking">
     <div class="top-three">
-      <div class="rank-container">
-        <div class="member-name">{{ rankingData[1]?.name || '-' }}</div>
-        <div class="rank rank-2">2</div>
-        <div class="profit-rate">{{ rankingData[1]?.profitRate || 0 }}%</div>
+      <div class="rank-item rank-1" v-if="sortedRankingData.length > 0">
+        <div class="rank-info">
+          <span class="rank">1</span>
+          <span class="member-name">{{ sortedRankingData[0]?.nickName || '-' }}</span>
+          <span class="profit-rate">{{ sortedRankingData[0]?.profitPercentage || 0 }}%</span>
+        </div>
+        <span class="reward">리워드: 100,000원</span>
       </div>
-      <div class="rank-container">
-        <div class="member-name">{{ rankingData[0]?.name || '-' }}</div>
-        <div class="rank rank-1">1</div>
-        <div class="profit-rate">{{ rankingData[0]?.profitRate || 0 }}%</div>
+      <div class="rank-item rank-2" v-if="sortedRankingData.length > 1">
+        <div class="rank-info">
+          <span class="rank">2</span>
+          <span class="member-name">{{ sortedRankingData[1]?.nickName || '-' }}</span>
+          <span class="profit-rate">{{ sortedRankingData[1]?.profitPercentage || 0 }}%</span>
+        </div>
+        <span class="reward">리워드: 50,000원</span>
       </div>
-      <div class="rank-container">
-        <div class="member-name">{{ rankingData[2]?.name || '-' }}</div>
-        <div class="rank rank-3">3</div>
-        <div class="profit-rate">{{ rankingData[2]?.profitRate || 0 }}%</div>
+      <div class="rank-item rank-3" v-if="sortedRankingData.length > 2">
+        <div class="rank-info">
+          <span class="rank">3</span>
+          <span class="member-name">{{ sortedRankingData[2]?.nickName || '-' }}</span>
+          <span class="profit-rate">{{ sortedRankingData[2]?.profitPercentage || 0 }}%</span>
+        </div>
+        <span class="reward">리워드: 30,000원</span>
       </div>
     </div>
-    <table class="ranking-table">
-      <thead>
-        <tr>
-          <th>순위</th>
-          <th>회원명</th>
-          <th>수익률</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in rankingData" :key="index">
-          <td>{{ index + 4 }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.profitRate }}%</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="ranking-cards">
+      <div v-for="(item, index) in sortedRankingData.slice(3)" :key="index" class="rank-item">
+        <div class="rank-info">
+          <span class="rank">{{ index + 4 }}</span>
+          <span class="member-name">{{ item.nickName }}</span>
+          <span class="profit-rate">{{ item.profitPercentage }}%</span>
+        </div>
+        <span class="reward">리워드: 10,000원</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -43,146 +46,91 @@ export default {
       type: Array,
       required: true
     }
+  },
+  computed: {
+    sortedRankingData() {
+      return this.rankingData.sort((a, b) => b.profitPercentage - a.profitPercentage); // Sort by profitPercentage in descending order
+    }
   }
 }
 </script>
 
 <style scoped>
 .investment-ranking {
-  padding: 20px;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.ranking-container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  width: 100%;
 }
 
 .top-three {
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-bottom: 30px;
+  flex-direction: column; /* 세로로 쌓이게 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  margin-top: 20px;
 }
 
-.rank-container {
+.rank-item {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 10px;
+  justify-content: space-between; /* 양쪽 끝으로 정렬 */
+
+  background-color: #f9f9f9; /* 카드 배경색 */
+  border-radius: 10px; /* 카드 모서리 둥글게 */
+  padding: 15px; /* 카드 내부 패딩 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 카드 그림자 */
+  margin: 10px 0; /* 위아래 여백 */
+  width: 100%; /* 카드 너비 */
+  transition: transform 0.3s; /* 호버 효과 */
 }
 
-.member-name {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-align: center;
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.rank-item:hover {
+  transform: scale(1.02); /* 호버 시 확대 효과 */
 }
 
-.profit-rate {
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.rank {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  border-radius: 50%;
-}
-
+/* 1, 2, 3위 강조 스타일 */
 .rank-1 {
-  background-color: #ffd700;
-  height: 70px;
-  width: 70px;
-  font-size: 24px;
+  background-color: #fff6c0; /* Gold */
 }
 
 .rank-2 {
-  background-color: #c0c0c0;
+  background-color: #e4e0e0; /* Silver */
 }
 
 .rank-3 {
-  background-color: #cd7f32;
+  background-color: #f7dfc7; /* Bronze */
 }
 
-.ranking-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+.rank-info {
+  display: flex;
+  align-items: center; /* 수직 정렬 */
 }
 
-.ranking-table th,
-.ranking-table td {
-  padding: 12px;
-  text-align: center;
+.rank {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 10px; /* 순위와 이름 간격 */
+  color: #ffbe0d; /* 순위 텍스트 색상 */
 }
 
-.ranking-table th {
-  background-color: #f0f0f0;
-  color: #333;
-  font-weight: 600;
+.member-name {
+  font-size: 22px;
+  font-weight: bold;
+  margin-right: 10px; /* 이름과 수익률 간격 */
 }
 
-.ranking-table td {
-  background-color: #f9f9f9;
+.profit-rate {
+  font-size: 18px;
+  color: #666;
+  margin-right: 10px; /* 수익률과 리워드 간격 */
 }
 
-.ranking-table tr:nth-child(even) td {
-  background-color: #f0f0f0;
+.reward {
+  font-size: 18px;
+  color: #a78528; /* 리워드 색상 */
+  font-weight: bold;
 }
 
-@media (max-width: 768px) {
-  .investment-ranking {
-    padding: 15px;
-  }
-
-  .section-title {
-    font-size: 16px;
-  }
-
-  .rank {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
-  }
-
-  .rank-1 {
-    height: 60px;
-    width: 60px;
-    font-size: 20px;
-  }
-
-  .ranking-table th,
-  .ranking-table td {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .member-name {
-    font-size: 12px;
-    max-width: 80px;
-  }
-
-  .profit-rate {
-    font-size: 12px;
-  }
+.ranking-cards {
+  display: flex;
+  flex-direction: column; /* 세로로 쌓이게 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  margin-top: 20px; /* 카드 위 여백 */
 }
 </style>

@@ -1,4 +1,3 @@
-// stores/auth.js
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
@@ -9,9 +8,11 @@ const AUTH_KEY = 'auth';
 const initState = {
   token: '',
   user: {
+    memberId: '',
     email: '',
     nickname: '',
     roles: [],
+    cottonCandy: '0',
   },
 };
 
@@ -23,57 +24,94 @@ export const useAuthStore = defineStore('auth', () => {
   const isLogin = computed(() => !!state.value.user.nickname);
   const nickname = computed(() => state.value.user.nickname);
   const email = computed(() => state.value.user.email);
+  const cottonCandy = computed(() => state.value.user.cottonCandy);
 
- // 로그인 메서드
- const login = async (member, router) => { // router 인자 추가
-  let isError = false;
-  isLoading.value = true; // 요청 시작 시 로딩 시작
-  errorMessage.value = ''; // 에러 메시지 초기화
-  try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', member);
-    console.log('로그인 성공:', response.data);
-    
-    // 로그인 정보 업데이트
-    state.value.token = response.data.token; // 예시로 토큰만 업데이트
-    state.value.user = { ...response.data.user }; // 사용자 정보 업데이트
-    
-    // 로컬 스토리지에 저장
-    localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
-   
-    // 로그인 성공 후 라우터 이동
-    router.push('/'); // 라우터 이동 추가
-  } catch (error) {
-    console.error('로그인 실패:', error);
-    errorMessage.value = '로그인 실패. 다시 시도하세요.';  // 에러 메시지를 스토어에 저장
-    isError = true;
-
-  } finally {
-    isLoading.value = false; // 요청 종료 시 로딩 끝
-  return isError
-  }
-
-};
-
-// 로그아웃 메서드
-const logout = () => {
-  localStorage.removeItem(AUTH_KEY);
-  state.value = { ...initState };
-  router.push('/login'); // router를 사용하여 페이지 이동
-};
-
-  // 로컬스토리지에서 인증 정보 로드
-  const load = () => {
-    const auth = localStorage.getItem(AUTH_KEY);
-    if (auth) {
-      state.value = JSON.parse(auth);
-      if (!state.value.user.nickname) {
-        // 닉네임이 없으면 초기 상태로 설정
-        state.value = { ...initState };
-      }
+  const login = async (member) => {
+    let isError = false;
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/login', member);
+      console.log('로그인 성공:', response.data);
+      state.value.token = response.data.token;
+      state.value.user = { ...response.data.user };
+      localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
+      router.push('/');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      errorMessage.value = '로그인 실패. 다시 시도하세요.';
+      isError = true;
+    } finally {
+      isLoading.value = false;
+      return isError;
     }
   };
 
-  load(); // 애플리케이션 시작 시 로드
+  const logout = () => {
+    localStorage.removeItem(AUTH_KEY);
+    state.value = { ...initState };
+    router.push('/');
+  };
+
+  const load = () => {
+    const auth = localStorage.getItem(AUTH_KEY);
+    console.log('로컬 스토리지에서 로드된 데이터:', auth);
+    if (auth) {
+        try {
+            state.value = JSON.parse(auth);
+            // user 객체가 존재하는지 확인
+            if (!state.value.user || !state.value.user.nickname || !state.value.user.memberId) {
+                state.value = { ...initState };
+            }
+        } catch (error) {
+            console.error('로컬 스토리지 데이터 파싱 오류:', error);
+            state.value = { ...initState }; // 초기 상태로 리셋
+        }
+    }
+};
+
+const updateCottonCandy = async (amount) => {
+  const userId = state.value.user.memberId;
+
+  if (!userId) {
+    console.error('사용자 ID가 정의되지 않았습니다.');
+    return;
+  }
+
+  const newCottonCandyAmount = parseInt(state.value.user.cottonCandy) + amount;
+  state.value.user.cottonCandy = newCottonCandyAmount.toString();
+  localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
+
+  try {
+    await axios.patch(`http://localhost:8080/api/members/${userId}/cotton-candy`, {
+      cottonCandy: newCottonCandyAmount,
+    });
+    console.log('코튼 캔디 업데이트 성공', newCottonCandyAmount);
+  } catch (error) {
+    console.error('코튼 캔디 업데이트 실패:', error);
+  }
+};
+
+  const getCottonCandy = async () => {
+    const userId = state.value.user.memberId;
+
+    if (!userId) {
+        console.error('사용자 ID가 정의되지 않았습니다.');
+        return;
+    }
+
+    try {
+        const response = await axios.get(`http://localhost:8080/api/members/${userId}/cotton-candy`);
+        const cottonCandyAmount = response.data.data; 
+        state.value.user.cottonCandy = cottonCandyAmount;
+        localStorage.setItem(AUTH_KEY, JSON.stringify(state.value)); 
+        console.log('코튼 캔디 가져오기 성공:', cottonCandyAmount);
+    } catch (error) {
+        console.error('코튼 캔디 가져오기 실패:', error);
+    }
+};
+
+  load();
 
   return {
     state,
@@ -82,6 +120,10 @@ const logout = () => {
     email,
     login,
     logout,
-    isLoading, // 로딩 상태 추가
+    cottonCandy,
+    isLoading,
+    getCottonCandy,
+    updateCottonCandy,
+    load,
   };
 });

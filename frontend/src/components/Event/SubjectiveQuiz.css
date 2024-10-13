@@ -1,0 +1,27 @@
+.subQuestion-div {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  height: 310px;
+}
+
+.hidden {
+  display: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover\:example-label-gray:hover {
+  background-color: #f0f0f0;
+}
+
+.example-label-orange {
+background-color: #ffd698;
+}
+
+.disabled-input {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

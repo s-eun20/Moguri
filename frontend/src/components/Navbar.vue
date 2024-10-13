@@ -5,139 +5,154 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
+      <div v-if="isLoggedIn" class="user-dropdown">
+        <img
+          src="@/assets/img/Moguri.png"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+      </div>
+
       <div class="d-flex align-items-center">
-        <b-dropdown v-if="isLoggedIn">
-          <template #button-content>
-            <img
-              src="@/assets/img/Moguri.png"
-              alt="Profile Picture"
-              class="profile-pic"
-            />
-          </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges"
-            >🛡️ 뱃지함</b-dropdown-item
-          >
-          <b-dropdown-item class="dropdown-item" @click="collectMoguri"
-            >🪙 모구리 모으기</b-dropdown-item
-          >
-          <b-dropdown-item class="dropdown-item" @click="editAccount"
-            >📝 회원 수정</b-dropdown-item
-          >
-          <b-dropdown-item class="dropdown-item" @click="logout"
-            >🚪 로그아웃</b-dropdown-item
-          >
-        </b-dropdown>
+        <div v-if="isLoggedIn" class="user-info">
+          <b-nav-item class="user-name" @click="goToMyPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 추가 -->
+        </div>
 
-        <b-nav-item v-if="isLoggedIn" class="user-name"
-          >{{ nickname }}님</b-nav-item
-        >
+        <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
+          <p class="cotton-candy">코튼 캔디: {{ cottonCandy }}</p>
+        </b-nav-item>
 
-        <!-- 로그인 링크 수정 -->
         <b-nav-item v-else>
-          <router-link to="/login" class="login-button">
+          <button @click="showLoginModal" class="login-button">
             <i class="fas fa-user-circle"></i> 로그인
-          </router-link>
+          </button>
         </b-nav-item>
       </div>
     </b-navbar-nav>
   </b-navbar>
-  <div class="nav-divider"></div>
-</template>
 
+  <div class="nav-divider"></div>
+
+  <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
+</template>
 <script setup>
-import { computed } from 'vue';
-import MenuGroup from './Menu/menuGroup.vue';
+import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import MenuGroup from './Menu/menuGroup.vue';
 import { useRouter } from 'vue-router';
-import '../assets/styles/global.css';
+import LoginModal from '@/pages/login/LoginModal.vue';
+import '@/assets/styles/global.css';
 
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
+const cottonCandy = computed(() => authStore.cottonCandy);
+const profilePhoto = computed(() => authStore.profilePhoto);
+const defaultPhoto = 'path_to_default_image';
 const router = useRouter();
-const logout = () => {
-  authStore.logout(router); // router 전달
+
+const showModal = ref(false);
+
+// 마이페이지로 이동하는 함수
+const goToMyPage = () => {
+  router.push({ name: 'EditProfile' }); // 'EditProfile'이 마이페이지의 라우트 이름인지 확인
 };
 
-const goToBadges = () => {
-  console.log('뱃지함으로 이동');
+const showLoginModal = () => {
+  showModal.value = true;
 };
 
-const collectMoguri = () => {
-  console.log('모구리 모으기');
-};
-
-const editAccount = () => {
-  console.log('회원 수정');
+const closeLoginModal = () => {
+  showModal.value = false;
 };
 </script>
 
 <style scoped>
+.navbar-custom {
+  font-family: 'HakgyoansimWoojuR' !important;
+}
+
 .nav-divider {
   height: 1px;
-  background-color: #e0e0e0; /* 원하는 색상으로 변경 가능 */
+  background-color: #e0e0e0;
   margin-top: 5px;
   padding: 0;
   border: none;
 }
+
 .moguri-logo {
-  color: rgb(255, 166, 0);
+  color: rgb(255, 166, 0); /* 주황색 */
   font-weight: bold;
   font-size: 24px;
-  font-family: 'HakgyoansimWoojuR';
+  z-index:1;
 }
 
 .menu {
   margin-right: auto;
-  font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
   font-size: 19px;
 }
 
-.user-name {
+.user-dropdown {
+  position: relative; /* 드롭다운의 위치를 상대적으로 설정 */
+  z-index: 1000; /* 드롭다운이 다른 요소 위에 표시되도록 설정 */
+}
+.user-dropdown .dropdown-toggle::after {
+  display: none; /* 화살표 숨기기 */
+}
+
+.cotton-candy {
+  margin-top: 15px;
   font-weight: bold;
-  font-family: 'Ownglyph_meetme-Rg';
-  font-size: 22px;
-  color: #333;
-  margin-left: 0.5rem;
+  color: rgb(228, 171, 67);
+}
+
+.profile-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .profile-pic {
-  width: 40px;
-  height: 40px;
+  width: 60px; /* 프로필 사진 크기 조정 */
+  height: 60px; 
   border-radius: 50%;
   object-fit: cover;
-  margin-left: 1rem;
+  transition: transform 0.3s; /* Hover 애니메이션 */
+}
+
+.profile-pic:hover {
+  transform: scale(1.1); /* Hover 시 확대 */
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 24px; /* 크기 조정 */
+  color: rgb(255, 166, 0); /* 주황색 */
   cursor: pointer;
 }
 
 .login-button {
   margin-left: 1rem;
   font-weight: bold;
-  color: #fecd72;
-  border: 2px solid #fecd72;
-  padding: 14px 14px; /* 여백 추가하여 버튼 크기 조정 */
-  border-radius: 5px; /* 모서리 둥글게 */
+  color: rgb(255, 166, 0); /* 주황색 */
+  border: 2px solid rgb(255, 166, 0); /* 주황색 */
+  background-color: white;
+  padding: 14px 14px;
+  border-radius: 5px;
   transition: all 0.3s ease;
-  text-decoration: none; /* 링크 밑줄 제거 */
 }
 
 .login-button:hover {
-  background-color: #fecd72;
+  background-color: rgb(255, 166, 0); /* 주황색 */
   color: white;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  padding: 8px 12px; /* 여백 추가하여 버튼 크기 조정 */
-  transition: background-color 0.2s;
-  border-radius: 5px;
-}
-
-.dropdown-item:hover {
-  background-color: rgba(255, 166, 0, 0.1);
-  color: rgb(255, 166, 0);
 }
 </style>

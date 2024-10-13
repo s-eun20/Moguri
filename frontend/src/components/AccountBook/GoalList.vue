@@ -3,8 +3,6 @@
     <div class="goal-header">
       <span class="title" v-if="props.activeTab === 'saving'">{{ title }}</span>
     </div>
-
-    <!-- Only show the goals table if the active tab is 'saving' -->
     <table class="goal-table" v-if="props.activeTab === 'saving'">
       <thead>
         <tr>
@@ -33,9 +31,7 @@
           </td>
           <td>
             <button @click="editGoal(goal)" class="edit-button">수정</button>
-            <button @click="deleteGoal(goal.goalId)" class="delete-button">
-              삭제
-            </button>
+            <button @click="deleteGoal(goal.goalId)" class="delete-button">삭제</button>
           </td>
         </tr>
       </tbody>
@@ -43,12 +39,8 @@
 
     <!-- Only show the quests table -->
     <div class="quest-header">
-      <span class="title" v-if="props.activeTab === 'expense'"
-        >지출 퀘스트 목록</span
-      >
-      <span class="title" v-if="props.activeTab === 'saving'"
-        >저축 퀘스트 목록</span
-      >
+      <span class="title" v-if="props.activeTab === 'expense'">지출 퀘스트 목록</span>
+      <span class="title" v-if="props.activeTab === 'saving'">저축 퀘스트 목록</span>
       <p class="quest-description" v-if="props.activeTab === 'expense'">
         ※지출 퀘스트는 기간 내 최대 지출 금액보다 적어야 리워드가 지급됩니다.
       </p>
@@ -84,9 +76,7 @@
           </td>
           <td>{{ formatCurrency(quest.rewardAmount) }}</td>
           <td>
-            <button @click="deleteGoal(quest.goalId)" class="delete-button">
-              삭제
-            </button>
+            <button @click="deleteGoal(quest.goalId)" class="delete-button">삭제</button>
           </td>
         </tr>
       </tbody>
@@ -102,10 +92,10 @@
 </template>
 
 <script>
-import { useGoalStore } from '@/stores/goalStore';
-import { useAccountStore } from '@/stores/accountStore';
-import { onMounted, computed, ref, watch } from 'vue';
-import GoalEditModal from './GoalEditModal.vue';
+import { useGoalStore } from "@/stores/goalStore";
+import { useAccountStore } from "@/stores/accountStore";
+import { onMounted, computed, ref, watch } from "vue";
+import GoalEditModal from "./GoalEditModal.vue";
 
 export default {
   components: {
@@ -117,41 +107,41 @@ export default {
   },
   setup(props) {
     const goalStore = useGoalStore();
-    const accountStore = useAccountStore();
+    const accountStore = useAccountStore(); 
     const isModalVisible = ref(false);
-    const selectedGoal = ref(null);
+    const selectedGoal = ref(null); 
     onMounted(() => {
-      fetchGoals();
+      fetchGoals(); 
     });
 
     const fetchGoals = () => {
-      goalStore.fetchGoals();
+      goalStore.fetchGoals(); 
     };
 
     const editGoal = (goal) => {
-      selectedGoal.value = goal;
-      isModalVisible.value = true;
+      selectedGoal.value = goal; 
+      isModalVisible.value = true; 
     };
 
     const closeModal = () => {
       isModalVisible.value = false;
-      selectedGoal.value = null;
+      selectedGoal.value = null; 
     };
 
     const filteredGoals = computed(() => {
       return goalStore.goals.filter((goal) => {
         // activeTab에 따라 목표를 필터링
-        if (props.activeTab === 'saving') {
+        if (props.activeTab === "saving") {
           return goal.goalCategory === null && goal.rewardAmount === null;
         } else {
-          return false;
+          return false; 
         }
       });
     });
 
     const filteredQuests = computed(() => {
       return goalStore.goals.filter((goal) => {
-        if (props.activeTab === 'saving') {
+        if (props.activeTab === "saving") {
           return goal.goalCategory === null && goal.rewardAmount > 0;
         } else {
           return goal.goalCategory !== null && goal.rewardAmount > 0;
@@ -160,9 +150,9 @@ export default {
     });
 
     const formatCurrency = (value) => {
-      return new Intl.NumberFormat('ko-KR', {
-        style: 'currency',
-        currency: 'KRW',
+      return new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
       }).format(value);
     };
 
@@ -170,8 +160,8 @@ export default {
       const date = new Date(dateString);
       return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
         2,
-        '0'
-      )}.${String(date.getDate()).padStart(2, '0')}`;
+        "0"
+      )}.${String(date.getDate()).padStart(2, "0")}`;
     };
 
     const formatDateRange = (startDate, endDate) => {
@@ -182,25 +172,25 @@ export default {
       return Math.round((goal.currentAmount / goal.goalAmount) * 100);
     };
 
+
     const deleteGoal = (goalId) => {
       console.log(goalId);
-      if (confirm('정말로 이 목표를 삭제하시겠습니까?')) {
+      if (confirm("정말로 이 목표를 삭제하시겠습니까?")) {
         goalStore.deleteGoal(goalId);
       }
     };
 
-    // watch(
-    //   () => accountStore.transactions,
-    //   () => {
-    //     goalStore.goals.forEach((goal) => {
-    //       if (goal.goalCategory) {
-    //         updateCurrentAmount(goal.goalCategory);
-    //       }
-    //     });
-    //   }
-    // );
-
-    console.log('트랜젝션:', accountStore.transactions); // transactions 내용 출력
+    
+    watch(
+      () => accountStore.transactions,
+      () => {
+        goalStore.goals.forEach((goal) => {
+          if (goal.goalCategory) {
+            updateCurrentAmount(goal.goalCategory);
+          }
+        });
+      }
+    );
 
     const updateCurrentAmount = (goalCategory) => {
       const goalToUpdate = goalStore.goals.find(
@@ -211,6 +201,7 @@ export default {
         const startDate = new Date(goalToUpdate.startDate);
         const endDate = new Date(goalToUpdate.endDate);
 
+        
         const totalAmount = accountStore.transactions
           .filter((transaction) => {
             const transactionDate = new Date(transaction.transactionDate);
@@ -251,7 +242,7 @@ export default {
   background-color: #ffffff;
   border-radius: 8px;
   margin-bottom: 20px;
-  font-family: 'HakgyoansimWoojuR';
+  font-family: "HakgyoansimWoojuR";
 }
 
 .goal-header {

@@ -81,6 +81,7 @@
 <script>
 import { defineComponent, ref, computed, watch } from "vue";
 import { useGoalStore } from "@/stores/goalStore";
+import { useAuthStore } from "@/stores/auth"; // auth 스토어를 가져옵니다.
 
 export default defineComponent({
   props: {
@@ -88,8 +89,11 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const goalStore = useGoalStore();
+    const authStore = useAuthStore(); // auth 스토어를 사용합니다.
 
-    const memberId = ref(1);
+    // authStore에서 memberId를 가져옵니다.
+    const memberId = computed(() => authStore.state.user.memberId);
+
     const transactionDate = ref("");
     const type = ref("");
     const category = ref("");
@@ -141,22 +145,29 @@ export default defineComponent({
     };
 
     const addTransaction = () => {
-      const newTransaction = {
-        memberId: memberId.value,
-        transactionDate: transactionDate.value,
-        type: type.value,
-        category:
-          type.value === "지출"
-            ? category.value
-            : type.value === "수입"
-            ? incomeType.value
-            : null, // 저축의 경우 category를 null로 설정
-        amount: amount.value,
-        description: description.value,
-        paymentMethod: type.value === "지출" ? paymentMethod.value : "",
-      };
-      emit("add", newTransaction);
-      console.log(newTransaction);
+  // newTransaction 생성
+  const newTransaction = {
+    memberId: memberId.value, // memberId를 computed로 가져옵니다.
+    transactionDate: transactionDate.value,
+    type: type.value,
+    category:
+      type.value === "지출"
+        ? category.value
+        : type.value === "수입"
+        ? incomeType.value
+        : null, // 저축의 경우 category를 null로 설정
+    amount: amount.value,
+    description: description.value,
+    paymentMethod: type.value === "지출" ? paymentMethod.value : "",
+  };
+
+  // 순환 참조를 피하기 위해 새로운 객체를 JSON으로 변환
+  const transactionData = {
+    ...newTransaction,
+  };
+
+  emit("add", transactionData); // emit으로 새로운 객체를 전달
+  console.log(transactionData);
       if (type.value === "저축") {
         const matchingGoal = goalStore.goals.find(
           (goal) => goal.goalName === description.value
@@ -168,6 +179,7 @@ export default defineComponent({
       }
       closeModal();
     };
+    
     const resetForm = () => {
       transactionDate.value = "";
       type.value = "";
@@ -180,7 +192,7 @@ export default defineComponent({
     };
 
     return {
-      memberId,
+      memberId, // computed 속성 반환
       transactionDate,
       type,
       category,
