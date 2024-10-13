@@ -48,9 +48,9 @@ export const useElementStore = defineStore('element', () => {
       "answer2": { "text": "안정적인 사업이 아니면 신중해야 해.", "type": "토" }
     },
     {
-      "question": "당신의 급전은 나무에 비유한다면, 어느 시기에 가장 힘을 발휘할까요?",
-      "answer1": { "text": "빠르게 자라서 하늘을 찌를 때", "type": "수" },
-      "answer2": { "text": "바람에 불어 주변 나무와 연결될 때", "type": "목" }
+      "question": "갑자기 목돈이 생긴다면, 어떻게 사용하고 싶나요?",
+      "answer1": { "text": "주식에 투자해 빠른 수익을 노린다.", "type": "수" },
+      "answer2": { "text": "여러 자산에 나눠 안전하게 운영한다.", "type": "목" }
     },
     {
       "question": "당신이 가장 선호하는 돈 관리 방식은?",
