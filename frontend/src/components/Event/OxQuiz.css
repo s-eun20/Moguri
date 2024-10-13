@@ -1,0 +1,48 @@
+.oxQuestion-div {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  height: 245px;
+}
+
+.oxExample-label {
+  display: block;
+  margin-top: 1rem;
+  border-width: 1px;
+  border-color: rgba(209, 213, 219, var(--tw-border-opacity));
+  border-radius: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.hover\:example-label-gray:hover {
+    background-color: #f0f0f0;
+  }
+
+.example-label-orange {
+  background-color: #ffd698;
+}
+
+
+.ox-quiz-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.disabled-label {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

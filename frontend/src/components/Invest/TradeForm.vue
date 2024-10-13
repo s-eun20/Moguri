@@ -1,8 +1,8 @@
 <template>
   <div class="trade-form">
     <div class="trade-buttons">
-      <button :class="['buy', { active: tradeType === 'buy' }]" @click="setTradeType('buy')">매수</button>
-      <button :class="['sell', { active: tradeType === 'sell' }]" @click="setTradeType('sell')">매도</button>
+      <button :class="['buy', { active: tradeType === 'BUY' }]" @click="setTradeType('BUY')">매수</button>
+      <button :class="['sell', { active: tradeType === 'SELL' }]" @click="setTradeType('SELL')">매도</button>
       <button :class="['history', { active: showingHistory }]" @click="showHistory">거래내역</button>
     </div>
     <div v-if="!showingHistory" class="form">
@@ -11,8 +11,8 @@
         <input type="number" v-model="orderQuantity" />
       </div>
       <div class="form-group">
-        <label>{{ tradeType === 'buy' ? '매수가격' : '매도가격' }}</label>
-        <input type="text" v-model="orderPrice"/>
+        <label>{{ tradeType === 'BUY' ? '매수가격' : '매도가격' }}</label>
+        <input type="text" v-model="orderPrice" />
       </div>
       <div class="form-group">
         <label>주문총액</label>
@@ -22,69 +22,90 @@
     <div v-else class="history-list">
       <h3>거래내역</h3>
       <ul>
-        <li v-for="(trade, index) in tradeHistory" :key="index">
+        <li v-for="(trade, index) in paginatedTrades" :key="index">
           <div class="trade-info">
-            <span class="trade-date">{{ trade.date }}</span>
-            <span class="trade-stock">{{ trade.stockName }}</span>
+            <span class="trade-date">{{ trade.tradeAt }}</span>
+            <span class="trade-stock">{{ trade.stockNameKR }}</span>
           </div>
           <div class="trade-details">
-            <span :class="['trade-type', trade.type]">
-              {{ trade.type === 'buy' ? '매수' : '매도' }}
+            <span :class="['trade-type', trade.tradeType]">
+              {{ trade.tradeType === 'BUY' ? '매수' : '매도' }}
             </span>
             <span class="trade-quantity">{{ trade.quantity }}주</span>
-            <span class="trade-price">{{ trade.price.toLocaleString() }}원</span>
+            <span class="trade-price">{{ trade.price }}원</span>
           </div>
           <div class="trade-total">
-            {{ (trade.quantity * trade.price).toLocaleString() }}원
+            {{ trade.totalAmount }}원
           </div>
         </li>
       </ul>
+
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+        <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+      </div>
     </div>
     <div v-if="!showingHistory" class="form-actions">
-      <button @click="resetForm">초기화</button>
-      <button @click="placeOrder">{{ tradeType === 'buy' ? '매수' : '매도' }}</button>
+      <button class="reset" @click="resetForm">초기화</button>
+      <button :class="tradeType === 'BUY' ? 'buy' : 'sell'" @click="placeOrder">
+        {{ tradeType === 'BUY' ? '매수' : '매도' }}
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { useStockStore } from '@/stores/stockStore'; // stockStore import
+
 export default {
   props: {
     currentPrice: {
       type: Number,
       required: true
-    }
+    },
+    stockCode: {
+      type: String,
+      required: true
+    },
   },
   data() {
     return {
-      tradeType: 'buy',
+      tradeType: 'BUY',
       orderQuantity: 0,
-      orderPrice: 0, // 초기값을 0으로 설정
+      orderPrice: 0,
       showingHistory: false,
-      tradeHistory: [
-        { type: 'buy', stockName: '삼성전자', quantity: 10, price: 63000, date: '2023-05-01' },
-        { type: 'sell', stockName: '삼성전자', quantity: 5, price: 63500, date: '2023-05-02' },
-        { type: 'buy', stockName: 'SK하이닉스', quantity: 20, price: 120000, date: '2023-05-03' }
-      ]
+      tradeHistory: [],
+      currentPage: 1,
+      itemsPerPage: 4,
     };
   },
   computed: {
     totalPrice() {
       return this.orderQuantity * this.orderPrice;
+    },
+    totalPages() {
+      return Math.ceil(this.tradeHistory.length / this.itemsPerPage);
+    },
+    paginatedTrades() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.tradeHistory.slice(start, start + this.itemsPerPage);
     }
   },
-  mounted() {
-    // 로컬 스토리지에서 selectedStock 불러오기
+  async mounted() {
     const savedStock = localStorage.getItem('selectedStock');
+    const stockStore = useStockStore(); 
     if (savedStock) {
       const stockData = JSON.parse(savedStock);
-      this.orderPrice = stockData.currentPrice; // selectedStock의 currentPrice로 초기화
+      this.orderPrice = stockData.currentPrice; 
+      await stockStore.fetchTradeHistory(stockData.stockCode); 
+      this.tradeHistory = stockStore.tradeHistory; 
+      console.log('Trade history on mount:', this.tradeHistory); 
     } else {
       this.orderPrice = this.currentPrice; // 기본값으로 currentPrice 설정
     }
-    console.log("Current Price in TradeForm.vue:", this.orderPrice); 
   },
- 
   methods: {
     setTradeType(type) {
       this.tradeType = type;
@@ -94,35 +115,69 @@ export default {
       this.orderQuantity = 0;
       this.orderPrice = this.currentPrice; 
     },
-    placeOrder() {
+    async placeOrder() {
+      const stockStore = useStockStore(); 
       const trade = {
-        type: this.tradeType,
         quantity: this.orderQuantity,
         price: this.orderPrice,
-        stockName: '삼성전자', // 예시로 삼성전자로 고정
-        date: new Date().toISOString().split('T')[0] // 현재 날짜
+        totalAmount: this.totalPrice
       };
-      this.tradeHistory.push(trade);
-      // 여기에 실제 주문 처리 로직을 추가할 수 있습니다.
-      this.$emit('updateBalance', this.newBalance);
+
+      // 매수 또는 매도 처리
+      if (this.tradeType === 'BUY') {
+        await stockStore.buyStock(this.stockCode, trade); 
+        console.log(this.stockCode);
+      } else {
+        await stockStore.sellStock(this.stockCode, trade); 
+      }
+
+      // Fetch trade history after placing the order
+      await stockStore.fetchTradeHistory(this.stockCode); 
+      this.tradeHistory = stockStore.tradeHistory; // Update local tradeHistory
+      console.log('Updated trade history after order:', this.tradeHistory);
+
       this.resetForm();
       // 주문 가격을 로컬 스토리지에 저장
       localStorage.setItem('orderPrice', this.orderPrice);
+      localStorage.setItem('stockCode', this.stockCode);
+      await stockStore.fetchHoldings();
+      this.$emit('refreshHoldings');
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;
       if (this.showingHistory) {
         this.tradeType = null;
       }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    async updateTradeHistory(stockCode) {
+      const stockStore = useStockStore(); 
+      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
+      this.tradeHistory = stockStore.tradeHistory; // 로컬 거래내역 업데이트
+      console.log('Updated trade history:', this.tradeHistory);
+    },
+  },
+  watch: {
+  stockCode: {
+    immediate: true,
+    handler(newStockCode) {
+      this.updateTradeHistory(newStockCode);
     }
   },
-  
-  watch: {
-    currentPrice(newPrice) {
-      this.orderPrice = newPrice; 
-    }
+  currentPrice(newPrice) {
+    this.orderPrice = newPrice; 
   }
 }
+};
 </script>
 
 
@@ -147,18 +202,22 @@ export default {
   padding: 10px;
   font-size: 16px;
   font-weight: bold;
-}
-
-.buy, .sell, .history {
-  background-color: #f7ea81;
   border-radius: 5px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.buy:hover, .sell:hover, .history:hover {
-  background-color: #f5e456;
+.buy {
+  background-color: #b4e1ec; /* Sky blue for buy */
+}
+
+.sell {
+  background-color: #f5c3c7; /* Red for sell */
+}
+
+.history {
+  background-color: #f7ea81; /* Existing color for history */
 }
 
 .form {
@@ -172,7 +231,7 @@ export default {
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-size :23px;
+  font-size: 23px;
 }
 
 .form-group input {
@@ -190,16 +249,35 @@ export default {
 .form-actions button {
   width: 45%;
   padding: 10px;
-  background-color: #ffe3ae;
   font-size: 16px;
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.trade-buttons button.active {
-  opacity: 0.7;
+.reset {
+  background-color: #ece9e3; 
+}
+
+.reset:hover {
+  background-color: #ffd54f; 
+}
+
+.form-actions button.buy {
+  background-color: #b4e1ec; /* Sky blue for buy */
+}
+
+.form-actions button.sell {
+  background-color: #f5c3c7; /* Red for sell */
+}
+
+.form-actions button.buy:hover {
+  background-color: #a0d3e0; 
+}
+
+.form-actions button.sell:hover {
+  background-color: #f1b2b5; 
 }
 
 .history-list {
@@ -223,7 +301,7 @@ export default {
   padding: 15px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .trade-info {
@@ -256,12 +334,12 @@ export default {
   border-radius: 4px;
 }
 
-.trade-type.buy {
-  background-color: #e6f7ff;
-  color: #1890ff;
+.trade-type.BUY {
+  background-color: #e9fafa;
+  color: #5aa9bd;
 }
 
-.trade-type.sell {
+.trade-type.SELL {
   background-color: #fff1f0;
   color: #ff4d4f;
 }
@@ -270,6 +348,7 @@ export default {
   font-size: 20px;
   color: #333;
 }
+
 .trade-price {
   font-size: 17px;
   color: #e10202;
@@ -291,5 +370,39 @@ export default {
   .trade-type, .trade-quantity, .trade-price {
     margin-bottom: 5px;
   }
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  margin: 0 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination button:disabled {
+  background-color: #e0e0e0; /* 비활성화된 버튼 색상 */
+  color: #a0a0a0; /* 비활성화된 버튼 텍스트 색상 */
+  cursor: not-allowed; /* 커서 모양 변경 */
+}
+
+.pagination button:not(:disabled):hover {
+  background-color: #007bff; /* 버튼 호버 색상 */
+  color: white; /* 버튼 호버 시 텍스트 색상 */
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+  font-weight: bold;
 }
 </style>

@@ -6,22 +6,21 @@ export default {
     { title: '솜사탕 상점', url: '/cottonCandy', items: 'cottonCandyMenus' },
   ],
 
-  accountBookMenus: [
-    { title: '가계부', url: '/accountBook/incomeExpense' },
-    { title: '통계', url: '/accountBook/statistics' },
-    { title: '목표', url: '/accountBook/goal' },
-  ],
+    accountBookMenus: [
+      { title: '가계부', url: '/accountBook/incomeExpense' },
+      { title: '통계', url: '/accountBook/statistics' },
+      { title: '목표', url: '/accountBook/goal' }
+    ],
+  
+    investmentMenus: [
+      { title: '매수/매도', url: '/investment/stock' },
+      { title: '랭킹', url: '/investment/rank' }
+    ],
+  
+    eventMenus: [
+      { title: '출석/ 룰렛', url: '/event/check' },
+      { title: '금융 퀴즈', url: '/event/quiz' }
+    ],
 
-  investmentMenus: [
-    { title: '매도/매수', url: '/investment/stock' },
-    { title: '랭킹', url: '/investment/rank' },
-  ],
-
-  eventMenus: [
-    { title: '출석', url: '/event/check' },
-    { title: '룰렛', url: '/event/roulette' },
-    { title: '금융 퀴즈', url: '/event/quiz' },
-  ],
-
-  cottonCandyMenus: [{ title: '상점', url: '/cottoncandyshop' }],
+    cottonCandyMenus: [{ title: '상점', url: '/cottoncandyshop' }],
 };

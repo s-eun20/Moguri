@@ -1,16 +1,30 @@
 <template>
   <div class="stock-page">
-    <h1 class="page-title">매도/매수</h1>
+    <h1 class="page-title">매수/매도</h1>
     <div class="content-wrapper">
       <div class="stock-info-container">
-        <StockInfo @updateCurrentPrice="updateCurrentPrice" />
+        <StockInfo 
+          ref="stockInfo"
+          @updateCurrentPrice="updateCurrentPrice" 
+          @updateStockCode="updateStockCode" 
+          :selectedStock="selectedStock" 
+          @updateTradeHistory="updateTradeHistory"
+        />
       </div>
       <div class="trade-form-container">
-        <TradeForm :currentPrice="currentPrice" />
+        <TradeForm 
+          ref="tradeForm"
+          :currentPrice="currentPrice" 
+          :stockCode="stockCode" 
+          @refreshHoldings="refreshHoldings" 
+        />
       </div>
     </div>
     <div class="stock-holding-container">
-      <StockHolding :stockName="'삼성전자'" :currentPrice="currentPrice" />
+      <StockHolding 
+        ref="stockHoldings" 
+        @select-stock="selectStock"
+      />
     </div>
   </div>
 </template>
@@ -19,6 +33,7 @@
 import StockInfo from '@/components/Invest/StockInfo.vue';
 import TradeForm from '@/components/Invest/TradeForm.vue';
 import StockHolding from '@/components/Invest/StockHolding.vue';
+import { useStockStore } from '@/stores/stockStore';
 
 export default {
   components: {
@@ -28,13 +43,33 @@ export default {
   },
   data() {
     return {
-      currentPrice: 0 // Initialize currentPrice
+      currentPrice: 0, 
+      stockCode: '', 
+      selectedStock: null 
     };
   },
   methods: {
+    async updateTradeHistory(stockCode) {
+      const stockStore = useStockStore();
+      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
+      this.$refs.tradeForm.updateTradeHistory(stockCode); // TradeForm의 메서드를 호출하여 거래내역 업데이트
+    },
     updateCurrentPrice(price) {
-      console.log('현재 가격 업데이트:', price);
-      this.currentPrice = price; // Update currentPrice
+      this.currentPrice = price;
+    },
+    updateStockCode(code) {
+      this.stockCode = code; 
+    },
+    async refreshHoldings() {
+      await this.$refs.stockHoldings.loadHoldings(); 
+    },
+   selectStock(stock) {
+      console.log("Selecting stock in parent:", stock);
+      this.selectedStock = stock; 
+      this.updateCurrentPrice(stock.currentPrice || 0); 
+      this.updateStockCode(stock.stockCode); 
+      this.$refs.stockInfo.selectStock(stock); 
+      this.$refs.tradeForm.updateTradeHistory(stock.stockCode);
     }
   }
 };

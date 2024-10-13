@@ -5,10 +5,14 @@ import IncomeExpense from '@/pages/accountBook/IncomeExpense.vue';
 import Statistics from '@/pages/accountBook/Statistics.vue';
 import Goals from '@/pages/accountBook/Goals.vue';
 import Rank from '@/pages/investment/Rank.vue';
-import Stock from '@/pages/investment/Stock.vue';
-import Login from '@/pages/login/Login.vue'; // Login 컴포넌트 import 추가
+import Stock from '@/pages/investment/Stock.vue'
+import Login from '@/pages/login/LoginModal.vue'; // Login 컴포넌트 import 추가
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
 import Main from '@/pages/main/Main.vue'; //main 페이지 추가
+import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
+import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
+import ElementPage from '@/pages/element/ElementPage.vue';
+import MoguriIntro from '@/pages/main/MoguriIntro.vue';
 import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
 
 const routes = [
@@ -56,12 +60,12 @@ const routes = [
   {
     path: '/element', // 소비 원소 테스트 페이지 경로 추가
     name: 'ElementPage',
-    // component: ElementPage,
+    component: ElementPage,
   },
   {
-    path: '/whatismoguri', // 모구리 설명 페이지 경로 추가
-    name: 'WhatIsMoguri',
-    // component: WhatIsMoguri,
+    path: '/moguriintro', // 모구리 설명 페이지 경로 추가
+    name: 'MoguriIntro',
+    component: MoguriIntro,
   },
   {
     path: '/attendance', // 출석 체크 페이지 경로 추가
@@ -72,6 +76,15 @@ const routes = [
     path: '/cottoncandyshop',
     name: 'CottonCandyShop',
     component: CottonCandyShop,
+  },
+    path: '/event/check', // 출석체크 경로 추가
+    name: 'Check',
+    component: Check,
+  },
+  {
+    path: '/event/quiz', // 금융 퀴즈 경로 추가
+    name: 'Quiz',
+    component: Quiz,
   },
 ];
 

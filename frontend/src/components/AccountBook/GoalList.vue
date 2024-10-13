@@ -3,8 +3,6 @@
     <div class="goal-header">
       <span class="title" v-if="props.activeTab === 'saving'">{{ title }}</span>
     </div>
-
-    <!-- Only show the goals table if the active tab is 'saving' -->
     <table class="goal-table" v-if="props.activeTab === 'saving'">
       <thead>
         <tr>
