@@ -5,22 +5,21 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
+      <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
+        <template #button-content>
+          <img
+            src="@/assets/img/Moguri.png"
+            alt="Profile Picture"
+            class="profile-pic"
+          />
+        </template>
+        <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
+        <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
+        <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
+        <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
+      </b-dropdown>
 
-        <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
-          <template #button-content>
-            <img
-              src="@/assets/img/Moguri.png"
-              alt="Profile Picture"
-              class="profile-pic"
-            />
-          </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
-        </b-dropdown>
-
-        <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
           <b-nav-item class="user-name">{{ nickname }}님</b-nav-item>
         </div>
@@ -34,7 +33,6 @@
             <i class="fas fa-user-circle"></i> 로그인 
           </button>
         </b-nav-item>
-       
       </div>
     </b-navbar-nav>
   </b-navbar>
@@ -150,7 +148,6 @@ const closeLoginModal = () => {
   display: flex;
   flex-direction: column; 
   align-items: flex-start; 
-
 }
 
 .user-name {
@@ -158,9 +155,6 @@ const closeLoginModal = () => {
   font-size: 24px; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
 }
-
-
-
 
 .login-button {
   margin-left: 1rem;
@@ -178,20 +172,44 @@ const closeLoginModal = () => {
   color: white;
 }
 
-
 li.dropdown-item {
-  padding : 3px;
-
+  padding: 3px;
 }
 
 .dropdown-menu {
---bs-dropdown-min-width: 5rem;
+  --bs-dropdown-min-width: 5rem;
 }
-.dropdown-item:hover {
 
+.dropdown-item:hover {
   color: rgb(255, 166, 0);
 }
 
-/* 드롭다운 배경 */
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .navbar-custom {
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+  }
 
+  .moguri-logo {
+    font-size: 20px; /* 모바일에서 로고 크기 조정 */
+  }
+
+  .user-name {
+    font-size: 18px; /* 모바일에서 사용자 이름 크기 조정 */
+  }
+
+  .cotton-candy {
+    font-size: 16px; /* 모바일에서 코튼 캔디 크기 조정 */
+  }
+
+  .login-button {
+    font-size: 14px; /* 모바일에서 로그인 버튼 크기 조정 */
+  }
+
+  .profile-pic {
+    width: 50px; /* 모바일에서 프로필 사진 크기 조정 */
+    height: 50px; 
+  }
+}
 </style>

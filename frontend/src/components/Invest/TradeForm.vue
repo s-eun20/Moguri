@@ -8,7 +8,7 @@
     <div v-if="!showingHistory" class="form">
       <div class="form-group">
         <label>주문수량</label>
-        <input type="number" v-model="orderQuantity" />
+        <input type="number" v-model="orderQuantity" @input="validateQuantity" />
       </div>
       <div class="form-group">
         <label>{{ tradeType === 'BUY' ? '매수가격' : '매도가격' }}</label>
@@ -73,7 +73,7 @@ export default {
   data() {
     return {
       tradeType: 'BUY',
-      orderQuantity: 0,
+      orderQuantity: 1,
       orderPrice: 0,
       showingHistory: false,
       tradeHistory: [],
@@ -112,10 +112,17 @@ export default {
       this.showingHistory = false;
     },
     resetForm() {
-      this.orderQuantity = 0;
+      this.orderQuantity = 1; // 최소 1로 설정
       this.orderPrice = this.currentPrice; 
     },
     async placeOrder() {
+      const confirmation = confirm(`${this.tradeType === 'BUY' ? '매수' : '매도'} 하시겠습니까?\n\n` +
+        `가격: ${this.orderPrice.toLocaleString()}원\n` + // 실시간 금액 반영
+        `수량: ${this.orderQuantity}주`);
+      
+      if (!confirmation) {
+        return; // 사용자가 취소하면 함수 종료
+      }
       const stockStore = useStockStore(); 
       const trade = {
         quantity: this.orderQuantity,
@@ -159,27 +166,30 @@ export default {
         this.currentPage++;
       }
     },
-    async updateTradeHistory(stockCode) {
+    async updateTradeHistory() {
       const stockStore = useStockStore(); 
-      await stockStore.fetchTradeHistory(stockCode); // 거래내역을 가져옵니다.
       this.tradeHistory = stockStore.tradeHistory; // 로컬 거래내역 업데이트
       console.log('Updated trade history:', this.tradeHistory);
     },
+    validateQuantity() {
+      if (this.orderQuantity < 1) {
+        this.orderQuantity = 1; // 최소 1로 설정
+      }
+    },
   },
   watch: {
-  stockCode: {
-    immediate: true,
-    handler(newStockCode) {
-      this.updateTradeHistory(newStockCode);
+    stockCode: {
+      immediate: true,
+      handler(newStockCode) {
+        this.updateTradeHistory(newStockCode);
+      }
+    },
+    currentPrice(newPrice) {
+      this.orderPrice = newPrice; 
     }
-  },
-  currentPrice(newPrice) {
-    this.orderPrice = newPrice; 
   }
-}
 };
 </script>
-
 
 <style scoped>
 .trade-form {
@@ -361,16 +371,6 @@ export default {
   font-size: 16px;
 }
 
-@media (max-width: 768px) {
-  .trade-details {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .trade-type, .trade-quantity, .trade-price {
-    margin-bottom: 5px;
-  }
-}
 .pagination {
   margin-top: 20px;
   display: flex;
