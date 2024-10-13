@@ -4,7 +4,7 @@
       <div class="search-container">
         <input
           v-model="searchQuery"
-          @input="searchStocks"
+          @input="debouncedSearchStocks"
           @keydown.enter="searchStocks"
           placeholder="주식 종목 검색"
           class="search-input"
@@ -39,9 +39,9 @@
               : "N/A"
           }}
           <span
-            :class="[
-              'price-change',
-              selectedStock.priceChange > 0 ? 'positive' : 'negative',
+            :class="[ 
+              'price-change', 
+              selectedStock.priceChange > 0 ? 'positive' : 'negative' 
             ]"
           >
             ({{
@@ -114,69 +114,78 @@ export default {
     const selectedStock = ref(null); // 초기값을 null로 설정
 
     const searchStocks = async () => {
-      const trimmedQuery = searchQuery.value.trim(); // 공백 제거
+      const trimmedQuery = searchQuery.value.trim().normalize("NFC");  // 공백 제거
       if (trimmedQuery === "") {
         stockStore.searchResults = [];
         return;
       }
-      console.log("Searching for:", trimmedQuery);
       try {
-        await stockStore.fetchStocks(trimmedQuery); // 트리밍된 검색어 사용
-        console.log("Search results:", stockStore.searchResults);
+        await stockStore.fetchStocks(trimmedQuery); 
       } catch (error) {
         console.error("Error fetching stocks:", error);
       }
     };
 
+    // Debounce function
+    const debounce = (func, delay) => {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+      };
+    };
+
+    const debouncedSearchStocks = debounce(searchStocks, 100); // 300ms 대기
+
     const selectStock = async (stock) => {
       try {
-    console.log("Selecting stock:", stock);
-    const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
-    if (priceData) {
-      const latestData = await stockStore.fetchLatestStockData(stock.stockCode);
-      if (latestData) {
-        selectedStock.value = {
-          ...stock,
-          currentPrice: priceData.currentPrice,
-          priceChangePercent: priceData.priceChangePercent,
-          openPrice: latestData.open,
-          highPrice: latestData.high,
-          lowPrice: latestData.low,
-          volume: latestData.volume,
-        };
-        emit("updateCurrentPrice", priceData.currentPrice);
-        emit("updateStockCode", stock.stockCode); 
-        await stockStore.setSelectedStock({ ...selectedStock.value });
-        localStorage.setItem("selectedStock", JSON.stringify(selectedStock.value));
-        stockStore.searchResults = [];
+        console.log("Selecting stock:", stock);
+        const priceData = await stockStore.fetchCurrentPrice(stock.stockCode);
+        if (priceData) {
+          const latestData = await stockStore.fetchLatestStockData(stock.stockCode);
+          if (latestData) {
+            selectedStock.value = {
+              ...stock,
+              currentPrice: priceData.currentPrice,
+              priceChangePercent: priceData.priceChangePercent,
+              openPrice: latestData.open,
+              highPrice: latestData.high,
+              lowPrice: latestData.low,
+              volume: latestData.volume,
+            };
+            emit("updateCurrentPrice", priceData.currentPrice);
+            emit("updateStockCode", stock.stockCode); 
+            await stockStore.setSelectedStock({ ...selectedStock.value });
+            localStorage.setItem("selectedStock", JSON.stringify(selectedStock.value));
+            stockStore.searchResults = [];
 
-        emit("updateTradeHistory", stock.stockCode);
-      } else {
-        console.error("Failed to fetch latest stock data.");
+            emit("updateTradeHistory", stock.stockCode);
+          } else {
+            console.error("Failed to fetch latest stock data.");
+          }
+        } else {
+          console.error("Failed to fetch current price.");
+        }
+      } catch (error) {
+        console.error("Error selecting stock:", error);
       }
-    } else {
-      console.error("Failed to fetch current price.");
-    }
-  } catch (error) {
-    console.error("Error selecting stock:", error);
-  }
-};
+    };
 
-const updateStockPrice = async () => {
-  try {
-    const updatedPriceData = await stockStore.fetchCurrentPrice(selectedStock.value.stockCode);
-    if (updatedPriceData) {
-      selectedStock.value.currentPrice = updatedPriceData.currentPrice;
-      selectedStock.value.priceChangePercent = updatedPriceData.priceChangePercent;
-      emit("updateCurrentPrice", updatedPriceData.currentPrice);
-      emit("updateStockCode", selectedStock.value.stockCode); // stockCode emit
-    } else {
-      console.error("Failed to fetch updated price.");
-    }
-  } catch (error) {
-    console.error("Error fetching updated price:", error);
-  }
-};
+    const updateStockPrice = async () => {
+      try {
+        const updatedPriceData = await stockStore.fetchCurrentPrice(selectedStock.value.stockCode);
+        if (updatedPriceData) {
+          selectedStock.value.currentPrice = updatedPriceData.currentPrice;
+          selectedStock.value.priceChangePercent = updatedPriceData.priceChangePercent;
+          emit("updateCurrentPrice", updatedPriceData.currentPrice);
+          emit("updateStockCode", selectedStock.value.stockCode); // stockCode emit
+        } else {
+          console.error("Failed to fetch updated price.");
+        }
+      } catch (error) {
+        console.error("Error fetching updated price:", error);
+      }
+    };
 
     onMounted(() => {
       const savedStock = localStorage.getItem("selectedStock");
@@ -196,7 +205,7 @@ const updateStockPrice = async () => {
       selectStock,
       filteredStocks,
       selectedStock,
-      searchStocks,
+      debouncedSearchStocks,
     };
   },
 };
@@ -349,8 +358,7 @@ const updateStockPrice = async () => {
   }
 
   .stock-info-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr; /* 모바일에서 1열로 변경 */
   }
 }
-
 </style>

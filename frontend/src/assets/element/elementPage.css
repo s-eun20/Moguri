@@ -4,6 +4,23 @@
   font-weight: normal;
   font-style: normal;
 }
+.element-bigcontainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center center;
+  background-image: url('../../assets/element/배경3.jpg');
+  position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .element-container { 
   font-family: 'ChosunCentennial';
   font-weight: 800 !important;
@@ -16,8 +33,8 @@
   align-items: center;
   margin: 30px auto;
   text-align: center;
-  width: 500px;
-  height: 110vh; /* 화면의 높이를 100%로 설정 */
+  width: 450px;
+  height: 95vh; /* 화면의 높이를 100%로 설정 */
   position: relative;
   background-color: white;
   border-radius: 8px;
@@ -125,9 +142,9 @@
 }
 .result{
   border:1px solid white;
-  height: 630px;
+  height: 680px;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .exp{
   height: 50%;
@@ -148,12 +165,13 @@
   height: 50%;
   object-fit: cover;
 }
-
-
+.resultsns {
+  margin-bottom: 10px;
+}
 .btn_comm{
   border-color: transparent;
   background-color: transparent ;
 }
 .link-icon { position: relative; display: inline-block; width: auto; font-size: 14px; font-weight: 500; color: #333; margin-right: 10px; padding-top: 50px; }
 .link-icon.twitter { background-image: url(@/assets/element/twitter.png); background-repeat: no-repeat; }
-.link-icon.facebook { background-image: url(@/assets/element/facebook.png); background-repeat: no-repeat; } 
+.link-icon.facebook { background-image: url(@/assets/element/facebook.png); background-repeat: no-repeat; }

@@ -131,7 +131,6 @@ const closeLoginModal = () => {
   display: flex;
   flex-direction: column; 
   align-items: flex-start; 
-
 }
 
 .user-name {
@@ -140,9 +139,6 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   cursor: pointer;
 }
-
-
-
 
 .login-button {
   margin-left: 1rem;
