@@ -18,7 +18,7 @@
       <ul class="quest-items">
         <li v-for="quest in filteredQuests" :key="quest.questId">
           <input type="checkbox" v-model="selectedQuests" :value="quest" />
-          <div class="quest-info">                                                              
+          <div class="quest-info">
             <span class="quest-name">{{ quest.questTitle }}</span>
             <span class="quest-description">{{ quest.questDescription }}</span>
             <span class="quest-period">기간: {{ quest.questDays }}일</span>
@@ -46,15 +46,15 @@ export default {
   },
   data() {
     return {
-      selectedCategory: "저축",
+      selectedCategory: '저축',
       categories: [
-        "저축",
-        "식비",
-        "교통비",
-        "주거비",
-        "통신비",
-        "쇼핑",
-        "건강",
+        '저축',
+        '식비',
+        '교통비',
+        '주거비',
+        '통신비',
+        '쇼핑',
+        '건강',
       ],
       selectedQuests: [], // 선택된 퀘스트를 저장할 배열
     };
@@ -68,21 +68,22 @@ export default {
   },
   methods: {
     formatCurrency(value) {
-      return new Intl.NumberFormat("ko-KR", {
-        style: "currency",
-        currency: "KRW",
+      return new Intl.NumberFormat('ko-KR', {
+        style: 'currency',
+        currency: 'KRW',
       }).format(value);
     },
     addSelectedQuests() {
       const today = new Date();
       this.selectedQuests.forEach((quest) => {
-        const startDate = today.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+        const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
         const endDate = new Date(
           today.setDate(today.getDate() + quest.questDays)
         )
           .toISOString()
-          .split("T")[0];
+          .split('T')[0];
         const newGoal = {
+          memberId: 1, // 임시 하드코딩
           goalName: quest.questTitle,
           description: quest.questDescription,
           startDate: startDate,
@@ -92,10 +93,11 @@ export default {
           goalAmount: quest.goalAmount,
           rewardAmount: quest.rewardAmount,
           goalCategory: quest.categoryName,
+          questId: quest.questId,
         };
-        this.$emit("add-goal", newGoal);
+        this.$emit('add-goal', newGoal);
       });
-      this.$emit("close"); // 모달 닫기
+      this.$emit('close'); // 모달 닫기
     },
   },
 };
