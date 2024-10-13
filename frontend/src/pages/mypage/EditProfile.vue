@@ -137,30 +137,37 @@
     }
   };
   
-  // 비밀번호 변경
-  const updatePassword = async () => {
-    if (newPassword.value !== confirmNewPassword.value) {
-      errorMessage.value = '비밀번호가 일치하지 않습니다.';
-      return;
-    }
   
-    try {
-      const requestData = {
-        password: newPassword.value,
-      };
-  
-      const response = await axios.patch(`http://localhost:8080/api/members/${userId}`, requestData);
-  
-      if (response.data.returnCode === '0000') {
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-      } else {
-        alert('비밀번호 변경에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('비밀번호 변경 중 오류:', error);
-      alert('비밀번호 변경 중 오류가 발생했습니다.');
-    }
-  };
+// 비밀번호 변경
+const updatePassword = async () => {
+  if (newPassword.value !== confirmNewPassword.value) {
+    errorMessage.value = '새 비밀번호가 일치하지 않습니다.';
+    return;
+  }
+
+  try {
+    await axios.patch(`http://localhost:8080/api/members/${authStore.state.user.memberId}/password`, {
+      currentPassword: currentPassword.value,
+      newPassword: newPassword.value,
+    });
+
+    alert('비밀번호가 변경되었습니다.');
+
+    // 비밀번호 변경 후 입력된 필드 초기화
+    currentPassword.value = '';
+    newPassword.value = '';
+    confirmNewPassword.value = '';
+
+    // 메인 페이지로 리다이렉트
+    authStore.logout();
+    router.push({ name: 'Main' });
+    
+  } catch (error) {
+    console.error('비밀번호 변경 실패:', error);
+    errorMessage.value = '비밀번호 변경에 실패했습니다.';
+  }
+};
+
   
   // 파일 업로드 처리
   const onFileChange = (e) => {

@@ -138,6 +138,9 @@
       currentPassword.value = '';
       newPassword.value = '';
       confirmNewPassword.value = '';
+
+      router.push({name:'Main'});
+
     } catch (error) {
       console.error('비밀번호 변경 실패:', error);
       errorMessage.value = '비밀번호 변경에 실패했습니다.';

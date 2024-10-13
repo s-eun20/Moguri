@@ -5,24 +5,17 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
+      <div v-if="isLoggedIn" class="user-dropdown">
+        <img
+          src="@/assets/img/Moguri.png"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+      </div>
 
-        <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
-          <template #button-content>
-            <img
-              src="@/assets/img/Moguri.png"
-              alt="Profile Picture"
-              class="profile-pic"
-            />
-          </template>
-          <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
-          <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
-        </b-dropdown>
-
-        <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name">{{ nickname }}님</b-nav-item>
+          <b-nav-item class="user-name" @click="goToMyPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 추가 -->
         </div>
 
         <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
@@ -34,7 +27,6 @@
             <i class="fas fa-user-circle"></i> 로그인
           </button>
         </b-nav-item>
-       
       </div>
     </b-navbar-nav>
   </b-navbar>
@@ -43,7 +35,6 @@
 
   <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
 </template>
-
 <script setup>
 import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -56,15 +47,15 @@ const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
 const cottonCandy = computed(() => authStore.cottonCandy);
-const profilePhoto = computed(() => authStore.profilePhoto); // 프로필 사진 가져오기
-const defaultPhoto = 'path_to_default_image'; // 기본 이미지 경로
+const profilePhoto = computed(() => authStore.profilePhoto);
+const defaultPhoto = 'path_to_default_image';
 const router = useRouter();
 
 const showModal = ref(false);
 
 // 마이페이지로 이동하는 함수
 const goToMyPage = () => {
-  router.push({ name: 'EditProfile' });
+  router.push({ name: 'EditProfile' }); // 'EditProfile'이 마이페이지의 라우트 이름인지 확인
 };
 
 const showLoginModal = () => {
