@@ -1,8 +1,9 @@
 <template>
+  <div class="element-bigcontainer">
   <div :style="{ backgroundImage: `url(${elementStore.backgroundImage})` }" class="element-container">
 <!-- 헤더는 항상 표시 -->
 <div class="header">
-  <h5>☯ 음양 오행으로 알아보는 자산 관리 유형 테스트 ☯</h5>
+  <h6>☯ 음양 오행으로 알아보는 자산 관리 유형 테스트 ☯</h6>
 </div>
 <br>
 <!-- 시작 섹션: showQuestions와 showResult가 false일 때만 표시 -->
@@ -72,6 +73,7 @@
       <img src="@/assets/element/facebook.png" alt="Facebook 공유">
     </button>
   </div> 
+</div>
 </div>
 </div>
 </template>

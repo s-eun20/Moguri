@@ -69,11 +69,11 @@
             <div class="middle-flex bg-warning"></div>
             <div class="p-2">
               <div class="last-flex d-flex flex-column">
-                <div class="last-flex-1">당신의 소비 원소는❓</div>
+                <div class="last-flex-1">☯️소름돋는 금융 사주☯️</div>
                 <div class="last-flex-2">
                   <p>
                     "나의 자산 관리 방식은 어떤 유형일까?"<br />
-                    테스트를 통해 나의 소비 원소를 확인 후<br />
+                    테스트를 통해 나의 자산 관리 유형을 확인하고<br />
                     친구들과 공유 해보아요.
                   </p>
                 </div>
@@ -158,8 +158,9 @@
       </section>
   
         <section id="section2">
+          <div id="section2-left">
           <section id="section2-header">
-          <h3>가계부</h3><br>
+          <h3>자산 관리</h3><br>
           <h1>자산 관리,
           <br>지출부터 목표 설정까지 
           <br>똑똑하게</h1><br>
@@ -171,37 +172,42 @@
           </h4>
           </div>
         </section>
+      </div>
           <div class="d-flex justify-content-end" id="section2-icon">
-          <img src="../../assets/mainpage/둘러보기.png">
-          <img src="../../assets/mainpage/퀘스트설정.png">
-          <img src="../../assets/mainpage/솜사탕.png">
+          <img id="둘러보기" src="../../assets/mainpage/둘러보기.png">
+          <img id="퀘스트" src="../../assets/mainpage/퀘스트설정.png">
+          <img id="솜사탕" src="../../assets/mainpage/솜사탕.png">
          </div>
       </section>
   
         <section id="section3">
-          <div class="section3-header">
-          <h3>모의투자</h3><br>
-          <h1>간편하고 재미있게,
-          <br>모의 투자로 
-          <br>투자 경험을 쌓아봐요
-          </h1>
-          <div class="section3-content">
-            <h4>이해하기 쉬운 용어<br>
-            설명이 필요 없는
-            직관적인 화면 구성<br></h4>
-            <h4>그리고 실제 투자에 도움을 주는<br>
-            매도/매수 경험까지 한 번에</h4>
+          <div id="section3-right">
+            <div class="section3-header">
+            <h3>모의투자</h3><br>
+              <h1>간편하고 재미있게,
+              <br>모의 투자로 
+              <br>투자 경험을 쌓아봐요<br>
+              </h1>
+            <div class="section3-content">
+              <h4>이해하기 쉬운 용어<br>
+              설명이 필요 없는
+              직관적인 화면 구성<br></h4>
+              <h4>그리고 실제 투자에 도움을 주는<br>
+              매도/매수 경험까지 한 번에</h4>
+            </div>
           </div>
         </div>
           <img class="section3-img" src="../../assets/mainpage/모의투자컴터.png">
         </section>
   
         <section id="section4">
-          <h3>이벤트</h3><br>
-          <h1>금융 퀴즈, 룰렛 돌리기 등
-          <br>다양한 게임을 통해
-          <br>솜사탕을 획득해 보아요
-          </h1>
+          <div id="section4-content">
+            <h3>이벤트</h3><br>
+            <h1>금융 퀴즈, 룰렛 돌리기 등
+            <br>다양한 게임을 통해
+            <br>솜사탕을 획득해 보아요
+            </h1>
+          </div>
           <img class="section4-img" src="../../assets/mainpage/이벤트 배경.png">
         </section>
       </div>
