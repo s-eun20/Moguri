@@ -31,10 +31,10 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 export default {
   setup() {
-    const email = ref('dlugr12008@naver.com');
-    const nickname = ref('이혁짱');
-    const password = ref('1234');
-    const confirmPassword = ref('1234');
+    const email = ref();
+    const nickname = ref();
+    const password = ref();
+    const confirmPassword = ref();
     const errorMessage = ref('');
     const router = useRouter();
     const register = async () => {

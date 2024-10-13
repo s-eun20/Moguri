@@ -5,23 +5,17 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
-      <b-dropdown v-if="isLoggedIn" class="user-dropdown" variant="link" text="">
-        <template #button-content>
-          <img
-            src="@/assets/img/Moguri.png"
-            alt="Profile Picture"
-            class="profile-pic"
-          />
-        </template>
-        <b-dropdown-item class="dropdown-item" @click="goToBadges">🛡️ 뱃지함</b-dropdown-item>
-        <b-dropdown-item class="dropdown-item" @click="collectMoguri">🪙 모구리 모으기</b-dropdown-item>
-        <b-dropdown-item class="dropdown-item" @click="editAccount">📝 회원 수정</b-dropdown-item>
-        <b-dropdown-item class="dropdown-item" @click="logout">🚪 로그아웃</b-dropdown-item>
-      </b-dropdown>
+      <div v-if="isLoggedIn" class="user-dropdown">
+        <img
+          src="@/assets/img/Moguri.png"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+      </div>
 
       <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name">{{ nickname }}님</b-nav-item>
+          <b-nav-item class="user-name" @click="goToMyPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 추가 -->
         </div>
 
         <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
@@ -30,18 +24,17 @@
 
         <b-nav-item v-else>
           <button @click="showLoginModal" class="login-button">
-            <i class="fas fa-user-circle"></i> 로그인 
+            <i class="fas fa-user-circle"></i> 로그인
           </button>
         </b-nav-item>
       </div>
     </b-navbar-nav>
   </b-navbar>
-  
+
   <div class="nav-divider"></div>
 
   <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
 </template>
-
 <script setup>
 import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -54,25 +47,15 @@ const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
 const cottonCandy = computed(() => authStore.cottonCandy);
+const profilePhoto = computed(() => authStore.profilePhoto);
+const defaultPhoto = 'path_to_default_image';
 const router = useRouter();
 
-const showModal = ref(false); 
+const showModal = ref(false);
 
-const logout = async () => {
-  await authStore.logout(router);
-  localStorage.removeItem("selectedStock"); 
-};
-
-const goToBadges = () => {
-  console.log("뱃지함으로 이동");
-};
-
-const collectMoguri = () => {
-  console.log("모구리 모으기");
-};
-
-const editAccount = () => {
-  console.log("회원 수정");
+// 마이페이지로 이동하는 함수
+const goToMyPage = () => {
+  router.push({ name: 'EditProfile' }); // 'EditProfile'이 마이페이지의 라우트 이름인지 확인
 };
 
 const showLoginModal = () => {
@@ -81,7 +64,7 @@ const showLoginModal = () => {
 
 const closeLoginModal = () => {
   showModal.value = false;
-}
+};
 </script>
 
 <style scoped>
@@ -91,7 +74,7 @@ const closeLoginModal = () => {
 
 .nav-divider {
   height: 1px;
-  background-color: #e0e0e0; 
+  background-color: #e0e0e0;
   margin-top: 5px;
   padding: 0;
   border: none;
@@ -154,6 +137,7 @@ const closeLoginModal = () => {
   font-weight: bold;
   font-size: 24px; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
+  cursor: pointer;
 }
 
 .login-button {
@@ -162,54 +146,13 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   border: 2px solid rgb(255, 166, 0); /* 주황색 */
   background-color: white;
-  padding: 14px 14px; 
-  border-radius: 5px; 
+  padding: 14px 14px;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 
 .login-button:hover {
   background-color: rgb(255, 166, 0); /* 주황색 */
   color: white;
-}
-
-li.dropdown-item {
-  padding: 3px;
-}
-
-.dropdown-menu {
-  --bs-dropdown-min-width: 5rem;
-}
-
-.dropdown-item:hover {
-  color: rgb(255, 166, 0);
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .navbar-custom {
-    flex-direction: column; /* 세로 방향으로 정렬 */
-    align-items: flex-start; /* 왼쪽 정렬 */
-  }
-
-  .moguri-logo {
-    font-size: 20px; /* 모바일에서 로고 크기 조정 */
-  }
-
-  .user-name {
-    font-size: 18px; /* 모바일에서 사용자 이름 크기 조정 */
-  }
-
-  .cotton-candy {
-    font-size: 16px; /* 모바일에서 코튼 캔디 크기 조정 */
-  }
-
-  .login-button {
-    font-size: 14px; /* 모바일에서 로그인 버튼 크기 조정 */
-  }
-
-  .profile-pic {
-    width: 50px; /* 모바일에서 프로필 사진 크기 조정 */
-    height: 50px; 
-  }
 }
 </style>

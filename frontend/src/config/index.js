@@ -22,8 +22,8 @@ export default {
       { title: '금융 퀴즈', url: '/event/quiz' }
     ],
 
-    cottonCandyMenus : [
-        { title: '상점', url: '/cottonCandy/shop' },
+    cottonCandyMenus: [
+      { title: '상점', url: '/cottoncandyshop' }, // 라우터 경로와 일치
     ]
   };
   
