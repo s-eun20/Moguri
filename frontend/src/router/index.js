@@ -5,10 +5,11 @@ import IncomeExpense from '@/pages/accountBook/IncomeExpense.vue';
 import Statistics from '@/pages/accountBook/Statistics.vue';
 import Goals from '@/pages/accountBook/Goals.vue';
 import Rank from '@/pages/investment/Rank.vue';
-import Stock from '@/pages/investment/Stock.vue'
+import Stock from '@/pages/investment/Stock.vue';
 import Login from '@/pages/login/Login.vue'; // Login 컴포넌트 import 추가
 import Register from '@/pages/login/Register.vue'; // Register 컴포넌트 추가
 import Main from '@/pages/main/Main.vue'; //main 페이지 추가
+import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
 
 const routes = [
   {
@@ -29,14 +30,13 @@ const routes = [
   {
     path: '/investment/stock',
     name: 'Stock',
-    component: Stock
+    component: Stock,
   },
-
 
   {
     path: '/investment/rank',
     name: 'Rank',
-    component: Rank
+    component: Rank,
   },
   {
     path: '/login', // 로그인 경로 추가
@@ -67,6 +67,11 @@ const routes = [
     path: '/attendance', // 출석 체크 페이지 경로 추가
     name: 'AttendancePage',
     // component: AttendancePage,
+  },
+  {
+    path: '/cottoncandyshop',
+    name: 'CottonCandyShop',
+    component: CottonCandyShop,
   },
 ];
 
