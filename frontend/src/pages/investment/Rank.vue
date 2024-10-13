@@ -66,20 +66,23 @@ export default {
 }
 
 .moguri-image {
-  width: 100px; /* 원하는 크기로 조정 */
-  height: auto;
-  margin-right: 10px; /* 이미지와 말풍선 간격 */
+  width: 90px; /* 원하는 크기로 조정 */
+  height: 100px;
 }
 
 .speech-bubble {
   background: #fff;
-  
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 2px solid #FFD700;
+  border-radius: 20px;
+  padding: 20px; /* 패딩을 조정하여 내부 여백을 설정 */
   font-size: 16px;
   text-align: center;
   white-space: nowrap;
+}
+
+.speech-bubble p {
+  margin: 3px 0;
+  font-weight: bold;
 }
 @media (max-width: 768px) {
   .ranking-page {

@@ -158,5 +158,5 @@ export const useAccountStore = defineStore('account', {
         return transactionDate.toDateString() === selectedDate.toDateString();
       });
     }
-  }
+  },
 });
