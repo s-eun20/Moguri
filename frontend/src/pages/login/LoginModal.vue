@@ -52,7 +52,7 @@ const props = defineProps({
 const emit = defineEmits(); // emit 정의
 const authStore = useAuthStore();
 const router = useRouter();
-const email = ref('user1@example.com');
+const email = ref();
 const password = ref('');
 const errorMessage = computed(() => authStore.errorMessage);
 

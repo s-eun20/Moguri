@@ -70,27 +70,27 @@ export const useAuthStore = defineStore('auth', () => {
     }
 };
 
-  const updateCottonCandy = async (amount) => {
-    const userId = state.value.user.memberId;
+const updateCottonCandy = async (amount) => {
+  const userId = state.value.user.memberId;
 
-    if (!userId) {
-      console.error('사용자 ID가 정의되지 않았습니다.');
-      return;
-    }
+  if (!userId) {
+    console.error('사용자 ID가 정의되지 않았습니다.');
+    return;
+  }
 
-    const newCottonCandyAmount = parseInt(state.value.user.cottonCandy) + amount;
-    state.value.user.cottonCandy = newCottonCandyAmount.toString();
-    localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
+  const newCottonCandyAmount = parseInt(state.value.user.cottonCandy) + amount;
+  state.value.user.cottonCandy = newCottonCandyAmount.toString();
+  localStorage.setItem(AUTH_KEY, JSON.stringify(state.value));
 
-    try {
-      await axios.patch(`http://localhost:8080/api/members/${userId}/cotton-candy`, {
-        cottonCandy: newCottonCandyAmount,
-      });
-      console.log('코튼 캔디 업데이트 성공',newCottonCandyAmount );
-    } catch (error) {
-      console.error('코튼 캔디 업데이트 실패:', error);
-    }
-  };
+  try {
+    await axios.patch(`http://localhost:8080/api/members/${userId}/cotton-candy`, {
+      cottonCandy: newCottonCandyAmount,
+    });
+    console.log('코튼 캔디 업데이트 성공', newCottonCandyAmount);
+  } catch (error) {
+    console.error('코튼 캔디 업데이트 실패:', error);
+  }
+};
 
   const getCottonCandy = async () => {
     const userId = state.value.user.memberId;
