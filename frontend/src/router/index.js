@@ -16,6 +16,7 @@ import EditProfile from '@/pages/mypage/EditProfile.vue';
 import ElementPage from '@/pages/element/ElementPage.vue';
 import MoguriIntro from '@/pages/main/MoguriIntro.vue';
 import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
+import Moguri from '@/pages/mypage/Moguri.vue'; 
 
 const routes = [
   {
@@ -72,11 +73,13 @@ const routes = [
     path: '/element', // 소비 원소 테스트 페이지 경로 추가
     name: 'ElementPage',
     component: ElementPage,
+    meta: { hideProfilePic: true },
   },
   {
     path: '/moguriintro', // 모구리 설명 페이지 경로 추가
     name: 'MoguriIntro',
     component: MoguriIntro,
+    meta: { hideProfilePic: true }, // 프로필 사진을 숨기기 위한 설정
   },
   {
     path: '/attendance', // 출석 체크 페이지 경로 추가
@@ -97,6 +100,11 @@ const routes = [
     path: '/cottoncandyshop', // 솜사탕 상점 경로 추가
     name: 'CottonCandyShop',
     component: CottonCandyShop,
+  },
+  {
+    path: '/moguri', // 모구리 모으기 페이지 경로 추가
+    name: 'Moguri',
+    component: Moguri,
   },
 ];
 

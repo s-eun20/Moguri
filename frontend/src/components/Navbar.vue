@@ -5,7 +5,8 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
-      <div v-if="isLoggedIn" class="user-dropdown">
+      <!-- 프로필 사진을 숨기기 위한 조건 추가 -->
+      <div v-if="isLoggedIn && !hideProfilePic" class="user-dropdown">
         <img
           src="@/assets/img/Moguri.png"
           alt="Profile Picture"
@@ -15,13 +16,14 @@
 
       <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name" @click="goToMyPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 추가 -->
+          <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item>
         </div>
 
-        <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
-          <p class="cotton-candy">코튼 캔디: {{ cottonCandy }}</p>
+        <b-nav-item v-if="isLoggedIn" id="cotton-candy-container" class="d-flex align-items-center">
+          <!-- Font Awesome 솜사탕 아이콘 추가 -->
+          <i class="fas fa-cloud cotton-candy-icon" style="color: #ffe5f2; font-size: 20px;"></i>
+          <p class="cotton-candy ml-2 mb-0">{{ cottonCandy }}</p> <!-- 코튼 캔디 금액 -->
         </b-nav-item>
-
         <b-nav-item v-else>
           <button @click="showLoginModal" class="login-button">
             <i class="fas fa-user-circle"></i> 로그인
@@ -35,6 +37,7 @@
 
   <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
 </template>
+
 <script setup>
 import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -47,15 +50,18 @@ const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
 const cottonCandy = computed(() => authStore.cottonCandy);
-const profilePhoto = computed(() => authStore.profilePhoto);
-const defaultPhoto = 'path_to_default_image';
 const router = useRouter();
+
+// 현재 경로의 메타 정보에 따라 프로필 사진 숨기기 결정
+const hideProfilePic = computed(() => {
+  return router.currentRoute.value.meta.hideProfilePic; // 메타 필드 확인
+});
 
 const showModal = ref(false);
 
-// 마이페이지로 이동하는 함수
-const goToMyPage = () => {
-  router.push({ name: 'EditProfile' }); // 'EditProfile'이 마이페이지의 라우트 이름인지 확인
+// 마구리 페이지로 이동하는 함수
+const goToMoguriPage = () => {
+  router.push({ name: 'Moguri' });
 };
 
 const showLoginModal = () => {
@@ -97,14 +103,11 @@ const closeLoginModal = () => {
   position: relative; /* 드롭다운의 위치를 상대적으로 설정 */
   z-index: 1000; /* 드롭다운이 다른 요소 위에 표시되도록 설정 */
 }
-.user-dropdown .dropdown-toggle::after {
-  display: none; /* 화살표 숨기기 */
-}
 
 .cotton-candy {
-  margin-top: 15px;
   font-weight: bold;
   color: rgb(228, 171, 67);
+  margin-bottom: 0; /* 텍스트 아래 여백 제거 */
 }
 
 .profile-container {
@@ -138,6 +141,7 @@ const closeLoginModal = () => {
   font-size: 24px; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
   cursor: pointer;
+  margin-right: 10px;
 }
 
 .login-button {
@@ -154,5 +158,11 @@ const closeLoginModal = () => {
 .login-button:hover {
   background-color: rgb(255, 166, 0); /* 주황색 */
   color: white;
+}
+
+.cotton-candy-icon {
+  color: #ffe5f2; /* 아이콘 색상 */
+  font-size: 10px; /* 아이콘 크기 조정 */
+  margin-right: 3px; /* 아이콘과 텍스트 간의 간격 조정 */
 }
 </style>
