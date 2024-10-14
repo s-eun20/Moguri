@@ -49,17 +49,29 @@
     </div>
     <div v-if="!showingHistory" class="form-actions">
       <button class="reset" @click="resetForm">초기화</button>
-      <button :class="tradeType === 'BUY' ? 'buy' : 'sell'" @click="placeOrder">
+      <button :class="tradeType === 'BUY' ? 'buy' : 'sell'" @click="confirmOrder">
         {{ tradeType === 'BUY' ? '매수' : '매도' }}
       </button>
     </div>
+
+    <!-- Confirmation Modal -->
+    <ConfirmationModal
+      :isVisible="isModalVisible"
+      :message="modalMessage"
+      @close="isModalVisible = false"
+      @confirm="placeOrder"
+    />
   </div>
 </template>
 
 <script>
 import { useStockStore } from '@/stores/stockStore'; // stockStore import
+import ConfirmationModal from '@/components/Cottoncandyshop/ConfirmationModal.vue'; // 모달 컴포넌트 import
 
 export default {
+  components: {
+    ConfirmationModal,
+  },
   props: {
     currentPrice: {
       type: Number,
@@ -79,6 +91,8 @@ export default {
       tradeHistory: [],
       currentPage: 1,
       itemsPerPage: 4,
+      isModalVisible: false, // 모달 가시성 상태
+      modalMessage: '', // 모달 메시지
     };
   },
   computed: {
@@ -115,14 +129,13 @@ export default {
       this.orderQuantity = 1; // 최소 1로 설정
       this.orderPrice = this.currentPrice; 
     },
-    async placeOrder() {
-      const confirmation = confirm(`${this.tradeType === 'BUY' ? '매수' : '매도'} 하시겠습니까?\n\n` +
+    confirmOrder() {
+      this.modalMessage = `${this.tradeType === 'BUY' ? '매수' : '매도'} 하시겠습니까?\n\n` +
         `가격: ${this.orderPrice.toLocaleString()}원\n` + // 실시간 금액 반영
-        `수량: ${this.orderQuantity}주`);
-      
-      if (!confirmation) {
-        return; // 사용자가 취소하면 함수 종료
-      }
+        `수량: ${this.orderQuantity}주`;
+      this.isModalVisible = true; // 모달 표시
+    },
+    async placeOrder() {
       const stockStore = useStockStore(); 
       const trade = {
         quantity: this.orderQuantity,
@@ -133,7 +146,6 @@ export default {
       // 매수 또는 매도 처리
       if (this.tradeType === 'BUY') {
         await stockStore.buyStock(this.stockCode, trade); 
-        console.log(this.stockCode);
       } else {
         await stockStore.sellStock(this.stockCode, trade); 
       }
@@ -190,6 +202,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .trade-form {
