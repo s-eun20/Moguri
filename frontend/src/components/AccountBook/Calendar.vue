@@ -69,7 +69,7 @@ export default {
     color: #a06d36;
     text-align: center;
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 50px;
 }
 
 /* 달력 헤더 버튼 스타일 */
