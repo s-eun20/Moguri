@@ -2,7 +2,10 @@
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;
-  height: 245px;
+  height: 190px;
+  display: flex;
+  margin-bottom: 20px;
+  margin-top: 40px;
 }
 
 .oxExample-label {
@@ -26,11 +29,16 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
 .hover\:example-label-gray:hover {
     background-color: #f0f0f0;
   }
 
 .example-label-orange {
+  background-color: #ffd698;
+}
+
+.example-label-orange:hover {
   background-color: #ffd698;
 }
 
@@ -45,4 +53,56 @@
 .disabled-label {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.quiz-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.quiz-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz-footer {
+  margin-top: auto;
+}
+
+.quiz-btn {
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-btn button {
+  background-color: #ffd698;
+  color: black;
+  font-weight: bold;
+  border: none; 
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.quiz-btn button:hover {
+  background-color: #f7b500;
+}
+
+.quiz-btn button:disabled {
+  background-color: #c8c8c8;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.quiz-message {
+  text-align: center;
+  margin-top: -40px;
 }
