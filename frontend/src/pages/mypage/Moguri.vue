@@ -53,7 +53,7 @@
 import { useAuthStore } from '@/stores/auth';
 import CharacterCard from '@/components/Cottoncandyshop/CharacterCard.vue';
 import ConfirmationModal from '@/components/Cottoncandyshop/ConfirmationModal.vue';
-import MoguriModal from '@/components/Cottoncandyshop/MoguriModal.vue'; // 새로운 모달 가져오기
+import MoguriModal from '@/components/Cottoncandyshop/MoguriModal.vue';
 import moguriSampleImage from '@/assets/img/moguristore_sample_img.png';
 import { useRouter } from 'vue-router';
 
@@ -61,7 +61,7 @@ export default {
   components: {
     CharacterCard,
     ConfirmationModal,
-    MoguriModal, // 새로운 모달 등록
+    MoguriModal,
   },
   data() {
     return {
@@ -71,85 +71,85 @@ export default {
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 100,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: true, // 활성화
+          isPurchased: true,
         },
         {
           MOGURI_ID: 2,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 200,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: true, // 활성화
+          isPurchased: true,
         },
         {
           MOGURI_ID: 3,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 300,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 4,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 400,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 5,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 500,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 6,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 100,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 7,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 200,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 8,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 300,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 9,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 400,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
         {
           MOGURI_ID: 10,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 500,
           MOGURI_IMAGE_PATH: moguriSampleImage,
-          isPurchased: false, // 비활성화
+          isPurchased: false,
         },
       ],
       badgeColors: ['#E78160', '#F7E788', '#75BF7D', '#B8DAF4'],
-      isMoguriModalVisible: false, // 모달 상태 추가
-      selectedCharacter: {}, // 선택된 캐릭터
+      isMoguriModalVisible: false,
+      selectedCharacter: {},
       isConfirmationModalVisible: false,
       confirmationMessage: '',
-      memberId: null, // memberId 초기화
+      memberId: null,
     };
   },
   computed: {
     currentCottonCandy() {
       const authStore = useAuthStore();
-      return authStore.cottonCandy; // 동적으로 authStore에서 cottonCandy 값 가져오기
-    }
+      return authStore.cottonCandy;
+    },
   },
   created() {
     const authStore = useAuthStore();
@@ -164,7 +164,6 @@ export default {
       this.isMoguriModalVisible = true;
     },
     async selectMoguriCharacter() {
-      // 모구리 캐릭터 선택 로직 구현
       const price = this.selectedCharacter.MOGURI_PRICE;
 
       if (this.currentCottonCandy < price) {
@@ -214,56 +213,69 @@ export default {
 };
 </script>
 
-
 <style scoped>
 /* 스타일링 */
 .sidebar {
-  background-color: #f8f9fa; /* 사이드바 배경 색상 */
-  padding: 1.5rem; /* 내부 여백 */
-  border-radius: 0.5rem; /* 모서리 둥글게 */
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  font-family: 'HakgyoansimWoojuR', sans-serif;
 }
 
 .sidebar h2 {
-  font-size: 24px; /* 제목 크기 */
-  color: #ff8f17; /* 제목 색상 */
-  margin-bottom: 1.5rem; /* 제목과 목록 간격 */
+  font-size: 24px;
+  color: #ff8f17;
+  margin-bottom: 1.5rem;
 }
 
 .sidebar ul {
-  list-style: none; /* 기본 리스트 스타일 제거 */
-  padding: 0; /* 패딩 제거 */
+  list-style: none;
+  padding: 0;
 }
 
 .sidebar li {
-  font-size: 18px; /* 항목 크기 */
-  color: #333; /* 항목 색상 */
-  padding: 0.75rem 1rem; /* 각 항목 패딩 */
-  cursor: pointer; /* 포인터 커서 */
-  transition: background-color 0.2s; /* 배경 색상 변경 효과 */
+  font-size: 18px;
+  color: #333;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .sidebar li:hover {
-  background-color: #ffecd1; /* 호버 시 배경 색상 변경 */
+  background-color: #e2e6ea;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .page-title {
-  font-size: 2rem; /* 페이지 제목 크기 */
-  color: #333; /* 페이지 제목 색상 */
+  font-size: 36px;
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 헤더와 동일한 폰트 설정 */
+  color: #343a40;
 }
-.character-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4열 그리드 */
-  gap: 20px; /* 카드 간 간격 */
-  padding-bottom: 50px; /* 아래 패딩 */
-}
+
 .character-list-container {
-  padding: 0 20px; /* 가로 패딩 */
+  margin-top: 2rem;
+}
+
+.character-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* 캐릭터 카드 폰트 설정 */
+.character-cards li {
+  width: calc(33.333% - 1rem);
+  margin-bottom: 1rem;
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 캐릭터 카드 폰트 설정 */
+}
+
+/* 캐릭터 카드 내부의 텍스트 스타일 추가 */
+.character-cards li .character-name {
+  font-size: 20px; /* 캐릭터 이름 크기 */
+  color: #343a40; /* 캐릭터 이름 색상 */
+  margin: 0.5rem 0; /* 캐릭터 이름과 이미지 간의 여백 */
 }
 </style>

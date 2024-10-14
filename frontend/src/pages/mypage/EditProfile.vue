@@ -29,7 +29,7 @@
                   type="text"
                   v-model="nickname"
                   placeholder="닉네임을 입력하세요"
-                  style="border: 2px solid #eaecef; border-radius: 3px; padding: 2%"
+                  style="border: 2px solid #eaecef; border-radius: 3px; padding: 2%; font-family: 'HakgyoansimWoojuR', sans-serif;"
                 />
               </div>
 
@@ -37,7 +37,7 @@
                 <button
                   type="submit"
                   class="btn mb-1 me-3"
-                  style="border: 1px solid #ff8f17; background-color: #ff8f17; color: white"
+                  style="border: 1px solid #ff8f17; background-color: #ff8f17; color: white; font-family: 'HakgyoansimWoojuR', sans-serif;"
                 >
                   수정
                 </button>
@@ -59,6 +59,7 @@
                 v-model="currentPassword"
                 type="password"
                 placeholder="기존 비밀번호를 입력하세요"
+                style="font-family: 'HakgyoansimWoojuR', sans-serif;"
               />
             </div>
             <div class="mb-3">
@@ -68,6 +69,7 @@
                 v-model="newPassword"
                 type="password"
                 placeholder="새로운 비밀번호를 입력하세요"
+                style="font-family: 'HakgyoansimWoojuR', sans-serif;"
               />
             </div>
             <div class="mb-3">
@@ -77,6 +79,7 @@
                 v-model="confirmNewPassword"
                 type="password"
                 placeholder="비밀번호를 다시 입력하세요"
+                style="font-family: 'HakgyoansimWoojuR', sans-serif;"
               />
               <span class="ms-2" style="color: red;">{{ errorMessage }}</span>
             </div>
@@ -84,7 +87,7 @@
               <button
                 class="btn mb-1 me-3"
                 @click="updatePassword"
-                style="border: 1px solid #ff8f17; background-color: #ff8f17; color: white"
+                style="border: 1px solid #ff8f17; background-color: #ff8f17; color: white; font-family: 'HakgyoansimWoojuR', sans-serif;"
               >
                 비밀번호 변경
               </button>
@@ -197,6 +200,7 @@ const updatePassword = async () => {
   background-color: #f8f9fa;
   padding: 1.5rem;
   border-radius: 0.5rem;
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 사이드바 폰트 설정 */
 }
 
 .sidebar h2 {
@@ -220,5 +224,20 @@ const updatePassword = async () => {
 
 .sidebar li:hover {
   background-color: #ffecd1;
+}
+
+/* 카드 내의 텍스트 필드 폰트 설정 */
+.card-header-title {
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 카드 제목 폰트 설정 */
+}
+
+/* 전체 카드 본문에 대한 폰트 설정 */
+.card-body {
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 카드 본문 폰트 설정 */
+}
+
+/* 입력 필드의 폰트 설정 */
+.input-field {
+  font-family: 'HakgyoansimWoojuR', sans-serif; /* 입력 필드 폰트 설정 */
 }
 </style>

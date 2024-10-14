@@ -19,10 +19,11 @@
           <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item>
         </div>
 
-        <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
-          <p class="cotton-candy">코튼 캔디: {{ cottonCandy }}</p>
+        <b-nav-item v-if="isLoggedIn" id="cotton-candy-container" class="d-flex align-items-center">
+          <!-- Font Awesome 솜사탕 아이콘 추가 -->
+          <i class="fas fa-cloud cotton-candy-icon" style="color: #ffe5f2; font-size: 20px;"></i>
+          <p class="cotton-candy ml-2 mb-0">{{ cottonCandy }}</p> <!-- 코튼 캔디 금액 -->
         </b-nav-item>
-
         <b-nav-item v-else>
           <button @click="showLoginModal" class="login-button">
             <i class="fas fa-user-circle"></i> 로그인
@@ -104,9 +105,9 @@ const closeLoginModal = () => {
 }
 
 .cotton-candy {
-  margin-top: 15px;
   font-weight: bold;
   color: rgb(228, 171, 67);
+  margin-bottom: 0; /* 텍스트 아래 여백 제거 */
 }
 
 .profile-container {
@@ -140,6 +141,7 @@ const closeLoginModal = () => {
   font-size: 24px; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
   cursor: pointer;
+  margin-right: 10px;
 }
 
 .login-button {
@@ -156,5 +158,11 @@ const closeLoginModal = () => {
 .login-button:hover {
   background-color: rgb(255, 166, 0); /* 주황색 */
   color: white;
+}
+
+.cotton-candy-icon {
+  color: #ffe5f2; /* 아이콘 색상 */
+  font-size: 10px; /* 아이콘 크기 조정 */
+  margin-right: 3px; /* 아이콘과 텍스트 간의 간격 조정 */
 }
 </style>
