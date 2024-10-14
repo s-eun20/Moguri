@@ -15,7 +15,7 @@
 
       <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name" @click="goToMyPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 추가 -->
+          <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 수정 -->
         </div>
 
         <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
@@ -35,6 +35,7 @@
 
   <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
 </template>
+
 <script setup>
 import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -53,9 +54,9 @@ const router = useRouter();
 
 const showModal = ref(false);
 
-// 마이페이지로 이동하는 함수
-const goToMyPage = () => {
-  router.push({ name: 'EditProfile' }); // 'EditProfile'이 마이페이지의 라우트 이름인지 확인
+// 마구리 페이지로 이동하는 함수
+const goToMoguriPage = () => {
+  router.push({ name: 'Moguri' }); // 'Moguri'로 리다이렉트
 };
 
 const showLoginModal = () => {

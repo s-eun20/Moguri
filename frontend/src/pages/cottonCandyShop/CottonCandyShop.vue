@@ -15,11 +15,13 @@
       </div>
       <ul class="character-cards">
         <li v-for="(character, index) in characters" :key="character.MOGURI_ID">
-          <CharacterCard
-            :character="character"
-            :badgeColor="getBadgeColor(index)"
-            @purchase="openPurchaseModal"
-          />
+      <CharacterCard
+        :character="character"
+        :badgeColor="getBadgeColor(index)"
+        :disabled="character.isPurchased" 
+        :disabledMessage="character.isPurchased ? '구매 완료' : ''" 
+        @purchase="openPurchaseModal"
+      />
         </li>
       </ul>
     </div>
@@ -61,60 +63,70 @@ export default {
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 100,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 2,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 200,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 3,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 300,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 4,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 400,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 5,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 500,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 6,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 100,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 7,
           MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 200,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 8,
-          MOGURI_NAME: '저쩌구 모구리',
+          MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 300,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 9,
           MOGURI_NAME: '저쩌구 모구리',
           MOGURI_PRICE: 400,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
         {
           MOGURI_ID: 10,
-          MOGURI_NAME: '저쩌구 모구리',
+          MOGURI_NAME: '어쩌구 모구리',
           MOGURI_PRICE: 500,
           MOGURI_IMAGE_PATH: moguriSampleImage,
+          isPurchased: false, // 구매 여부 프로퍼티 추가
         },
       ],
       badgeColors: ['#E78160', '#F7E788', '#75BF7D', '#B8DAF4'],
@@ -167,6 +179,10 @@ export default {
         // 코튼 캔디 업데이트 (음수로 전달하여 줄어들게)
         await authStore.updateCottonCandy(-price);
 
+        // 구매 상태 업데이트
+        const characterIndex = this.characters.findIndex(c => c.MOGURI_ID === this.selectedCharacter.MOGURI_ID);
+        this.characters[characterIndex].isPurchased = true;
+
         this.confirmationMessage = `${this.selectedCharacter.MOGURI_NAME} 구매가 완료되었습니다!`;
         this.closePurchaseModal();
         this.isConfirmationModalVisible = true;
@@ -179,7 +195,6 @@ export default {
       this.confirmationMessage = '';
     },
   },
-
 };
 </script>
 

@@ -16,6 +16,7 @@ import EditProfile from '@/pages/mypage/EditProfile.vue';
 import ElementPage from '@/pages/element/ElementPage.vue';
 import MoguriIntro from '@/pages/main/MoguriIntro.vue';
 import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
+import Moguri from '@/pages/mypage/Moguri.vue'; 
 
 const routes = [
   {
@@ -97,6 +98,11 @@ const routes = [
     path: '/cottoncandyshop', // 솜사탕 상점 경로 추가
     name: 'CottonCandyShop',
     component: CottonCandyShop,
+  },
+  {
+    path: '/moguri', // 모구리 모으기 페이지 경로 추가
+    name: 'Moguri',
+    component: Moguri,
   },
 ];
 
