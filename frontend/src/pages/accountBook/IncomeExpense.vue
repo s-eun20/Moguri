@@ -123,7 +123,8 @@ export default {
       }
     };
 
-    const deleteTransaction = async (accountBookId) => { {
+    const deleteTransaction = async (accountBookId) => {
+ {
         try {
           await accountStore.deleteTransaction(accountBookId);
           calculateAndSaveEvents(); 
