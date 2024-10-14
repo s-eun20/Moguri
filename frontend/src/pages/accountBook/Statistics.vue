@@ -144,17 +144,20 @@ export default {
 .mascot-image {
   width: 90px;
   height: 110px;
-  margin-top: 10px;
 }
 
 .speech-bubble {
-  background-color: #FFF;
+  background: #fff;
   border: 2px solid #FFD700;
   border-radius: 20px;
-  padding: 10px;
+  padding: 20px; /* 패딩을 조정하여 내부 여백을 설정 */
+  font-size: 16px;
   text-align: center;
-  margin-right: 10px;
-  width: 400px;
+  white-space: nowrap;
+}
+
+.speech-bubble p {
+  margin: 3px 0;
   font-weight: bold;
 }
 

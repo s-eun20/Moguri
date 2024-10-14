@@ -7,7 +7,11 @@
     
     <div class="content-wrapper">
       <div class="calendar-container">
-        <Calendar @dateSelected="handleDateSelected" />
+        <Calendar 
+        v-if="calendarEvents.length > 0"
+          @dateSelected="handleDateSelected" 
+          :events="calendarEvents" 
+        />
       </div>
       <div class="transactions-container">
         <IncomeExpenseCard 
@@ -41,7 +45,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAccountStore } from '@/stores/accountStore';
 import { storeToRefs } from 'pinia';
 import IncomeExpenseCard from '@/components/AccountBook/IncomeExpenseCard.vue';
@@ -64,6 +68,7 @@ export default {
     const isEditModalVisible = ref(false);
     const editingTransaction = ref(null);
     const totalAssets = ref(0);
+    const calendarEvents = ref([]); // 이벤트를 저장할 ref 추가
 
     const handleDateSelected = (date) => {
       if (date instanceof Date) {
@@ -84,10 +89,13 @@ export default {
       isAddModalVisible.value = false;
     };
 
-    const addTransaction = async (newTransaction, memberId) => {
+    const addTransaction = async (newTransaction) => {
       try {
-        await accountStore.addTransaction(newTransaction,memberId);
+        await accountStore.addTransaction(newTransaction);
         closeAddModal();
+        calculateAndSaveEvents(); 
+        saveEventsToLocalStorage(); 
+        loadEventsFromLocalStorage(); 
       } catch (error) {
         console.error('거래 추가 중 오류가 발생했습니다:', error);
       }
@@ -107,15 +115,20 @@ export default {
       try {
         await accountStore.updateTransaction(updatedTransaction);
         closeEditModal();
+        calculateAndSaveEvents(); 
+        saveEventsToLocalStorage(); // 이벤트 저장
+        loadEventsFromLocalStorage(); // 로컬 스토리지에서 이벤트 불러오기
       } catch (error) {
         console.error('거래 수정 중 오류가 발생했습니다:', error);
       }
     };
 
-    const deleteTransaction = async (accountBookId) => {
-      if (confirm('정말로 이 거래 내역을 삭제하시겠습니까?')) {
+    const deleteTransaction = async (accountBookId) => { {
         try {
           await accountStore.deleteTransaction(accountBookId);
+          calculateAndSaveEvents(); 
+          saveEventsToLocalStorage(); // 이벤트 저장
+          loadEventsFromLocalStorage(); // 로컬 스토리지에서 이벤트 불러오기
         } catch (error) {
           console.error('거래 내역 삭제 중 오류가 발생했습니다:', error);
         }
@@ -133,31 +146,77 @@ export default {
     const filteredTransactions = computed(() => {
       if (!selectedDate.value) return [];
       
-      let selectedDateString;
-      if (selectedDate.value instanceof Date) {
-        selectedDateString = selectedDate.value.toISOString().split('T')[0];
-      } else if (typeof selectedDate.value === 'string') {
-        selectedDateString = selectedDate.value.split('T')[0];
-      } else {
-        console.error('Invalid selectedDate format:', selectedDate.value);
-        return [];
-      }
-      
       return transactions.value.filter(transaction => {
         const transactionDateString = transaction.transactionDate.split('T')[0];
-        return transactionDateString === selectedDateString;
+        return transactionDateString === selectedDate.value;
       });
     });
 
+    const saveEventsToLocalStorage = () => {
+      const events = calendarEvents.value;
+      localStorage.setItem('calendarEvents', JSON.stringify(events));
+    };
+
+    const loadEventsFromLocalStorage = () => {
+      const storedEvents = localStorage.getItem('calendarEvents');
+      if (storedEvents) {
+        calendarEvents.value = JSON.parse(storedEvents); // 로컬 스토리지에서 이벤트 불러오기
+        console.log('Loaded events from local storage:', calendarEvents.value); // 로드된 이벤트 확인
+      }
+    };
+    const calculateAndSaveEvents = async () => {
+      try {
+        const response = await accountStore.fetchAllTransactions(); // 사용자 거래 내역을 가져오는 API 호출
+        const events = [];
+
+        // 수입과 지출 계산
+        response.forEach(transaction => {
+      const date = transaction.transactionDate; // 거래 날짜
+      const amount = transaction.amount; // 거래 금액
+      const type = transaction.type; // 거래 유형 (수입/지출)
+
+      if (!events[date]) {
+        events[date] = { income: 0, expense: 0 };
+      }
+
+      if (type === '수입') {
+        events[date].income += amount; // 수입 합산
+      } else if(type === '지출') {
+        events[date].expense += amount; // 지출 합산
+      }
+    });
+
+    // 이벤트 배열 생성
+    const eventArray = [];
+    for (const date in events) {
+      const totalIncome = events[date].income;
+      const totalExpense = events[date].expense;
+
+      if (totalIncome > 0) {
+        eventArray.push({ title: `+₩${totalIncome}`, date }); // 총 수입 이벤트
+      }
+      if (totalExpense > 0) {
+        eventArray.push({ title: `-₩${totalExpense}`, date }); // 총 지출 이벤트
+      }
+    }
+
+    calendarEvents.value = eventArray; // 캘린더 이벤트 설정
+    saveEventsToLocalStorage(); // 로컬 스토리지에 저장
+  } catch (error) {
+    console.error('이벤트 계산 중 오류가 발생했습니다:', error);
+  }
+    };
+
     onMounted(async () => {
       try {
-        await accountStore.fetchAllTransactions();
+        await accountStore.fetchAllTransactions(); // 거래 내역 불러오기
+        await calculateAndSaveEvents(); 
+        saveEventsToLocalStorage();
+        loadEventsFromLocalStorage(); // 로컬 스토리지에서 이벤트 불러오기
       } catch (error) {
         console.error('거래 내역을 불러오는 중 오류가 발생했습니다:', error);
       } 
     });
-
-   
 
     return {
       transactions,
@@ -176,7 +235,8 @@ export default {
       deleteTransaction,
       totalAssets,
       updateTotalAssets,
-      formatCurrency
+      formatCurrency,
+      calendarEvents, // calendarEvents를 반환
     };
   }
 };
