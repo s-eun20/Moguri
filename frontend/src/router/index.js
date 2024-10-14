@@ -12,10 +12,10 @@ import Main from '@/pages/main/Main.vue'; // main 페이지 추가
 import Check from '@/pages/event/Attendance.vue'; // Attendance 컴포넌트 추가
 import Quiz from '@/pages/event/Quiz.vue'; // Quiz 컴포넌트 추가
 import ProfilePage from '@/pages/login/ProfilePage.vue'; // ProfilePage 경로 수정
-import EditProfile from '@/pages/mypage/EditProfile.vue'; 
+import EditProfile from '@/pages/mypage/EditProfile.vue';
 import ElementPage from '@/pages/element/ElementPage.vue';
 import MoguriIntro from '@/pages/main/MoguriIntro.vue';
-import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 솜사탕상점 컴포넌트 추가
+import CottonCandyShop from '@/pages/cottonCandyShop/CottonCandyShop.vue'; // 모구리 상점 컴포넌트 추가
 
 const routes = [
   {
@@ -94,7 +94,7 @@ const routes = [
     component: Quiz,
   },
   {
-    path: '/cottoncandyshop', // 솜사탕 상점 경로 추가
+    path: '/cottoncandyshop', // 모구리 상점 경로 추가
     name: 'CottonCandyShop',
     component: CottonCandyShop,
   },
