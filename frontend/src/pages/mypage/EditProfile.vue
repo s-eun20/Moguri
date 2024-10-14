@@ -89,6 +89,11 @@
                 비밀번호 변경
               </button>
             </div>
+
+            <!-- 비밀번호 변경 결과 메시지 -->
+            <div v-if="passwordChangeMessage" class="alert alert-success mt-3">
+              {{ passwordChangeMessage }}
+            </div>
           </div>
         </div>
       </div>
@@ -108,6 +113,7 @@ const currentPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const errorMessage = ref('');
+const passwordChangeMessage = ref(''); // 비밀번호 변경 메시지 상태
 const router = useRouter();
 
 const userId = authStore.state.user.memberId; // 스토어에서 유저 ID를 가져옴
@@ -163,16 +169,21 @@ const updatePassword = async () => {
       newPassword: newPassword.value,
     });
 
-    alert('비밀번호가 변경되었습니다.');
+    // 비밀번호 변경 성공 메시지
+    passwordChangeMessage.value = '비밀번호가 변경되었습니다.';
 
     // 비밀번호 변경 후 입력된 필드 초기화
     currentPassword.value = '';
     newPassword.value = '';
     confirmNewPassword.value = '';
 
-    // 메인 페이지로 리다이렉트
-    authStore.logout();
-    router.push({ name: 'Main' });
+    // 일정 시간 후 메인 페이지로 리다이렉트
+    setTimeout(() => {
+      // 비밀번호 변경 메시지 초기화
+      passwordChangeMessage.value = '';
+      authStore.logout();
+      router.push({ name: 'Main' });
+    }, 2000); // 2초 후 이동
   } catch (error) {
     console.error('비밀번호 변경 실패:', error);
     errorMessage.value = '비밀번호 변경에 실패했습니다.';

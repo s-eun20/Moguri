@@ -18,15 +18,6 @@
           </button>
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         </form>
-        <div class="divider">
-          <span>또는</span>
-        </div>
-        <div class="social-login">
-          <button @click="googleLogin" class="google-login-button">
-            <img src="@/assets/img/google-logo.png" alt="Google" class="google-logo" />
-            구글 계정으로 로그인
-          </button>
-        </div>
         <p class="register-link">
           계정이 없으신가요? 
           <router-link to="/register" @click="closeModal">회원가입</router-link> <!-- 회원가입 클릭 시 모달 닫기 -->
@@ -73,11 +64,6 @@ const login = async () => {
   }finally{
     password.value = '';
   }
-};
-
-// 소셜 로그인 메서드
-const googleLogin = () => {
-  console.log("구글 로그인 시도");
 };
 
 // 모달 닫기 메서드
@@ -176,61 +162,6 @@ input[type="password"]:focus {
 
 .login-button:hover {
   background-color: #F0B300;
-}
-
-.divider {
-  text-align: center;
-  margin: 20px 0;
-  color: #777;
-  position: relative;
-}
-
-.divider span {
-  background-color: white;
-  padding: 0 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.divider::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  border-top: 1px solid #ddd;
-  z-index: 0;
-}
-
-.social-login {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.google-login-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  width: 100%;
-  background-color: white; /* 흰색 배경 */
-  border: 1px solid #ddd; /* 경계선 */
-  border-radius: 4px; /* 둥근 모서리 */
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  padding-left: 16px; /* 왼쪽 패딩 증가 */
-}
-
-.google-login-button:hover {
-  background-color: #f7f7f7; /* 마우스 오버 시 배경색 변경 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
-}
-
-.google-logo {
-  width: 24px; /* 구글 로고 크기 조정 */
-  height: auto; /* 자동 높이 */
-  margin-right: 8px; /* 텍스트와 로고 간격 */
 }
 
 .error {

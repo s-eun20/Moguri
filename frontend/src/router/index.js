@@ -73,11 +73,13 @@ const routes = [
     path: '/element', // 소비 원소 테스트 페이지 경로 추가
     name: 'ElementPage',
     component: ElementPage,
+    meta: { hideProfilePic: true },
   },
   {
     path: '/moguriintro', // 모구리 설명 페이지 경로 추가
     name: 'MoguriIntro',
     component: MoguriIntro,
+    meta: { hideProfilePic: true }, // 프로필 사진을 숨기기 위한 설정
   },
   {
     path: '/attendance', // 출석 체크 페이지 경로 추가

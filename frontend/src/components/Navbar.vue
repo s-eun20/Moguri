@@ -5,7 +5,8 @@
     <menu-group class="menu" />
 
     <b-navbar-nav class="ml-auto d-flex align-items-center">
-      <div v-if="isLoggedIn" class="user-dropdown">
+      <!-- 프로필 사진을 숨기기 위한 조건 추가 -->
+      <div v-if="isLoggedIn && !hideProfilePic" class="user-dropdown">
         <img
           src="@/assets/img/Moguri.png"
           alt="Profile Picture"
@@ -15,7 +16,7 @@
 
       <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item> <!-- 클릭 이벤트 수정 -->
+          <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item>
         </div>
 
         <b-nav-item v-if="isLoggedIn" class="cotton-candy-container">
@@ -48,15 +49,18 @@ const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
 const cottonCandy = computed(() => authStore.cottonCandy);
-const profilePhoto = computed(() => authStore.profilePhoto);
-const defaultPhoto = 'path_to_default_image';
 const router = useRouter();
+
+// 현재 경로의 메타 정보에 따라 프로필 사진 숨기기 결정
+const hideProfilePic = computed(() => {
+  return router.currentRoute.value.meta.hideProfilePic; // 메타 필드 확인
+});
 
 const showModal = ref(false);
 
 // 마구리 페이지로 이동하는 함수
 const goToMoguriPage = () => {
-  router.push({ name: 'Moguri' }); // 'Moguri'로 리다이렉트
+  router.push({ name: 'Moguri' });
 };
 
 const showLoginModal = () => {
@@ -97,9 +101,6 @@ const closeLoginModal = () => {
 .user-dropdown {
   position: relative; /* 드롭다운의 위치를 상대적으로 설정 */
   z-index: 1000; /* 드롭다운이 다른 요소 위에 표시되도록 설정 */
-}
-.user-dropdown .dropdown-toggle::after {
-  display: none; /* 화살표 숨기기 */
 }
 
 .cotton-candy {
