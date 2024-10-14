@@ -37,29 +37,45 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
 import { useStockStore } from '@/stores/stockStore'; // stockStore import
 
 export default {
   name: 'StockHoldings',
   data() {
     return {
-      stockData: [] 
-    }
+      stockData: [],
+      priceUpdateInterval: null, // 가격 업데이트를 위한 interval ID
+    };
   },
   async mounted() {
-    await this.loadHoldings(); 
+    await this.loadHoldings();
+    this.startPriceUpdate(); // 가격 업데이트 시작
+  },
+  beforeUnmount() {
+    this.stopPriceUpdate(); // 컴포넌트 언마운트 시 interval 정리
   },
   methods: {
     async loadHoldings() {
       const stockStore = useStockStore();
-      await stockStore.fetchHoldings(); 
-      this.stockData = stockStore.holdings; 
+      await stockStore.fetchHoldings();
+      this.stockData = stockStore.holdings;
 
       for (const stock of this.stockData) {
         const currentPriceData = await stockStore.fetchCurrentPrice(stock.stockCode);
         stock.currentPrice = currentPriceData ? currentPriceData.currentPrice : null; // 현재가 저장
       }
+    },
+    startPriceUpdate() {
+      this.priceUpdateInterval = setInterval(async () => {
+        const stockStore = useStockStore();
+        for (const stock of this.stockData) {
+          const currentPriceData = await stockStore.fetchCurrentPrice(stock.stockCode);
+          stock.currentPrice = currentPriceData ? currentPriceData.currentPrice : null; // 현재가 업데이트
+        }
+      }, 3000); // 3초마다 업데이트
+    },
+    stopPriceUpdate() {
+      clearInterval(this.priceUpdateInterval); // interval 정리
     },
     selectStock(stock) {
       const selectedStock = {
@@ -67,9 +83,8 @@ export default {
         stockNameKR: stock.nameKr,
         marketType: stock.marketType,
       };
-      this.$emit('select-stock', selectedStock); 
+      this.$emit('select-stock', selectedStock);
     },
-    
     totalAmount(stock) {
       return stock.quantity * stock.averagePrice; // 수량 * 매입가
     },
