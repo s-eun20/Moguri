@@ -143,12 +143,16 @@ export default {
         totalAmount: this.totalPrice
       };
 
+      this.isModalVisible = false; 
+
       // 매수 또는 매도 처리
       if (this.tradeType === 'BUY') {
         await stockStore.buyStock(this.stockCode, trade); 
       } else {
         await stockStore.sellStock(this.stockCode, trade); 
       }
+
+      
 
       // Fetch trade history after placing the order
       await stockStore.fetchTradeHistory(this.stockCode); 
@@ -161,6 +165,7 @@ export default {
       localStorage.setItem('stockCode', this.stockCode);
       await stockStore.fetchHoldings();
       this.$emit('refreshHoldings');
+      
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;
