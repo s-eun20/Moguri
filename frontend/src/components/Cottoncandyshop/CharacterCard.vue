@@ -1,10 +1,5 @@
 <template>
-  <button 
-    class="card-btn" 
-    @click="handleClick" 
-    :disabled="disabled" 
-    :class="{ 'disabled-button': disabled }" 
-  >
+  <button class="card-btn" @click="handleClick">
     <div class="card">
       <div class="card-body">
         <div class="d-flex flex-column">
@@ -16,33 +11,25 @@
                 <span
                   class="badge rounded-pill"
                   :style="{ backgroundColor: badgeColor }"
-                  >{{ character.MOGURI_ID }}</span
+                  >{{ formattedMoguriId }}</span
                 >
               </div>
               <!-- 이름 -->
               <div class="flex-grow-1">
-                <span class="card-title">{{ character.MOGURI_NAME }}</span>
+                <span class="card-title">{{ character.moguriName }}</span>
               </div>
             </div>
           </div>
           <!-- 카드 이미지 -->
           <div class="card-img-container p-2">
-            <img
-              :src="character.MOGURI_IMAGE_PATH"
-              class="card-img"
-              :alt="character.MOGURI_NAME"
-            />
+            <img :src="character.filePath" />
           </div>
           <!-- 카드 가격 -->
           <div class="card-price p-2 text-end">
             <span class="text-end card-text">
-              {{ character.MOGURI_PRICE }}
+              {{ formattedMoguriPrice }}
               <i class="fa-solid fa-cloud" style="color: #ffe5f2"></i>
             </span>
-          </div>
-          <!-- 비활성화 오버레이 -->
-          <div v-if="disabled" class="overlay">
-            <span class="overlay-text">{{ disabledMessage }}</span>
           </div>
         </div>
       </div>
@@ -51,21 +38,35 @@
 </template>
 
 <script>
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+AOS.init();
+
 export default {
   props: {
-    character: Object,
-    badgeColor: String,
-    disabled: Boolean,
-    disabledMessage: { // 새로운 prop 추가
+    character: {
+      type: Object,
+      required: true,
+    },
+    badgeColor: {
       type: String,
-      default: '구매 완료', // 기본값 설정
+      required: true,
+    },
+  },
+  computed: {
+    // 한 자리 모구리 번호 포맷팅
+    formattedMoguriId() {
+      return String(this.character.moguriId).padStart(2, '0'); // 2자리로 포맷팅
+    },
+    // 코튼캔디 포맷팅
+    formattedMoguriPrice() {
+      return new Intl.NumberFormat().format(this.character.moguriPrice);
     },
   },
   methods: {
     handleClick() {
-      // 비활성화 상태에서 클릭 이벤트 무시
-      if (this.disabled) return;
-      this.$emit('purchase', this.character);
+      this.$emit('purchase', this.character); // 이벤트 발생
     },
   },
 };
@@ -109,16 +110,23 @@ export default {
 
 /* 카드 번호 뱃지 */
 .card-number {
-  margin-right: 5px;
+  margin-right: 10px;
   margin-left: 5px;
+  font-size: 1.2rem;
+}
+.badge {
+  /* padding: 0.34rem; */
+  vertical-align: middle;
 }
 /* 카드 이름(제목) span에 클래스 먹여져있음 */
 .card-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 /* 카드 가격 */
 .card-price {
   font-size: 1.3rem;
+  font-weight: 600;
 }
 /* 카드 전체 감싸는 버튼 */
 .card-btn {
@@ -131,21 +139,5 @@ export default {
   outline: inherit;
   width: 100%;
   text-align: left;
-}
-
-/* 비활성화 오버레이 */
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정색 배경 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 1.5rem;
-  border-radius: 8px;
 }
 </style>

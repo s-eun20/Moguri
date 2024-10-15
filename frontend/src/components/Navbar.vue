@@ -16,13 +16,31 @@
 
       <div class="d-flex align-items-center">
         <div v-if="isLoggedIn" class="user-info">
-          <b-nav-item class="user-name" @click="goToMoguriPage">{{ nickname }}님</b-nav-item>
+          <b-nav-item class="user-name" @click="goToMoguriPage"
+            >{{ nickname }}님</b-nav-item
+          >
         </div>
 
-        <b-nav-item v-if="isLoggedIn" id="cotton-candy-container" class="d-flex align-items-center">
+        <b-nav-item
+          v-if="isLoggedIn"
+          id="cotton-candy-container"
+          class="d-flex align-items-center"
+        >
           <!-- Font Awesome 솜사탕 아이콘 추가 -->
-          <i class="fas fa-cloud cotton-candy-icon" style="color: #ffe5f2; font-size: 20px;"></i>
-          <p class="cotton-candy ml-2 mb-0">{{ cottonCandy }}</p> <!-- 코튼 캔디 금액 -->
+          <!-- <i class="fas fa-cloud cotton-candy-icon" style="color: #ffe5f2; font-size: 20px;"></i>
+          <p class="cotton-candy ml-2 mb-0">{{ cottonCandy }}</p> 코튼 캔디 금액 -->
+          <div class="my-cotton-candy-container p-1 m-2">
+            <div class="icon-circle">
+              <i
+                class="fa-solid fa-cloud"
+                style="color: #ffe5f2; font-size: 1.2rem"
+              ></i>
+            </div>
+            <span class="my-cotton-candy">
+              {{ cottonCandy }}
+              <!-- 포맷팅된 값 사용 -->
+            </span>
+          </div>
         </b-nav-item>
         <b-nav-item v-else>
           <button @click="showLoginModal" class="login-button">
@@ -35,7 +53,11 @@
 
   <div class="nav-divider"></div>
 
-  <LoginModal v-if="showModal" :showModal="showModal" @close="closeLoginModal" />
+  <LoginModal
+    v-if="showModal"
+    :showModal="showModal"
+    @close="closeLoginModal"
+  />
 </template>
 
 <script setup>
@@ -49,7 +71,10 @@ import '@/assets/styles/global.css';
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLogin);
 const nickname = computed(() => authStore.nickname);
-const cottonCandy = computed(() => authStore.cottonCandy);
+// cottonCandy computed 속성 수정
+const cottonCandy = computed(() => {
+  return new Intl.NumberFormat('ko-KR').format(authStore.cottonCandy);
+});
 const router = useRouter();
 
 // 현재 경로의 메타 정보에 따라 프로필 사진 숨기기 결정
@@ -74,6 +99,30 @@ const closeLoginModal = () => {
 </script>
 
 <style scoped>
+/* 코튼캔디 */
+.my-cotton-candy-flex {
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.my-cotton-candy-container {
+  background-color: #fff3da;
+  border-radius: 17px;
+}
+.icon-circle {
+  background-color: #fff;
+  display: inline;
+  border-radius: 50%;
+  padding: 7px;
+}
+.my-cotton-candy {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
 .navbar-custom {
   font-family: 'HakgyoansimWoojuR' !important;
 }
@@ -90,7 +139,7 @@ const closeLoginModal = () => {
   color: rgb(255, 166, 0); /* 주황색 */
   font-weight: bold;
   font-size: 24px;
-  z-index:1;
+  z-index: 1;
 }
 
 .menu {
@@ -120,7 +169,7 @@ const closeLoginModal = () => {
 
 .profile-pic {
   width: 60px; /* 프로필 사진 크기 조정 */
-  height: 60px; 
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
   transition: transform 0.3s; /* Hover 애니메이션 */
@@ -132,13 +181,13 @@ const closeLoginModal = () => {
 
 .user-info {
   display: flex;
-  flex-direction: column; 
-  align-items: flex-start; 
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .user-name {
   font-weight: bold;
-  font-size: 24px; /* 크기 조정 */
+  font-size: 1.4rem; /* 크기 조정 */
   color: rgb(255, 166, 0); /* 주황색 */
   cursor: pointer;
   margin-right: 10px;

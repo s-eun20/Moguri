@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';  // auth 스토어 가져오기
+import { useAuthStore } from '@/stores/auth'; // auth 스토어 가져오기
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
@@ -17,21 +17,25 @@ export const useAccountStore = defineStore('account', {
       const memberId = authStore.state.user.memberId; // 로그인된 사용자의 memberId
 
       try {
-        const response = await axios.get('/api/accountbook', {
-          params: { page, limit, memberId }
-        });
-
+        const response = await axios.get(`/api/accountbook/list/${memberId}`);
+        console.log(response);
         if (response.data.returnCode === '0000') {
-          if (!response.data.data.accountBooks || !Array.isArray(response.data.data.accountBooks)) {
+          if (
+            !response.data.data.contents ||
+            !Array.isArray(response.data.data.contents)
+          ) {
             throw new Error('거래 내역이 없습니다.');
           }
 
-          this.transactions = response.data.data.accountBooks;
+          this.transactions = response.data.data.contents;
           this.totalItems = response.data.data.totalCount;
           this.totalPages = Math.ceil(this.totalItems / limit);
           this.currentPage = page;
         } else {
-          throw new Error(response.data.returnMessage || '거래 내역을 가져오는데 실패했습니다.');
+          throw new Error(
+            response.data.returnMessage ||
+              '거래 내역을 가져오는데 실패했습니다.'
+          );
         }
       } catch (error) {
         console.error('거래 내역을 가져오는 중 오류가 발생했습니다:', error);
@@ -58,7 +62,10 @@ export const useAccountStore = defineStore('account', {
         this.transactions = allTransactions;
         return allTransactions;
       } catch (error) {
-        console.error('모든 거래 내역을 가져오는 중 오류가 발생했습니다:', error);
+        console.error(
+          '모든 거래 내역을 가져오는 중 오류가 발생했습니다:',
+          error
+        );
         throw error;
       }
     },
@@ -69,9 +76,12 @@ export const useAccountStore = defineStore('account', {
       const memberId = authStore.state.user.memberId;
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/accountbook/${accountBookId}`, {
-          params: { memberId }
-        });
+        const response = await axios.get(
+          `http://localhost:8080/api/accountbook/${accountBookId}`,
+          {
+            params: { memberId },
+          }
+        );
         return response.data.data;
       } catch (error) {
         console.error('Error fetching transaction:', error);
@@ -84,19 +94,29 @@ export const useAccountStore = defineStore('account', {
       const memberId = authStore.state.user.memberId;
 
       try {
-        const response = await axios.post('/api/accountbook', { ...newTransaction, memberId }, {
-          headers: {
-            'Content-Type': 'application/json'
+        const response = await axios.post(
+          '/api/accountbook',
+          { ...newTransaction, memberId },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           }
-        });
+        );
 
         if (response.data.returnCode === '0000') {
           await this.fetchAllTransactions();
         } else {
-          console.error('Error adding transaction:', response.data.returnMessage);
+          console.error(
+            'Error adding transaction:',
+            response.data.returnMessage
+          );
         }
       } catch (error) {
-        console.error('Error adding transaction:', error.response ? error.response.data : error.message);
+        console.error(
+          'Error adding transaction:',
+          error.response ? error.response.data : error.message
+        );
         throw error;
       }
     },
@@ -107,18 +127,26 @@ export const useAccountStore = defineStore('account', {
       const memberId = authStore.state.user.memberId;
 
       try {
-        const response = await axios.patch(`http://localhost:8080/api/accountbook/${updatedTransaction.accountBookId}`, updatedTransaction, {
-          params: { memberId }
-        });
+        const response = await axios.patch(
+          `http://localhost:8080/api/accountbook/${updatedTransaction.accountBookId}`,
+          updatedTransaction,
+          {
+            params: { memberId },
+          }
+        );
 
         if (response.data.returnCode === '0000') {
-          const index = this.transactions.findIndex(t => t.accountBookId === updatedTransaction.accountBookId);
+          const index = this.transactions.findIndex(
+            (t) => t.accountBookId === updatedTransaction.accountBookId
+          );
           if (index !== -1) {
             this.transactions[index] = updatedTransaction;
           }
           return true;
         } else {
-          throw new Error(response.data.returnMessage || '거래 수정에 실패했습니다.');
+          throw new Error(
+            response.data.returnMessage || '거래 수정에 실패했습니다.'
+          );
         }
       } catch (error) {
         console.error('거래 수정 중 오류가 발생했습니다:', error);
@@ -132,15 +160,20 @@ export const useAccountStore = defineStore('account', {
       const memberId = authStore.state.user.memberId;
 
       try {
-        const response = await axios.delete(`http://localhost:8080/api/accountbook/${accountBookId}`, {
-          params: { memberId }
-        });
+        const response = await axios.delete(
+          `http://localhost:8080/api/accountbook/${accountBookId}`,
+          {
+            params: { memberId },
+          }
+        );
 
         if (response.data.returnCode === '0000') {
           await this.fetchAllTransactions();
           return true;
         } else {
-          throw new Error(response.data.returnMessage || '거래 삭제에 실패했습니다.');
+          throw new Error(
+            response.data.returnMessage || '거래 삭제에 실패했습니다.'
+          );
         }
       } catch (error) {
         console.error('거래 삭제 중 오류가 발생했습니다:', error);
@@ -153,10 +186,10 @@ export const useAccountStore = defineStore('account', {
     filteredTransactions: (state) => (selectedDate) => {
       if (!selectedDate) return [];
 
-      return state.transactions.filter(transaction => {
+      return state.transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.transactionDate);
         return transactionDate.toDateString() === selectedDate.toDateString();
       });
-    }
+    },
   },
 });
