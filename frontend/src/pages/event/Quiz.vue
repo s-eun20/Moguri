@@ -140,15 +140,13 @@
 }
 
 .quiz-page {
-  width: 75%;
-  margin: 0 auto;
   padding: 20px;
   font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* 변경: center에서 flex-start로 */
+  background: linear-gradient(135deg, rgb(255, 132, 0), rgb(255, 220, 0));
 }
 
 .quiz-title {
@@ -158,6 +156,8 @@
   text-align: left; /* 변경: center에서 left로 */
   align-self: flex-start; /* 추가: 왼쪽 정렬을 위해 */
   width: 100%; /* 추가: 전체 너비를 사용하도록 */
+  margin-top: 30px; /* 이 줄을 추가합니다 */
+  margin-left: 12%; /* 이 줄을 추가합니다 */
 }
 
 .quiz-content-wrapper {
@@ -177,6 +177,9 @@
   padding: 65px 95px 90px; /* 하단 패딩을 25px 증가 */
   min-height: calc(100% + 100px); /* 최소 높이를 50px 더 증가 */
   position: relative;
+  border-radius: 20px; /* 이 줄을 추가합니다 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* 이 줄을 추가합니다 */
+
 }
 
 .quiz-container-wrapper {
