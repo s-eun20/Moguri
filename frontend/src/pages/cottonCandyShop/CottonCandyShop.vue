@@ -1,7 +1,7 @@
 <template>
   <div class="cotton-candy-shop-page">
     <div class="header">
-      <h1 class="page-title">모구리 상점</h1>
+      <h1 class="page-title">솜사탕 상점</h1>
     </div>
     <div class="character-list-container">
       <div class="my-cotton-candy-flex d-flex flex-row-reverse">

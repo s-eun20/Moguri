@@ -3,7 +3,10 @@
     <div v-if="isVisible" class="modal-overlay">
       <div class="modal-content">
         <p>{{ message }}</p>
-        <button @click="close" class="confirm-button">확인</button>
+        <div class="modal-actions">
+          <button @click="close" class="confirm-button">확인</button>
+          <button @click="cancel" class="cancel-button">취소</button>
+        </div>
       </div>
     </div>
   </transition>
@@ -23,6 +26,9 @@ export default {
   },
   methods: {
     close() {
+      this.$emit('confirm');
+    },
+    cancel() {
       this.$emit('close');
     },
   },

@@ -117,7 +117,7 @@
         <!-- 출석체크 칸 -->
         <div class="main_bottom_banner_btn_container">
           <button
-            @click="goToPage('/attendance')"
+            @click="goToPage('/event/check')"
             class="main_bottom_banner_btn"
           >
             <div class="first-flex">

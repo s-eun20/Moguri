@@ -278,14 +278,19 @@ export default {
 }
 
 .speech-bubble {
-  background-color: #FFF;
+  background: #fff;
   border: 2px solid #FFD700;
   border-radius: 20px;
-  padding: 10px;
-  text-align: center;
-  width: 400px;
-  font-weight: bold;
+  padding: 20px; /* 패딩을 조정하여 내부 여백을 설정 */
+  font-size: 16px;
   margin-top: 15px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.speech-bubble p {
+  margin: 3px 0;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {

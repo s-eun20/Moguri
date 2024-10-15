@@ -46,8 +46,8 @@
           >
             ({{
               selectedStock.priceChangePercent
-                ? selectedStock.priceChangePercent
-                : "N/A"
+              
+               
             }}%)
           </span>
         </div>
@@ -57,31 +57,27 @@
         <div class="info-item">
           <span class="label">시가</span>
           <span class="value">{{
-            selectedStock.openPrice
-              ? selectedStock.openPrice.toLocaleString()
-              : "N/A"
+            selectedStock.openPrice.toLocaleString()
+              
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">고가</span>
           <span class="value">{{
-            selectedStock.highPrice
-              ? selectedStock.highPrice.toLocaleString()
-              : "N/A"
+            selectedStock.highPrice.toLocaleString()
+             
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">저가</span>
           <span class="value">{{
-            selectedStock.lowPrice
-              ? selectedStock.lowPrice.toLocaleString()
-              : "N/A"
+             selectedStock.lowPrice.toLocaleString()
           }}</span>
         </div>
         <div class="info-item">
           <span class="label">거래량</span>
           <span class="value">{{
-            selectedStock.volume ? selectedStock.volume.toLocaleString() : "N/A"
+            selectedStock.volume.toLocaleString() 
           }}</span>
         </div>
       </div>
