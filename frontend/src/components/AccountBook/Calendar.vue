@@ -36,7 +36,7 @@ export default {
               selectable: true,
               dateClick: this.handleDateClick,
               events: this.events, // 추가된 부분
-              eventBackgroundColor: '#ffcccc',
+              eventBackgroundColor: '#ffd698',
               eventTextColor: '#333333',
           }
       };

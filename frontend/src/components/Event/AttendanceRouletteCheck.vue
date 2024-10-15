@@ -1,18 +1,26 @@
 <template>
     <div class="roulette-outer">
-        <!-- <div class="roulette-pin"></div> -->
+        <div class="message-box">
+            <p v-if="isSpinning">두구두구두구...</p>
+            <p v-else-if="!hasPlayedToday && !result">룰렛을 돌려보세요</p>
+            <p v-else-if="result">{{ resultMessage }}</p>
+            <p v-else>오늘 룰렛 게임을 진행했어요</p>
+        </div>
+        <div class="roulette-pin">
+            <img src="@/assets/img/Moguri.png" alt="Moguri" class="moguri-image"/>
+        </div>
         <div class="roulette" v-bind:style="rouletteStyle">
             <!-- 값 영역 -->
             <div class="item-wrapper">
                 <div class="item">
                   10,000<br>솜사탕
-                  <img src="../../assets/img/cottoncandy.png" style="width: 50px; height: 50px;"/>
+                  <i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i>
                 </div>
-                <div class="item">1,000<br>솜사탕<img src="../../assets/img/cottoncandy.png" style="width: 50px; height: 50px;"/></div>
-                <div class="item">30,000<br>솜사탕<img src="../../assets/img/cottoncandy.png" style="width: 50px; height: 50px;"/></div>
-                <div class="item">5,000<br>솜사탕<img src="../../assets/img/cottoncandy.png" style="width: 50px; height: 50px;"/></div>
+                <div class="item">1,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
+                <div class="item">30,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
+                <div class="item">5,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
                 <div class="item">꽝<img src="../../assets/img/bomb.png" style="width: 50px; height: 50px;"/></div>
-                <div class="item">한번 더!<img src="../../assets/img/chance.png" style="width: 50px; height: 50px;"/></div>
+                <div class="item">한번 더!<img src="../../assets/img/clover.png" style="width: 50px; height: 50px;"/></div>
             </div>
             <!-- 선 영역 -->
              <div class="line-wrapper">
@@ -26,7 +34,7 @@
         </div>
   
         <div class="btn-wrapper">
-          <button class="play-btn" v-on:click="play" :disabled="hasPlayedToday">룰렛 돌리기!!</button>
+          <button class="play-btn" v-on:click="play" :disabled="hasPlayedToday || isSpinning">룰렛 돌리기</button>
         </div>
     </div>
   
@@ -55,7 +63,10 @@
                 current:0, // 실제 가리키는 데이터 위치
                 count:0,
                 history:[],
-                memberId: authStore.state.user.memberId, // Pinia 스토어에서 memberId 직접 할당
+                memberId: authStore.state.user.memberId,
+                result: null,
+                resultMessage: '',
+                isSpinning: false,
             }
         },
         computed: {
@@ -70,7 +81,6 @@
                 return this.segment / 2;
             },
             angle() {
-                // return -this.current * this.segment; // 정가운데 설정
                 let temp = this.current * this.segment;
                 let randomOffset = Math.floor(Math.random() * this.segment) - this.offset - 1;
                 let cycle = this.count * 360 * 5; //5바퀴 
@@ -87,35 +97,46 @@
         },
         methods: {
             async play() {
+                if (this.hasPlayedToday || this.isSpinning) return;
+
+                this.isSpinning = true;
+                this.result = null;
+                this.resultMessage = '';
+
                 const attendanceStore = useAttendanceStore();
                 try {
                     this.count++;
                     this.current = Math.floor(Math.random() * this.items.length);
-                    const result = this.items[this.current].value;
-                    this.history.push(result);
+                    
+                    // 룰렛 애니메이션 시간을 기다립니다
+                    await new Promise(resolve => setTimeout(resolve, 5000)); // 5초 대기
 
-                    if (result === "-1") {
-                        // '한번 더!' 결과일 경우
-                        console.log("한번 더 기회가 주어졌습니다!");
-                        // 추가 작업이 필요하다면 여기에 코드를 추가하세요
+                    this.result = this.items[this.current].value;
+                    this.history.push(this.result);
+
+                    if (this.result === "-1") {
+                        this.resultMessage = "한번 더 기회가 주어졌어요!";
+                        console.log("한번 더 기회가 주어졌어요!");
+                        this.isSpinning = false;
                     } else {
-                        // '한번 더!'가 아닌 경우에만 출석 데이터 전송
                         await attendanceStore.addRoulettePlay(this.memberId);
-                        // 룰렛 플레이 후 상태 업데이트
                         await attendanceStore.fetchHasRoulette(this.memberId);
 
-                        // 결과에 따른 추가 작업
-                        if (result !== "0") {
-                            // 당첨된 경우 (꽝이 아닌 경우)
-                            const candyAmount = parseInt(result);
+                        if (this.result !== "0") {
+                            const candyAmount = parseInt(this.result);
                             if (!isNaN(candyAmount)) {
                                 const authStore = useAuthStore();
                                 await authStore.updateCottonCandy(candyAmount);
+                                this.resultMessage = `${candyAmount.toLocaleString()} 솜사탕을 얻었어요.`;
                             }
+                        } else {
+                            this.resultMessage = "아쉽게도 꽝이네요.";
                         }
                     }
                 } catch (error) {
                     console.error('룰렛 플레이 중 오류 발생:', error);
+                } finally {
+                    this.isSpinning = false;
                 }
             }
         },
@@ -138,15 +159,35 @@
   </script>
   
   <style scoped>
+      .message-box {
+        position: absolute;
+        top: -120px; /* 위치 조정이 필요할 수 있습니다 */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #FFF;
+        border: 2px solid #FFD700;
+        border-radius: 20px;
+        padding: 10px;
+        text-align: center;
+        z-index: 30;
+        width: 200px; /* 크기 조정이 필요할 수 있습니다 */
+    }
+
+    .message-box p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
       .roulette-outer {
           text-align: center;
           position: relative;  
-          width: 300px;
-          height: 300px;
+          width: 285px;
+          height: 285px;
           font-size: 30px;
           margin-left: 0%;
           margin-right: 0%;
-          top: -30px;
+          top: -10px;
           left: 0;
           border: 2px solid black; /* 검은색 얇은 선 추가 */
           border-radius: 50%; /* 전체를 원형으로 만듦 */
@@ -160,24 +201,22 @@
           right:0%;
           bottom:0%;
           border-radius: 50%;
-          border: 20px solid #cfcfcf;
+          border: 20px solid #ffd698;
           z-index: 10;
       }
   
-  
-  
       .roulette-outer > .roulette-pin {
-          position: absolute;
-          top:3%;
-          left:50%;
-          width: 0;
-          height: 0;
-          border-style: solid;
-          border-width: 30px 5px 0 5px;
-          border-color: #ff0000 transparent transparent transparent;
-          margin-left: -5px;
-          z-index: 20;
+        position: absolute;
+        top: -30%; /* 위치 조정이 필요할 수 있습니다 */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
       }
+
+      .roulette-pin .moguri-image {
+        width: 150px; /* 이미지 크기 조정 */
+        height: auto;
+    }
   
       .roulette-outer > .roulette > .item-wrapper > .item {
           position: absolute;
@@ -238,6 +277,7 @@
         margin-top: 0px; /* 이미지 위의 여백 조정 */
         justify-content: center; /* 수평 중앙 정렬 */
         align-items: center;     /* 수직 중앙 정렬 */ 
+        top: -500000px;
       }
   
       .roulette-outer > .roulette >.line-wrapper > .line {
@@ -309,7 +349,7 @@
           flex: 1;
           display: flex;
           justify-content: space-between;
-          width: 137px; /* Ensure buttons take full width of modal */
+          width: 126px; /* Ensure buttons take full width of modal */
           margin: 10px auto 0; /* Add space above buttons */
       }
 

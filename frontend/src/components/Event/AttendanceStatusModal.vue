@@ -4,7 +4,7 @@
       <h2>이번 달 출석 현황</h2>
       <div class="attendance-graph">
         <div class="progress-bar" :style="{ width: `${progressPercentage}%` }"></div>
-        <img src="@/assets/img/roulettemoguri.png" alt="Raccoon" class="raccoon-image" :style="{ left: `${progressPercentage}%` }">
+        <!-- <img src="@/assets/img/roulettemoguri.png" alt="Raccoon" class="raccoon-image" :style="{ left: `${progressPercentage}%` }"> -->
       </div>
       <p>{{ attendanceDays }}일 출석 ({{ daysLeft }}일 남음)</p>
       <div class="rewards">
@@ -142,7 +142,7 @@ export default {
 
 .progress-bar {
   height: 100%;
-  background-color: #4CAF50;
+  background-color: #ffd698;
   transition: width 0.5s ease-in-out;
 }
 
@@ -166,18 +166,19 @@ export default {
 }
 
 .reward.achieved {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #ffd698;
+  color: black;
 }
 
 button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #ffd698;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .reward.clickable {
