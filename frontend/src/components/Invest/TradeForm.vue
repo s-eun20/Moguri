@@ -56,10 +56,17 @@
 
     <!-- Confirmation Modal -->
     <ConfirmModal
-      :isVisible="isModalVisible"
-      :message="modalMessage"
-      @close="isModalVisible = false"
-      @confirm="placeOrder"
+      :isVisible="isConfirmModalVisible"
+      :message="confirmMessage"
+      @close="isConfirmModalVisible = false"
+      @confirm="handleConfirmOrder"
+    />
+
+    <!-- Success Confirmation Modal -->
+    <ConfirmationModal
+      :isVisible="isSuccessModalVisible"
+      :message="successMessage"
+      @close="isSuccessModalVisible = false"
     />
   </div>
 </template>
@@ -67,10 +74,12 @@
 <script>
 import { useStockStore } from '@/stores/stockStore'; // stockStore import
 import ConfirmModal from './ConfirmModal.vue'; // 모달 컴포넌트 import
+import ConfirmationModal from '@/components/Cottoncandyshop/ConfirmationModal.vue'; // 모달 컴포넌트 import
 
 export default {
   components: {
     ConfirmModal,
+    ConfirmationModal
   },
   props: {
     currentPrice: {
@@ -91,8 +100,10 @@ export default {
       tradeHistory: [],
       currentPage: 1,
       itemsPerPage: 4,
-      isModalVisible: false, // 모달 가시성 상태
-      modalMessage: '', // 모달 메시지
+      isConfirmModalVisible: false,
+      confirmMessage: '', // Message for the initial confirmation
+      isSuccessModalVisible: false, // Success modal visibility
+      successMessage: '',
     };
   },
   computed: {
@@ -130,10 +141,16 @@ export default {
       this.orderPrice = this.currentPrice; 
     },
     confirmOrder() {
-      this.modalMessage = `${this.tradeType === 'BUY' ? '매수' : '매도'} 하시겠습니까?\n\n` +
+      this.confirmMessage = `${this.tradeType === 'BUY' ? '매수' : '매도'} 하시겠습니까?\n\n` +
         `가격: ${this.orderPrice.toLocaleString()}원\n` + // 실시간 금액 반영
         `수량: ${this.orderQuantity}주`;
-      this.isModalVisible = true; // 모달 표시
+      this.isConfirmModalVisible = true; // Show initial confirmation modal
+    },
+    async handleConfirmOrder() {
+      this.isConfirmModalVisible = false;
+      this.successMessage = `${this.tradeType === 'BUY' ? '매수' : '매도'}가 체결되었습니다.`;
+      this.isSuccessModalVisible = true; // Show success modal
+      await this.placeOrder();
     },
     async placeOrder() {
       const stockStore = useStockStore(); 
@@ -143,16 +160,12 @@ export default {
         totalAmount: this.totalPrice
       };
 
-      this.isModalVisible = false; 
-
       // 매수 또는 매도 처리
       if (this.tradeType === 'BUY') {
         await stockStore.buyStock(this.stockCode, trade); 
       } else {
         await stockStore.sellStock(this.stockCode, trade); 
       }
-
-      
 
       // Fetch trade history after placing the order
       await stockStore.fetchTradeHistory(this.stockCode); 
@@ -165,7 +178,6 @@ export default {
       localStorage.setItem('stockCode', this.stockCode);
       await stockStore.fetchHoldings();
       this.$emit('refreshHoldings');
-      
     },
     showHistory() {
       this.showingHistory = !this.showingHistory;
