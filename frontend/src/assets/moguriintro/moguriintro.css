@@ -43,8 +43,8 @@
 #character {
   background-color: transparent;
   position: absolute;
-  bottom: 400px; /* 지구 위에 적절히 위치하도록 설정 */
-  left: 360px;
+  bottom: 480px; /* 지구 위에 적절히 위치하도록 설정 */
+  left: 450px;
   transform: translate(-50%, 50%);
   width: 15%; /* 캐릭터 크기 조절 */
   z-index: 10; /* 지구 위에 나타나도록 z-index 조정 */
@@ -61,7 +61,7 @@
   transition: opacity 0.4s ease, transfrom 0.4s ease;
   position: absolute;
   top: -29%;
-  left: 70px;
+  left: 95px;
   width: 70px;
   z-index: 20;
 }
