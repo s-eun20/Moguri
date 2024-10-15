@@ -43,14 +43,13 @@ export default {
   z-index: 1000;
 }
 
-
 .modal-content {
   /* background-color: #f7f2d6; */
   background-color: white;
   padding: 20px;
   border-radius: 5px;
   text-align: center;
-  max-width: 500px; /* 모달 최대 너비 설정 */
+  max-width: 600px; /* 모달 최대 너비 설정 */
   width: 100%; /* 모바일 대응을 위한 반응형 너비 */
   font-size: 1.4rem;
 }
@@ -63,6 +62,8 @@ export default {
   cursor: pointer;
   background-color: #72be7c;
   color: white;
+  width: 20%;
+  margin: auto;
 }
 
 /* 애니메이션 스타일 */

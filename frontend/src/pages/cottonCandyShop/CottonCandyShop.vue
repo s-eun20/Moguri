@@ -9,9 +9,10 @@
           <div class="icon-circle">
             <i class="fa-solid fa-cloud" style="color: #ffe5f2"></i>
           </div>
-          <span class="my-cotton-candy" style="height: 1.5rem">{{
-            currentCottonCandy
-          }}</span>
+          <span class="my-cotton-candy" style="height: 1.5rem">
+            {{ formattedCottonCandy }}
+            <!-- 포맷팅된 값 사용 -->
+          </span>
         </div>
       </div>
       <ul class="character-cards">
@@ -55,7 +56,7 @@ export default {
   },
   data() {
     return {
-      characters: [], // 초기화
+      characters: [],
       badgeColors: ['#E78160', '#F7E788', '#75BF7D', '#B8DAF4'],
       isPurchaseModalVisible: false,
       selectedCharacter: {},
@@ -66,19 +67,21 @@ export default {
   computed: {
     currentCottonCandy() {
       const authStore = useAuthStore();
-      return authStore.cottonCandy; // 동적으로 authStore에서 cottonCandy 값 가져오기
+      return authStore.cottonCandy;
+    },
+    formattedCottonCandy() {
+      return new Intl.NumberFormat().format(this.currentCottonCandy); // 포맷팅
     },
   },
   async mounted() {
-    await this.fetchMoguriList(); // 컴포넌트가 마운트될 때 데이터 가져오기
-    console.log(this.character); // character prop 확인
+    await this.fetchMoguriList();
   },
   methods: {
     async fetchMoguriList() {
       try {
-        const response = await axios.get('/api/moguri'); // API 호출
+        const response = await axios.get('/api/moguri');
         if (response.data.returnCode === '0000') {
-          this.characters = response.data.data.contents; // 데이터 저장
+          this.characters = response.data.data.contents;
         } else {
           console.error(
             '목표 데이터를 가져오는 중 오류 발생:',
@@ -118,7 +121,6 @@ export default {
             method: 'POST',
           }
         );
-
         // 코튼 캔디 업데이트 (음수로 전달하여 줄어들게)
         await authStore.updateCottonCandy(-price);
 

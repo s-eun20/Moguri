@@ -27,7 +27,7 @@
           <!-- 카드 가격 -->
           <div class="card-price p-2 text-end">
             <span class="text-end card-text">
-              {{ character.moguriPrice }}
+              {{ formattedMoguriPrice }}
               <i class="fa-solid fa-cloud" style="color: #ffe5f2"></i>
             </span>
           </div>
@@ -55,8 +55,13 @@ export default {
     },
   },
   computed: {
+    // 한 자리 모구리 번호 포맷팅
     formattedMoguriId() {
       return String(this.character.moguriId).padStart(2, '0'); // 2자리로 포맷팅
+    },
+    // 코튼캔디 포맷팅
+    formattedMoguriPrice() {
+      return new Intl.NumberFormat().format(this.character.moguriPrice);
     },
   },
   methods: {
