@@ -8,7 +8,7 @@
       <!-- 프로필 사진을 숨기기 위한 조건 추가 -->
       <div v-if="isLoggedIn && !hideProfilePic" class="user-dropdown">
         <img
-          src="@/assets/img/Moguri.png"
+          src="@/assets/img/moguri_close.png"
           alt="Profile Picture"
           class="profile-pic"
         />
@@ -168,10 +168,10 @@ const closeLoginModal = () => {
 }
 
 .profile-pic {
-  width: 60px; /* 프로필 사진 크기 조정 */
-  height: 60px;
+  width: 50px; /* 프로필 사진 크기 조정 */
+  height: 50px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.3s; /* Hover 애니메이션 */
 }
 
