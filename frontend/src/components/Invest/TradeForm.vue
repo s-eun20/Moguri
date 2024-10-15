@@ -55,7 +55,7 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <ConfirmationModal
+    <ConfirmModal
       :isVisible="isModalVisible"
       :message="modalMessage"
       @close="isModalVisible = false"
@@ -66,11 +66,11 @@
 
 <script>
 import { useStockStore } from '@/stores/stockStore'; // stockStore import
-import ConfirmationModal from '@/components/Cottoncandyshop/ConfirmationModal.vue'; // 모달 컴포넌트 import
+import ConfirmModal from './ConfirmModal.vue'; // 모달 컴포넌트 import
 
 export default {
   components: {
-    ConfirmationModal,
+    ConfirmModal,
   },
   props: {
     currentPrice: {
