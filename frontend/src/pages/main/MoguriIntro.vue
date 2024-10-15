@@ -1,7 +1,6 @@
 <template>
     <body>
       <div class="moguriintro-body">
-        <!-- 기본 텍스트 -->
         <div class="text" id="basictext" style="display: block">
           <h1>모구리 한 마리 알아가세요 !</h1>
           <br />
@@ -22,8 +21,7 @@
       </div>
     </body>
   </template>
-  
+
   <style>
   @import '../../assets/moguriintro/moguriintro.css';
- 
   </style>

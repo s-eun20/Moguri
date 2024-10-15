@@ -1,41 +1,47 @@
 <template>
-  <transition name="modal-fade">
-    <div v-if="isVisible" class="modal-overlay">
-      <div class="modal-content">
-        <p>{{ message }}</p>
-        <div class="modal-actions">
-          <button @click="close" class="confirm-button">확인</button>
-          <button @click="cancel" class="cancel-button">취소</button>
+    <transition name="modal-fade">
+      <div v-if="isVisible" class="modal-overlay">
+        <div class="modal-content">
+          <p>
+            {{ character.MOGURI_NAME }}을(를) 당신의 캐릭터로 사용하시겠습니까?
+          </p>
+          <div class="button-group">
+            <button @click="confirmUsage" class="confirm-button">확인</button>
+            <button @click="cancelUsage" class="cancel-button">취소</button>
+          </div>
         </div>
       </div>
-    </div>
-  </transition>
-</template>
-
-<script>
-export default {
-  props: {
-    isVisible: {
-      type: Boolean,
-      required: true,
+    </transition>
+  </template>
+  
+  <script>
+  export default {
+    props: {
+      isVisible: {
+        type: Boolean,
+        required: true,
+      },
+      character: {
+        type: Object,
+        required: true,
+      },
     },
-    message: {
-      type: String,
-      required: true,
+    methods: {
+      confirmUsage() {
+        this.$emit('confirm');
+        // 모달 비활성화
+        this.$emit('update:isVisible', false);
+      },
+      cancelUsage() {
+        this.$emit('cancel');
+        // 모달 비활성화
+        this.$emit('update:isVisible', false);
+      },
     },
-  },
-  methods: {
-    close() {
-      this.$emit('confirm');
-    },
-    cancel() {
-      this.$emit('close');
-    },
-  },
-};
-</script>
-
-<style scoped>
+  };
+  </script>
+  
+  <style scoped>
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -50,7 +56,6 @@ export default {
   }
   
   .modal-content {
-    /* background-color: #f7f2d6; */
     background-color: white;
     padding: 20px;
     border-radius: 5px;
@@ -78,7 +83,7 @@ export default {
     color: white;
   }
   
-  /* 애니메이션 스타일 수정 */
+  /* 애니메이션 스타일 */
   .modal-fade-enter-active,
   .modal-fade-leave-active {
     transition: opacity 0.3s ease, transform 0.3s ease;
