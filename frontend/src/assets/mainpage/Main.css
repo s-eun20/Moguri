@@ -1,4 +1,5 @@
 /* === 배너 === */
+/*  tst 브랜치 : 80% 버전이며, serviceintro는 반응형 없는 버전*/
 #main_banner_container {
     margin: 0 auto;
     width: 100%;
@@ -219,83 +220,6 @@
     transform: translateY(20px); /* 기본 위치를 아래로 설정 */
     transition: opacity 0.5s ease, transform 0.5s ease; /* 부드러운 전환 효과 */
   }
-  /* 모바일 (최대 너비 767px) */
-@media (max-width: 767px) {
-  #section2 {
-    height: 400px;
-    padding: 10px 5%;
-    font-size: 14pt;
-  }
-
-  #section2 h3 {
-    font-size: 16pt;
-    padding-top: 3%;
-  }
-
-  #section2 h1 {
-    font-size: 18pt;
-  }
-
-  #section2-content {
-    font-size: 14pt;
-  }
-
-  #section2-left {
-    transform: translateY(10px);
-  }
-}
-
-/* 태블릿 (너비 768px ~ 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  #section2 {
-    height: 550px;
-    padding: 15px 7.5%;
-    font-size: 16pt;
-  }
-
-  #section2 h3 {
-    font-size: 18pt;
-    padding-top: 4%;
-  }
-
-  #section2 h1 {
-    font-size: 20pt;
-  }
-
-  #section2-content {
-    font-size: 16pt;
-  }
-
-  #section2-left {
-    transform: translateY(15px);
-  }
-}
-
-/* 데스크탑 (최소 너비 1024px) */
-@media (min-width: 1024px) {
-  #section2 {
-    height: 700px;
-    padding: 20px 10%;
-    font-size: 20pt;
-  }
-
-  #section2 h3 {
-    font-size: 20pt;
-    padding-top: 5%;
-  }
-
-  #section2 h1 {
-    font-size: 22pt;
-  }
-
-  #section2-content {
-    font-size: 18pt;
-  }
-
-  #section2-left {
-    transform: translateY(20px);
-  }
-}
 
   /* 가계부 아이콘 */
   #section2-icon{
@@ -303,30 +227,7 @@
    margin-top: -180px;   
    margin-bottom: 70px;
   }
-  /* section2 아이콘 반응형 */
-  @media (max-width: 767px) {  /* 모바일 */
-    #section2-icon {
-      height: 0px; 
-      margin-top: 0px; 
-      margin-bottom: 0px;
-    }
-  }
-  
-  @media (min-width: 768px) and (max-width: 1023px) {
-    #section2-icon {
-      height: 120px; /* 태블릿에서는 아이콘 크기를 약간 줄임 */
-      margin-top: -135px; /* 기존 마진의 3/4 */
-      margin-bottom: 52.5px; /* 기존 마진의 3/4 */
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    #section2-icon {
-      height: 200px; /* 데스크탑에서는 원래 크기 유지 */
-      margin-top: -180px;
-      margin-bottom: 70px;
-    }
-  }
+
 
   #section2:hover #section2-left{
     opacity: 1;
@@ -374,13 +275,21 @@
     height: 200px;
     width:500px;
     padding:50px 10px 0 0;
-    margin:0 40px 0 1000px;
+    margin:0 40px 0 1200px;
     text-align: left;
   }
 
   #section3-right{
+    margin-left: 50px;
     opacity: 0;
     transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .section3-img{
+    height:500px;
+    margin: -100px 700px 0 20px;
+    opacity: 0; /* 기본적으로 숨김 */
+    transform: translateY(20px); /* 아래에서 시작 */
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   #section3:hover #section3-right {
@@ -388,114 +297,7 @@
     transform: translateY(0);
     transition-delay: 0.5s; 
   }
-/* 모바일 (최대 너비 767px) */
-@media (max-width: 767px) {
-  #section3 {
-    height: 400px;
-    padding: 10px;
-    font-size: 14pt;
-  }
 
-  #section3 h3 {
-    font-size: 14pt;
-    padding-top: 3%;
-  }
-
-  .section3-header {
-    height: 100px;
-    width: 100%;
-    padding: 20px 5px 0 5px;
-    margin: 0 20px 0 0;
-    text-align: center;
-  }
-
-  #section3-right {
-    transform: translateY(10px);
-  }
-}
-
-/* 태블릿 (너비 768px ~ 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  #section3 {
-    height: 500px;
-    padding: 15px;
-    font-size: 16pt;
-  }
-
-  #section3 h3 {
-    font-size: 18pt;
-    padding-top: 4%;
-  }
-
-  .section3-header {
-    height: 150px;
-    width: 300px;
-    padding: 30px 5px 0 5px;
-    margin: 0 20px 0 500px;
-    text-align: left;
-  }
-
-  #section3-right {
-    transform: translateY(15px);
-  }
-}
-
-/* 데스크탑 (최소 너비 1024px) */
-@media (min-width: 1024px) {
-  #section3 {
-    height: 700px;
-    padding: 20px;
-    font-size: 20pt;
-  }
-
-  #section3 h3 {
-    font-size: 20pt;
-    padding-top: 5%;
-  }
-
-  .section3-header {
-    height: 200px;
-    width: 500px;
-    padding: 50px 10px 0 0;
-    margin: 0 40px 0 1000px;
-    text-align: left;
-  }
-
-  #section3-right {
-    transform: translateY(20px);
-  }
-}
-  .section3-img {
-    width: 550px;
-    float: left;
-    margin: -100px 30px 0 200px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  @media (max-width: 767px) {  /* 모바일 */
-  .section3-img  {
-      height: 0px; 
-      margin-top: 0px; 
-      margin-bottom: 0px;
-    }
-  }
-  
-  @media (min-width: 768px) and (max-width: 1023px) {  
-  .section3-img {
-      height: 120px; /* 태블릿에서는 아이콘 크기를 약간 줄임 */
-      margin-top: -135px; /* 기존 마진의 3/4 */
-      margin-bottom: 52.5px; /* 기존 마진의 3/4 */
-    }
-  }
-  
-  @media (min-width: 1024px) {
-  .section3-img {
-    width: 550px;
-    float: left;
-    margin: -100px 30px 0 200px;
-    }
-  }
   #section3:hover .section3-img {
     opacity: 1;
     transform: translateY(0);
@@ -547,91 +349,3 @@
     transform: translateY(0);
     transition-delay: 0.5s; 
   }
-/* 모바일 (최대 너비 767px) */
-@media (max-width: 767px) {
-  .section4-img {
-    float: none; 
-    width: 100%; 
-    height: auto; 
-    margin: 0 auto 20px auto; 
-    transform: translateY(10px); 
-  }
-
-  #section4 {
-    height: 400px;
-    padding: 10px 5%;
-    font-size: 14pt;
-  }
-
-  #section4 h3 {
-    font-size: 16pt;
-    padding-top: 3%;
-  }
-
-  #section4 h1 {
-    font-size: 18pt;
-  }
-
-  #section4-content {
-    font-size: 14pt;
-  }
-}
-
-/* 태블릿 (너비 768px ~ 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .section4-img {
-    float: right;
-    width: 450px; /* 너비 조정 */
-    height: 315px; /* 높이 조정 */
-    margin-top: -112.5px; /* 마진 조정 */
-    transform: translateY(15px); /* 이동 거리 조정 */
-  }
-
-  #section4 {
-    height: 550px;
-    padding: 15px 7.5%;
-    font-size: 16pt;
-  }
-
-  #section4 h3 {
-    font-size: 18pt;
-    padding-top: 4%;
-  }
-
-  #section4 h1 {
-    font-size: 20pt;
-  }
-
-  #section4-content {
-    font-size: 16pt;
-  }
-}
-/* 데스크탑 (최소 너비 1024px) */
-@media (min-width: 1024px) {
-  .section4-img {
-    float: right;
-    width: 600px;
-    height: 420px;
-    margin-top: -150px;
-    transform: translateY(20px);
-  }
-
-  #section4 {
-    height: 700px;
-    padding: 20px 10%;
-    font-size: 20pt;
-  }
-
-  #section4 h3 {
-    font-size: 20pt;
-    padding-top: 5%;
-  }
-
-  #section4 h1 {
-    font-size: 22pt;
-  }
-
-  #section4-content {
-    font-size: 18pt;
-  }
-}

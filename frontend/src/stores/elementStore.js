@@ -44,7 +44,7 @@ export const useElementStore = defineStore('element', () => {
     },
     {
       "question": "친구가 새로운 스타트업에 투자하라고 제안할 때, 당신의 반응은?",
-      "answer1": { "text": "큰 성과를 기대할 수 없다면 바로 투자하지!", "type": "화" },
+      "answer1": { "text": "큰 성과를 기대할 수 있다면 바로 투자하지!", "type": "화" },
       "answer2": { "text": "안정적인 사업이 아니면 신중해야 해.", "type": "토" }
     },
     {
