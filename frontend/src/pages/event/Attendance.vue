@@ -17,7 +17,7 @@
     <div class="attendance-icon-wrapper">
       <img
         @click="showAttendanceModal"
-        src="@/assets/img/roulettemoguri.png"
+        src="@/assets/img/Moguri.png"
         alt="출석 현황 아이콘"
         class="attendance-status-icon"
       />
@@ -80,11 +80,12 @@ export default {
     
 <style scoped>
   .attendance-page {
-    padding: 30px;
-    max-width: 1400px;
+    width: 75%;
     margin: 0 auto;
+    padding: 20px;
     font-family: 'HakgyoansimWoojuR';
     font-weight: bold;
+    margin-top: 20px;
   }
 
   .attendance-title {
@@ -93,7 +94,6 @@ export default {
     color: #000000;
     margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #FFCC00;
   }
 
   .attendance-content-wrapper {
@@ -110,6 +110,7 @@ export default {
   .attendance-roulette-container {
     flex: 0.7; /* 30% 더 좁게 */
     width: calc(35% - 15px); /* 대략적인 비율 조정 */
+    min-width: 320px; /* 최소 너비 설정 */
   }
 
   .attendance-calendar-container,
@@ -123,6 +124,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 500px;
   }
 
   @media (max-width: 1024px) {
@@ -133,6 +135,26 @@ export default {
     .attendance-calendar-container,
     .attendance-roulette-container {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .attendance-content-wrapper {
+      flex-direction: column;
+    }
+    
+    .attendance-calendar-container,
+    .attendance-roulette-container {
+      width: 100%;
+      min-width: 0; /* 최소 너비 제거 */
+    }
+
+    .attendance-roulette-container {
+      order: 2; /* 룰렛을 아래로 이동 */
+    }
+
+    .attendance-calendar-container {
+      order: 1; /* 캘린더를 위로 이동 */
     }
   }
 
@@ -165,15 +187,15 @@ export default {
   }
 
   .attendance-status-icon {
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     cursor: pointer;
   }
 
   .tooltip {
     position: absolute;
     bottom: 115px; /* 아이콘 위에 말풍선 배치 */
-    right: -35px;
+    right: -20px;
     background-color: #333;
     color: #fff;
     padding: 8px 12px;

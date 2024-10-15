@@ -3,7 +3,7 @@
     <div v-if="isVisible" class="modal-overlay">
       <div class="modal-content">
         <p>
-          {{ character.MOGURI_NAME }}을(를) {{ character.MOGURI_PRICE }} 코인에
+          {{ character.moguriName }}를 {{ character.moguriPrice }} 코인에
           구매하시겠습니까?
         </p>
         <div class="button-group">
@@ -30,13 +30,9 @@ export default {
   methods: {
     confirmPurchase() {
       this.$emit('confirm');
-      // 모달 비활성화
-      this.$emit('update:isVisible', false);
     },
     cancelPurchase() {
       this.$emit('cancel');
-      // 모달 비활성화
-      this.$emit('update:isVisible', false);
     },
   },
 };
@@ -57,11 +53,12 @@ export default {
 }
 
 .modal-content {
+  /* background-color: #f7f2d6; */
   background-color: white;
   padding: 20px;
   border-radius: 5px;
   text-align: center;
-  max-width: 500px; /* 모달 최대 너비 설정 */
+  max-width: 600px; /* 모달 최대 너비 설정 */
   width: 100%; /* 모바일 대응을 위한 반응형 너비 */
   font-size: 1.4rem;
 }

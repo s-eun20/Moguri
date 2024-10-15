@@ -3,20 +3,11 @@ import axios from 'axios';
 
 export const useQuizStore = defineStore('quiz', {
   state: () => ({
-    quizzes: [],
     objectQuiz: {},
     oxQuiz: {},
     subjectQuiz: {},
   }),
   actions: {
-    async fetchQuizzes() {
-      try {
-        const response = await axios.get('http://localhost:8080/api/quiz');
-        this.quizzes = response.data;
-      } catch (error) {
-        console.error('Error fetching quizzes:', error);
-      }
-    },
     async fetchObjectQuiz(id) {
       try {
         const response = await axios.get(`http://localhost:8080/api/quiz/${id}`);
