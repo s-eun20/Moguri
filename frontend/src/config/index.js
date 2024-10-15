@@ -3,7 +3,7 @@ export default {
       { title: '자산관리', url: '/accountBook', items: 'accountBookMenus' },
       { title: '모의투자', url: '/investment', items: 'investmentMenus' },
       { title: '이벤트', url: '/event', items: 'eventMenus' },
-      { title: '솜사탕 상점', url: '/cottonCandy', items: 'cottonCandyMenus' }
+      { title: '모구리 상점', url: '/cottonCandy', items: 'cottonCandyMenus' }
     ],
   
     accountBookMenus: [
