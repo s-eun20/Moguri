@@ -7,18 +7,18 @@
             <p v-else>오늘 룰렛 게임을 진행했어요</p>
         </div>
         <div class="roulette-pin">
-            <img src="@/assets/img/Moguri.png" alt="Moguri" class="moguri-image"/>
+            <img src="@/assets/img/moguri_mouth.png" alt="Moguri" class="moguri-image"/>
         </div>
         <div class="roulette" v-bind:style="rouletteStyle">
             <!-- 값 영역 -->
             <div class="item-wrapper">
                 <div class="item">
                   10,000<br>솜사탕
-                  <i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i>
+                  <i class="fa-solid fa-cloud" style="font-size: 30px; color: #ffe5f2"></i>
                 </div>
-                <div class="item">1,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
-                <div class="item">30,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
-                <div class="item">5,000<br>솜사탕<i class="fa-solid fa-cloud" style="width: 50px; height: 50px; color: #ffe5f2"></i></div>
+                <div class="item">1,000<br>솜사탕<i class="fa-solid fa-cloud" style="font-size: 30px; color: #ffe5f2"></i></div>
+                <div class="item">30,000<br>솜사탕<i class="fa-solid fa-cloud" style="font-size: 30px; color: #ffe5f2"></i></div>
+                <div class="item">5,000<br>솜사탕<i class="fa-solid fa-cloud" style="font-size: 30px; color: #ffe5f2"></i></div>
                 <div class="item">꽝<img src="../../assets/img/bomb.png" style="width: 50px; height: 50px;"/></div>
                 <div class="item">한번 더!<img src="../../assets/img/clover.png" style="width: 50px; height: 50px;"/></div>
             </div>
@@ -161,7 +161,7 @@
   <style scoped>
       .message-box {
         position: absolute;
-        top: -120px; /* 위치 조정이 필요할 수 있습니다 */
+        top: -100px; /* 위치 조정이 필요할 수 있습니다 */
         left: 50%;
         transform: translateX(-50%);
         background-color: #FFF;
@@ -207,14 +207,14 @@
   
       .roulette-outer > .roulette-pin {
         position: absolute;
-        top: -30%; /* 위치 조정이 필요할 수 있습니다 */
+        top: -15%; /* 위치 조정이 필요할 수 있습니다 */
         left: 50%;
         transform: translateX(-50%);
         z-index: 20;
       }
 
       .roulette-pin .moguri-image {
-        width: 150px; /* 이미지 크기 조정 */
+        width: 80px; /* 이미지 크기 조정 */
         height: auto;
     }
   

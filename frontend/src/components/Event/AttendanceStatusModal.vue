@@ -98,10 +98,8 @@ export default {
                 await authStore.updateCottonCandy(candyAmount);
             }
             console.log(this.rewardPoint);
-            alert(`${days}일 출석 보상 ${reward.amount} 솜사탕을 받았습니다!`);
           } catch (error) {
             console.error('리워드 수령 중 오류 발생:', error);
-            alert('리워드 수령 중 오류가 발생했습니다.');
           }
         }
       }

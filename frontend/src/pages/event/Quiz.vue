@@ -117,6 +117,17 @@
 
 <style scoped>
 
+:root {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 .quiz-start {
   display: flex;
   flex-direction: column;
@@ -140,15 +151,17 @@
 }
 
 .quiz-page {
-  width: 75%;
-  margin: 0 auto;
+  min-height: 89vh; /* 최소 높이를 뷰포트 높이로 설정 */
   padding: 20px;
   font-family: 'HakgyoansimWoojuR';
   font-weight: bold;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* 변경: center에서 flex-start로 */
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgb(255, 132, 0), rgb(255, 220, 0));
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .quiz-title {
@@ -158,6 +171,8 @@
   text-align: left; /* 변경: center에서 left로 */
   align-self: flex-start; /* 추가: 왼쪽 정렬을 위해 */
   width: 100%; /* 추가: 전체 너비를 사용하도록 */
+  margin-top: 30px; /* 이 줄을 추가합니다 */
+  margin-left: 12%; /* 이 줄을 추가합니다 */
 }
 
 .quiz-content-wrapper {
@@ -165,18 +180,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: calc(100% + 100px);
+  width: 100%;
   max-width: 550px;
-  margin-top: 30px;
-  margin-left: -50px;
+  margin: 0 auto; /* 상하 마진 0, 좌우 마진 auto로 변경 */
   align-self: center;
   background-image: url('@/assets/img/memo.png');
-  background-size: calc(100% - 50px) calc(100% + 130px); /* 배경 이미지 높이를 50px 증가 */
+  background-size: 100% calc(100% + 130px);
   background-repeat: no-repeat;
   background-position: center;
-  padding: 65px 95px 90px; /* 하단 패딩을 25px 증가 */
-  min-height: calc(100% + 100px); /* 최소 높이를 50px 더 증가 */
+  padding: 65px 95px 90px;
+  min-height: calc(100% + 100px);
   position: relative;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .quiz-container-wrapper {
@@ -237,14 +253,24 @@
 
 @media (max-width: 1024px) {
   .quiz-content-wrapper {
-    width: calc(90% + 100px);
-    background-size: calc(100% - 50px) calc(100% + 50px); /* 배경 이미지 높이를 50px 증가 */
-    padding: 45px 85px 70px; /* 하단 패딩을 25px 증가 */
-    margin-left: -50px;
+    width: 90%;
+    padding: 45px 5% 70px;
+    margin: 0 auto; /* 상하 마진 0, 좌우 마진 auto로 변경 */
   }
 
   .quiz-container-wrapper {
     margin-bottom: 30px;
   }
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox에서 스크롤바 숨기기 */
+* {
+  scrollbar-width: none;
+}
+
+
 </style>
