@@ -77,21 +77,21 @@ export default {
     await this.fetchMoguriList();
   },
   methods: {
-    async fetchMoguriList() {
-      try {
-        const response = await axios.get('/api/moguri');
-        if (response.data.returnCode === '0000') {
-          this.characters = response.data.data.contents;
-        } else {
-          console.error(
-            '목표 데이터를 가져오는 중 오류 발생:',
-            response.data.returnMessage
-          );
+      async fetchMoguriList() {
+        try {
+          const response = await axios.get('/api/moguri');
+          if (response.data.returnCode === '0000') {
+            this.characters = response.data.data.contents.map(character => ({
+              ...character,
+              isPurchased: false // 초기 상태는 구매되지 않음
+            }));
+          } else {
+            console.error('목표 데이터를 가져오는 중 오류 발생:', response.data.returnMessage);
+          }
+        } catch (error) {
+          console.error('가계부 데이터를 가져오는 중 오류 발생:', error);
         }
-      } catch (error) {
-        console.error('가계부 데이터를 가져오는 중 오류 발생:', error);
-      }
-    },
+      },
     getBadgeColor(index) {
       return this.badgeColors[index % this.badgeColors.length];
     },
@@ -104,25 +104,28 @@ export default {
       this.selectedCharacter = {};
     },
     async purchaseCharacter() {
-      const authStore = useAuthStore();
-      const price = this.selectedCharacter.moguriPrice;
+  const authStore = useAuthStore();
+  const price = this.selectedCharacter.moguriPrice;
 
-      if (this.currentCottonCandy < price) {
-        this.confirmationMessage = '코튼 캔디가 부족합니다.';
-        this.isConfirmationModalVisible = true;
-        return;
-      }
+  if (this.currentCottonCandy < price) {
+    this.confirmationMessage = '코튼 캔디가 부족합니다.';
+    this.isConfirmationModalVisible = true;
+    return;
+  }
 
-      try {
-        // 모구리 구매 API 호출
-        await fetch(
-          `/api/moguri/${this.selectedCharacter.moguriId}/${authStore.state.user.memberId}`,
+  try {
+    // 모구리 구매 API 호출
+    await fetch(
+      `/api/moguri/${this.selectedCharacter.moguriId}/${authStore.state.user.memberId}`,
           {
             method: 'POST',
           }
         );
         // 코튼 캔디 업데이트 (음수로 전달하여 줄어들게)
         await authStore.updateCottonCandy(-price);
+
+        // 구매한 캐릭터 비활성화 처리
+        this.selectedCharacter.isPurchased = true;
 
         this.confirmationMessage = `${this.selectedCharacter.moguriName} 구매가 완료되었습니다!`;
         this.closePurchaseModal();

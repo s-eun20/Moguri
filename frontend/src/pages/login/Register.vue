@@ -18,6 +18,7 @@
         </div>
         <button type="submit" class="register-button">회원가입</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <p v-if="successMessage" class="success">{{ successMessage }}</p> <!-- 성공 메시지 추가 -->
       </form>
       <p class="login-link">
         이미 계정이 있으신가요? <router-link to="/">로그인</router-link>
@@ -25,10 +26,12 @@
     </div>
   </div>
 </template>
+
 <script>
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+
 export default {
   setup() {
     const email = ref();
@@ -36,25 +39,35 @@ export default {
     const password = ref();
     const confirmPassword = ref();
     const errorMessage = ref('');
+    const successMessage = ref(''); // 성공 메시지 상태 추가
     const router = useRouter();
+
     const register = async () => {
       if (password.value !== confirmPassword.value) {
         errorMessage.value = '비밀번호가 일치하지 않습니다.';
+        successMessage.value = ''; // 성공 메시지 초기화
         return;
       }
+
       try {
         await axios.post('http://localhost:8080/api/members', {
           email: email.value,
           nickName: nickname.value,
           password: password.value,
         });
-        alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.'); // 팝업창 추가
-        router.push('/'); // 회원가입 성공 시 로그인 페이지로 이동
+
+        successMessage.value = '회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.'; // 성공 메시지 설정
+        errorMessage.value = ''; // 오류 메시지 초기화
+        setTimeout(() => {
+          router.push('/'); // 회원가입 성공 시 로그인 페이지로 이동
+        }, 2000); // 2초 후에 로그인 페이지로 이동
       } catch (error) {
         console.error('회원가입 실패:', error);
         errorMessage.value = '중복된 이메일입니다.';
+        successMessage.value = ''; // 성공 메시지 초기화
       }
     };
+
     return {
       email,
       nickname,
@@ -62,10 +75,12 @@ export default {
       confirmPassword,
       register,
       errorMessage,
+      successMessage, // 성공 메시지 반환
     };
   },
 };
 </script>
+
 <style scoped>
 .register-container {
   display: flex;
@@ -83,12 +98,14 @@ export default {
   width: 100%;
   max-width: 400px;
 }
+
 .moguri-logo {
   width: 80px;
   height: auto;
   display: block;
   margin: 0 auto 20px;
 }
+
 .register-title {
   color: #333;
   font-size: 24px;
@@ -103,6 +120,7 @@ export default {
 .input-group {
   margin-bottom: 20px;
 }
+
 input[type="text"],
 input[type="password"] {
   width: 100%;
@@ -130,11 +148,19 @@ input[type="password"]:focus {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
 .register-button:hover {
   background-color: #F0B300;
 }
+
 .error {
-  color: #e74c3c;
+  color: #e74c3c; /* 오류 메시지 색상 */
+  text-align: center;
+  margin-top: 10px;
+}
+
+.success {
+  color: #e74c3c; /* 성공 메시지를 빨간색으로 변경 */
   text-align: center;
   margin-top: 10px;
 }
@@ -144,6 +170,7 @@ input[type="password"]:focus {
   margin-top: 20px;
   color: #555;
 }
+
 .login-link a {
   color: #FECD72;
   text-decoration: none;

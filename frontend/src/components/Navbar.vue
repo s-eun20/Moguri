@@ -8,7 +8,7 @@
       <!-- 프로필 사진을 숨기기 위한 조건 추가 -->
       <div v-if="isLoggedIn && !hideProfilePic" class="user-dropdown">
         <img
-          src="@/assets/img/moguri_close.png"
+          src="@/assets/img/moguri-store/02_yeah_moguri.png"
           alt="Profile Picture"
           class="profile-pic"
         />

@@ -1,6 +1,6 @@
 <template>
-  <button class="card-btn" @click="handleClick">
-    <div class="card">
+  <button class="card-btn" @click="handleClick" :disabled="character.isPurchased">
+    <div class="card" :class="{ 'disabled-card': character.isPurchased }">
       <div class="card-body">
         <div class="d-flex flex-column">
           <!-- 카드 이름 -->
@@ -11,8 +11,7 @@
                 <span
                   class="badge rounded-pill"
                   :style="{ backgroundColor: badgeColor }"
-                  >{{ formattedMoguriId }}</span
-                >
+                >{{ formattedMoguriId }}</span>
               </div>
               <!-- 이름 -->
               <div class="flex-grow-1">
@@ -22,7 +21,7 @@
           </div>
           <!-- 카드 이미지 -->
           <div class="card-img-container p-2">
-            <img :src="character.filePath" />
+            <img :src="character.filePath" :alt="character.moguriName" />
           </div>
           <!-- 카드 가격 -->
           <div class="card-price p-2 text-end">
@@ -66,7 +65,9 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit('purchase', this.character); // 이벤트 발생
+      if (!this.character.isPurchased) {
+        this.$emit('purchase', this.character); // 이벤트 발생
+      }
     },
   },
 };
@@ -83,8 +84,8 @@ export default {
 }
 
 /* 호버 시 확대 효과 */
-.card:hover {
-  transform: scale(1.1); /* 5% 확대 */
+.card:hover:not(.disabled-card) {
+  transform: scale(1.1); /* 10% 확대 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
 }
 
@@ -92,19 +93,20 @@ export default {
 .card-body {
   padding: 15px;
 }
+
 /* 카드 이미지 컨테이너 */
 .card-img-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 250px; /* 원하는 높이로 조정 가능 */
+  overflow: hidden; /* 이미지가 컨테이너를 넘지 않도록 설정 */
 }
 
-/* 카드 이미지 자체(img태그에 클래스 먹여져 있음) */
-/* 최종 이미지 크기 고려하여 수정할 것 */
-.card-img {
-  max-width: 80%; /* 최대 너비 설정 */
-  max-height: 100%; /* 최대 높이 설정 */
+/* 카드 이미지 자체(img태그에 클래스 추가) */
+.card-img-container img {
+  max-width: 80%; /* 최대 너비를 40%로 설정하여 더 작게 조정 */
+  height: auto; /* 높이는 자동 조정 */
   object-fit: contain; /* 이미지 비율 유지 */
 }
 
@@ -114,20 +116,23 @@ export default {
   margin-left: 5px;
   font-size: 1.2rem;
 }
+
 .badge {
-  /* padding: 0.34rem; */
   vertical-align: middle;
 }
+
 /* 카드 이름(제목) span에 클래스 먹여져있음 */
 .card-title {
   font-size: 1.25rem;
   font-weight: 600;
 }
+
 /* 카드 가격 */
 .card-price {
   font-size: 1.3rem;
   font-weight: 600;
 }
+
 /* 카드 전체 감싸는 버튼 */
 .card-btn {
   background: none;
@@ -139,5 +144,12 @@ export default {
   outline: inherit;
   width: 100%;
   text-align: left;
+}
+
+/* 비활성화된 카드의 스타일 */
+.disabled-card {
+  background-color: rgba(220, 220, 220, 0.7); /* 밝은 회색 배경과 투명도 적용 */
+  color: #777; /* 글자 색상 변경 (회색) */
+  pointer-events: none; /* 클릭 불가능하게 설정 */
 }
 </style>
