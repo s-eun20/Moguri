@@ -3,7 +3,7 @@
       <div v-if="isVisible" class="modal-overlay">
         <div class="modal-content">
           <p>
-            {{ character.MOGURI_NAME }}을(를) 당신의 캐릭터로 사용하시겠습니까?
+            당신의 캐릭터로 사용하시겠습니까?
           </p>
           <div class="button-group">
             <button @click="confirmUsage" class="confirm-button">확인</button>
