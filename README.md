@@ -153,9 +153,9 @@
 
 
 ## 🧑‍💻 Contributor
-| [백승은<br>(FE Leader)](https://github.com/s-eun20) | [이은지](https://github.com/runeunrun)) | [신동민](https://github.com/ShinDong17) |
+| [백승은<br>(FE Leader)](https://github.com/s-eun20) | [이은지](https://github.com/runeunrun) | [신동민](https://github.com/ShinDong17) |
 | :---: | :---: | :---: |
-| <img src="https://avatars.githubusercontent.com/s-eun20" width="140px" /> | <img src="https://avatars.githubusercontent.com/" width="140px" /> | <img src="https://avatars.githubusercontent.com/" width="140px" /> |
+| <img src="https://avatars.githubusercontent.com/s-eun20" width="140px" /> | <img src="https://avatars.githubusercontent.com/runeunrun" width="140px" /> | <img src="https://avatars.githubusercontent.com/ShinDong17" width="140px" /> |
 | - 모의투자 프론트엔드 구현<br>- 가계부 프론트엔드 구현 | - 소비유형검사 프론트엔드, 백엔드 구현 | - 이벤트 프론트엔드, 백엔드 구현 |
 
 
